@@ -1,0 +1,167 @@
+import { useState } from 'react';
+import { Form, Input, Button, Checkbox, message } from 'antd';
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
+import { useLoginMutation } from '../../../store/authApi';
+
+const LoginForm = () => {
+    const [login, { isLoading }] = useLoginMutation();
+    const navigate = useNavigate();
+
+    const onFinish = async (values) => {
+        try {
+            const result = await login(values).unwrap();
+            localStorage.setItem('token', result.access_token);
+            localStorage.setItem('user', JSON.stringify(result.user));
+            message.success('Вы успешно вошли!');
+            navigate('/games');
+        } catch (error) {
+            message.error(error.data?.message || 'Ошибка входа');
+        }
+    };
+
+    return (
+        <Form
+            name="login"
+            initialValues={{ remember: true }}
+            onFinish={onFinish}
+            layout="vertical"
+            size="large"
+            className="login-form-custom"
+        >
+            <Form.Item
+                name="email"
+                rules={[
+                    { required: true, message: 'Пожалуйста, введите Email!' },
+                    { type: 'email', message: 'Введите корректный Email!' }
+                ]}
+            >
+                <div className="input-group">
+                    <span className="input-icon">✉️</span>
+                    <Input
+                        placeholder="Email"
+                        bordered={false}
+                        className="auth-field-input"
+                    />
+                </div>
+            </Form.Item>
+
+            <Form.Item
+                name="password"
+                rules={[{ required: true, message: 'Пожалуйста, введите пароль!' }]}
+            >
+                <div className="input-group">
+                    <span className="input-icon">🔒</span>
+                    <Input.Password
+                        placeholder="Пароль"
+                        bordered={false}
+                        className="auth-field-input"
+                        iconRender={visible => (visible ? '🙈' : '👁️')}
+                    />
+                </div>
+            </Form.Item>
+
+            <Form.Item>
+                <Form.Item name="remember" valuePropName="checked" noStyle>
+                    <Checkbox style={{ color: 'rgba(255,255,255,0.6)' }}>Запомнить меня</Checkbox>
+                </Form.Item>
+
+                <a className="login-form-forgot" href="" style={{ float: 'right', color: '#52c41a' }}>
+                    Забыли пароль?
+                </a>
+            </Form.Item>
+
+            <Form.Item>
+                <button type="submit" className="submit-btn" disabled={isLoading}>
+                    {isLoading ? '⏳ Вход...' : '🚀 Войти'}
+                </button>
+            </Form.Item>
+
+            <style>{`
+                .login-form-custom .ant-form-item-label > label {
+                    color: rgba(255, 255, 255, 0.8) !important;
+                }
+
+                .input-group {
+                    display: flex;
+                    align-items: center;
+                    background: rgba(255,255,255,0.08);
+                    border: 1px solid rgba(255,255,255,0.15);
+                    border-radius: 16px;
+                    padding: 0 16px;
+                    height: 64px;
+                    transition: all 0.2s;
+                    width: 100%;
+                }
+                
+                .input-group:focus-within {
+                    border-color: #52c41a;
+                    background: rgba(255,255,255,0.1);
+                    box-shadow: 0 0 0 3px rgba(82, 196, 26, 0.15);
+                }
+                
+                .input-icon {
+                    font-size: 20px;
+                    margin-right: 12px;
+                    opacity: 0.7;
+                }
+
+                .auth-field-input {
+                    background: transparent !important;
+                    color: white !important;
+                    font-size: 18px !important;
+                    height: 100%;
+                    padding: 0 !important;
+                    box-shadow: none !important;
+                }
+
+                .auth-field-input input {
+                    background: transparent !important;
+                    color: white !important;
+                    font-size: 18px !important;
+                }
+
+                .auth-field-input::placeholder, .auth-field-input input::placeholder {
+                    color: rgba(255,255,255,0.4) !important;
+                }
+                
+                .ant-input-password-icon {
+                    color: rgba(255,255,255,0.5) !important;
+                    font-size: 18px !important;
+                }
+                
+                .ant-input-password-icon:hover {
+                    color: white !important;
+                }
+
+                .submit-btn {
+                    width: 100%;
+                    height: 64px;
+                    font-size: 20px;
+                    font-weight: 700;
+                    border-radius: 16px;
+                    border: none;
+                    cursor: pointer;
+                    background: linear-gradient(135deg, #52c41a 0%, #237804 100%);
+                    color: white;
+                    box-shadow: 0 8px 24px rgba(82, 196, 26, 0.4);
+                    transition: all 0.2s;
+                    margin-top: 10px;
+                }
+                
+                .submit-btn:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 12px 32px rgba(82, 196, 26, 0.5);
+                }
+                
+                .submit-btn:disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                    transform: none;
+                }
+            `}</style>
+        </Form>
+    );
+};
+
+export default LoginForm;

@@ -1,0 +1,177 @@
+import React, { useState } from 'react';
+import { Button, Input, Form, message, Modal, Divider, Select, Space } from 'antd';
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import { auth } from '../../../firebase';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../../../store/store';
+import { useLoginWithPhoneMutation } from '../../../store/authApi';
+
+const { Option } = Select;
+
+const countryCodes = [
+    { code: '+994', country: 'Azerbaijan', flag: '🇦🇿' },
+    { code: '+90', country: 'Turkey', flag: '🇹🇷' },
+    { code: '+7', country: 'Russia', flag: '🇷🇺' },
+    { code: '+1', country: 'USA', flag: '🇺🇸' },
+    { code: '+44', country: 'UK', flag: '🇬🇧' },
+    { code: '+995', country: 'Georgia', flag: '🇬🇪' },
+    { code: '+380', country: 'Ukraine', flag: '🇺🇦' },
+];
+
+const PhoneLogin = ({ onSuccess }) => {
+    const [countryCode, setCountryCode] = useState('+994');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [verificationCode, setVerificationCode] = useState('');
+    const [confirmationResult, setConfirmationResult] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const dispatch = useDispatch();
+    const [loginWithPhone] = useLoginWithPhoneMutation();
+
+    const onCaptchVerify = () => {
+        if (!window.recaptchaVerifier) {
+            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                'size': 'invisible',
+                'callback': (response) => {
+                    onSignInSubmit();
+                },
+                'expired-callback': () => { }
+            });
+        }
+    }
+
+    const onSignInSubmit = () => {
+        if (!phoneNumber) {
+            message.error("Пожалуйста, введите номер телефона");
+            return;
+        }
+
+        setLoading(true);
+        onCaptchVerify();
+
+        const appVerifier = window.recaptchaVerifier;
+        // Strip leading 0 if present
+        const cleanPhone = phoneNumber.startsWith('0') ? phoneNumber.substring(1) : phoneNumber;
+        const formattedPhone = `${countryCode}${cleanPhone}`;
+
+        console.log(`Sending SMS to: ${formattedPhone}`);
+
+        signInWithPhoneNumber(auth, formattedPhone, appVerifier)
+            .then((confirmationResult) => {
+                window.confirmationResult = confirmationResult;
+                setConfirmationResult(confirmationResult);
+                setLoading(false);
+                setIsModalOpen(true);
+                message.success('Код отправлен на ваш номер');
+            }).catch((error) => {
+                console.error("Firebase Auth Error:", error);
+                setLoading(false);
+                if (error.code === 'auth/invalid-phone-number') {
+                    message.error('Неверный формат номера телефона');
+                } else if (error.code === 'auth/too-many-requests') {
+                    message.error('Слишком много попыток. Попробуйте позже.');
+                } else {
+                    message.error(`Ошибка отправки смс: ${error.message}`);
+                }
+            });
+    }
+
+    const verifyOtp = async () => {
+        setLoading(true);
+        try {
+            const result = await confirmationResult.confirm(verificationCode);
+            const user = result.user;
+            const idToken = await user.getIdToken();
+
+            // Send token to backend
+            const response = await loginWithPhone(idToken).unwrap();
+
+            if (response) {
+                dispatch(setCredentials({
+                    user: response.user,
+                    token: response.access_token
+                }));
+                message.success('Успешный вход!');
+                onSuccess();
+            }
+        } catch (error) {
+            console.error(error);
+            if (error.code === 'auth/invalid-verification-code') {
+                message.error('Неверный код. Попробуйте 123456 если это тестовый номер.');
+            } else {
+                message.error('Ошибка проверки кода');
+            }
+        } finally {
+            setLoading(false);
+            setIsModalOpen(false);
+        }
+    }
+
+    const prefixSelector = (
+        <Select
+            value={countryCode}
+            onChange={setCountryCode}
+            style={{ width: 100 }}
+            dropdownMatchSelectWidth={false}
+        >
+            {countryCodes.map(c => (
+                <Option key={c.code} value={c.code}>
+                    <Space>{c.flag} {c.code}</Space>
+                </Option>
+            ))}
+        </Select>
+    );
+
+    return (
+        <div style={{ marginTop: 20 }}>
+            <div id="recaptcha-container"></div>
+
+            <Divider plain>Или войти через телефон</Divider>
+
+            <Form layout="vertical">
+                <Form.Item label="Номер телефона">
+                    <Input
+                        addonBefore={prefixSelector}
+                        placeholder="70 123 45 67"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        style={{ width: '100%' }}
+                    />
+                </Form.Item>
+                <Button
+                    type="primary"
+                    block
+                    onClick={onSignInSubmit}
+                    loading={loading}
+                    style={{ height: '45px', fontSize: '16px' }}
+                >
+                    Отправить код
+                </Button>
+            </Form>
+
+            <Modal
+                title="Введите код из СМС"
+                open={isModalOpen}
+                onOk={verifyOtp}
+                onCancel={() => setIsModalOpen(false)}
+                confirmLoading={loading}
+            >
+                <div style={{ textAlign: 'center', marginBottom: 10 }}>
+                    <p>Мы отправили код на {countryCode} {phoneNumber}</p>
+                    <p style={{ fontSize: 12, color: '#888' }}>
+                        Для тестовых номеров используйте код: <b>123456</b>
+                    </p>
+                </div>
+                <Input
+                    placeholder="123456"
+                    value={verificationCode}
+                    onChange={(e) => setVerificationCode(e.target.value)}
+                    maxLength={6}
+                    style={{ textAlign: 'center', fontSize: '24px', letterSpacing: '8px' }}
+                />
+            </Modal>
+        </div>
+    );
+};
+
+export default PhoneLogin;
