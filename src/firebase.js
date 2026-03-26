@@ -17,30 +17,35 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
 export const auth = getAuth(app);
-export { app, messaging };
+export { app };
+
+// Messaging работает только на HTTPS с Service Worker
+let messaging = null;
+try {
+    messaging = getMessaging(app);
+} catch (e) {
+    console.warn('Firebase Messaging not supported in this environment');
+}
+export { messaging };
 
 export const requestForToken = async () => {
+    if (!messaging) return null;
     try {
         const currentToken = await getToken(messaging, { vapidKey: 'BC16ZZ7Y8KUrRKP9KHsvMMALrFpAmB6yUxLvEHxHB5bsJExprKYaH8RWHo63lm_8uLMGsPcAv0_rFzsdlh4lwEg' });
         if (currentToken) {
-            console.log('current token for client: ', currentToken);
             return currentToken;
-        } else {
-            console.log('No registration token available. Request permission to generate one.');
-            return null;
         }
+        return null;
     } catch (err) {
-        console.log('An error occurred while retrieving token. ', err);
+        console.warn('FCM token error:', err);
         return null;
     }
 };
 
-// Persistent foreground message listener — calls callback on every message
 export const onMessageListener = (callback) => {
+    if (!messaging) return () => {};
     return onMessage(messaging, (payload) => {
-        console.log('[FCM] Foreground message:', payload);
         callback(payload);
     });
 };
