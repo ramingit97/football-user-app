@@ -235,6 +235,11 @@
       "whatsappOpened": "Открываем WhatsApp...",
       "playerSelected": "Игрок {{name}} выбрал позицию",
       "statsSubmitted": "Отправлено ({{sent}}/{{total}})",
+      "noPlayersYet": "Пока никто не записался",
+      "priceAtStadium": "Цена на месте",
+      "paidAtStadium": "оплата наличными",
+      "serviceFee": "Сервисный сбор",
+      "paidFromWallet": "списывается с кошелька",
       "invitedPlayers": "Приглашенные игроки",
       "inviteStatus": {
         "pending": "Ожидает",

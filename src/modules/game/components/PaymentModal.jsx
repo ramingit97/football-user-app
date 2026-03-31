@@ -13,10 +13,8 @@ const PaymentModal = ({ visible, onCancel, onSuccess, game, user }) => {
     const [processPayment, { isLoading }] = useProcessPaymentMutation();
     const [paymentStatus, setPaymentStatus] = useState('initial'); // initial, processing, success, error
 
-    // DYNAMIC PRICING: Use slotPrice if set, otherwise use game price, fallback to 1.00
-    const gamePrice = game?.slotPrice > 0
-        ? Number(game.slotPrice)
-        : (game?.price > 0 ? Number(game.price) : 1.00);
+    // Только комиссия платформы — остальное игроки платят на месте
+    const gamePrice = Number(game?.commissionPerPlayer) > 0 ? Number(game.commissionPerPlayer) : 0.50;
 
     const handlePay = async () => {
         if (!user) return;

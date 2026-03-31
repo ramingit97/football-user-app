@@ -41,7 +41,8 @@ const JoinGameModal = ({ game, visible, onClose, onSuccess }) => {
         }
     };
 
-    const spotsLeft = game.maxPlayers - game.currentPlayers;
+    const currentPlayers = game.currentPlayers ?? (Array.isArray(game.players) ? game.players.length : 0);
+    const spotsLeft = game.maxPlayers - currentPlayers;
 
     return (
         <Modal
@@ -103,7 +104,7 @@ const JoinGameModal = ({ game, visible, onClose, onSuccess }) => {
                         }
                     >
                         <span>
-                            <strong style={{ color: 'var(--primary-color)' }}>{game.currentPlayers}</strong> / {game.maxPlayers}
+                            <strong style={{ color: 'var(--primary-color)' }}>{currentPlayers}</strong> / {game.maxPlayers}
                             <Tag
                                 color={spotsLeft <= 3 ? 'orange' : 'green'}
                                 style={{ marginLeft: 12, borderRadius: 20 }}
@@ -118,7 +119,7 @@ const JoinGameModal = ({ game, visible, onClose, onSuccess }) => {
                             <span><UserOutlined style={{ marginRight: 8, color: 'var(--primary-color)' }} />{t('game.join.organizer')}</span>
                         }
                     >
-                        {game.organizer}
+                        {game.organizerName || game.organizer}
                     </Descriptions.Item>
                 </Descriptions>
 

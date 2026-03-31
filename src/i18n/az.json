@@ -235,6 +235,11 @@
       "whatsappOpened": "WhatsApp açılır...",
       "playerSelected": "Oyunçu {{name}} mövqe seçdi",
       "statsSubmitted": "Göndərildi ({{sent}}/{{total}})",
+      "noPlayersYet": "Hələ heç kim qeydiyyatdan keçməyib",
+      "priceAtStadium": "Stadionда qiymət",
+      "paidAtStadium": "nağd ödəniş",
+      "serviceFee": "Servis haqqı",
+      "paidFromWallet": "cüzdandan silinir",
       "invitedPlayers": "Dəvət edilmiş oyunçular",
       "inviteStatus": {
         "pending": "Gözləyir",

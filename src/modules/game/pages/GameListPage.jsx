@@ -200,6 +200,7 @@ const GameListPage = () => {
                         <span style={{ color: 'var(--text-tertiary)', fontSize: 12 }}>{t('game.list.filter.format')}</span>
                         <Select value={formatFilter} onChange={setFormatFilter} allowClear placeholder={t('game.list.filter.formatAny')} size="small" style={{ width: 100 }} variant="borderless">
                             <Option value="5x5">5x5</Option>
+                            <Option value="6x6">6x6</Option>
                             <Option value="7x7">7x7</Option>
                             <Option value="8x8">8x8</Option>
                             <Option value="11x11">11x11</Option>

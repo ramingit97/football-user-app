@@ -585,7 +585,7 @@ const GameDetailPage = () => {
         const spotsAvailable = (game.maxPlayers || 0) - (game.players?.length || 0);
         const totalSpots = game.maxPlayers || 12;
         const filled = game.players?.length || 0;
-        const pricePerSlot = game.slotPrice > 0 ? Number(game.slotPrice).toFixed(0) : Number(game.price || 1).toFixed(0);
+        const pricePerSlot = Number(game.commissionPerPlayer) > 0 ? Number(game.commissionPerPlayer).toFixed(2) : '0.50';
         const baseUrl = window.location.origin + window.location.pathname;
         const refParam = currentUser?.id ? `?ref=${currentUser.id}` : '';
         const gameUrl = `${baseUrl}${refParam}`;
@@ -730,13 +730,45 @@ const GameDetailPage = () => {
                                 label={t('common.format')}
                                 value={game.format}
                             />
-                            {(game.price > 0 || game.slotPrice > 0) && (
-                                <InfoPill
-                                    label={t('game.card.priceLabel') || 'Цена'}
-                                    value={`${game.slotPrice || game.price} ₼`}
-                                    highlight
-                                />
-                            )}
+                        </div>
+
+                        {/* Pricing block */}
+                        <div style={{
+                            display: 'flex', gap: 10, marginBottom: 16,
+                        }}>
+                            <div style={{
+                                flex: 1, padding: '12px 14px',
+                                background: 'rgba(0,232,122,0.06)',
+                                border: '1px solid rgba(0,232,122,0.2)',
+                                borderRadius: 12,
+                            }}>
+                                <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 4 }}>
+                                    💵 {t('game.detail.priceAtStadium') || 'Цена на месте'}
+                                </div>
+                                <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--green)', fontFamily: 'Outfit, sans-serif' }}>
+                                    {Number(game.price) > 0 ? Number(game.price).toFixed(0) : Number(game.slotPrice || 5).toFixed(0)} ₼
+                                </div>
+                                <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 2 }}>
+                                    {t('game.detail.paidAtStadium') || 'оплата наличными'}
+                                </div>
+                            </div>
+
+                            <div style={{
+                                flex: 1, padding: '12px 14px',
+                                background: 'rgba(99,102,241,0.06)',
+                                border: '1px solid rgba(99,102,241,0.2)',
+                                borderRadius: 12,
+                            }}>
+                                <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 4 }}>
+                                    🔧 {t('game.detail.serviceFee') || 'Сервисный сбор'}
+                                </div>
+                                <div style={{ fontSize: 22, fontWeight: 700, color: '#818cf8', fontFamily: 'Outfit, sans-serif' }}>
+                                    {Number(game.commissionPerPlayer) > 0 ? Number(game.commissionPerPlayer).toFixed(2) : '0.50'} ₼
+                                </div>
+                                <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 2 }}>
+                                    {t('game.detail.paidFromWallet') || 'списывается с кошелька'}
+                                </div>
+                            </div>
                         </div>
 
                         {/* Players progress */}
@@ -1008,7 +1040,7 @@ const GameDetailPage = () => {
 
                     {currentPlayers === 0 ? (
                         <p style={{ color: 'var(--text-tertiary)', fontSize: 13, textAlign: 'center', padding: '16px 0' }}>
-                            {t('game.detail.noPlayersYet') || 'Пока никто не записался'}
+                            {t('game.detail.noPlayersYet')}
                         </p>
                     ) : (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
