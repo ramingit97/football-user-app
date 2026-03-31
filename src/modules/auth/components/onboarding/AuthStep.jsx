@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { signInWithGoogle } from '../../../../firebase';
 
 const countryCodes = [
     { code: '+994', flag: '🇦🇿' },
@@ -7,7 +8,7 @@ const countryCodes = [
     { code: '+7', flag: '🇷🇺' },
 ];
 
-const AuthStep = ({ formData, updateFormData, onNext, onBack, isLoading }) => {
+const AuthStep = ({ formData, updateFormData, onNext, onBack, isLoading, onGoogleAuth }) => {
     const { t } = useTranslation();
     const [countryCode, setCountryCode] = useState('+994');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -15,6 +16,7 @@ const AuthStep = ({ formData, updateFormData, onNext, onBack, isLoading }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [authMethod, setAuthMethod] = useState('email'); // 'email' or 'phone'
+    const [googleLoading, setGoogleLoading] = useState(false);
 
     const handleNext = () => {
         // Require email OR phone (one of them)
@@ -40,6 +42,19 @@ const AuthStep = ({ formData, updateFormData, onNext, onBack, isLoading }) => {
         }
         setError('');
         onNext();
+    };
+
+    const handleGoogleClick = async () => {
+        setGoogleLoading(true);
+        try {
+            const idToken = await signInWithGoogle();
+            onGoogleAuth(idToken);
+        } catch (error) {
+            console.error(error);
+            setError('Ошибка входа через Google');
+        } finally {
+            setGoogleLoading(false);
+        }
     };
 
     const handlePhoneChange = (value) => {
@@ -173,6 +188,23 @@ const AuthStep = ({ formData, updateFormData, onNext, onBack, isLoading }) => {
                     className="submit-btn"
                 >
                     {isLoading ? `⏳ ${t('auth.onboarding.auth.creating')}` : `✨ ${t('auth.onboarding.auth.createBtn')}`}
+                </button>
+
+                <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: 14, margin: '4px 0' }}>
+                    — или —
+                </div>
+
+                <button
+                    onClick={handleGoogleClick}
+                    disabled={googleLoading}
+                    className="google-auth-btn"
+                >
+                    {googleLoading ? '⏳ ...' : (
+                        <>
+                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width={22} height={22} />
+                            Продолжить через Google
+                        </>
+                    )}
                 </button>
 
                 <button onClick={onBack} className="back-btn">
@@ -358,6 +390,33 @@ const AuthStep = ({ formData, updateFormData, onNext, onBack, isLoading }) => {
                 .back-btn:hover {
                     background: rgba(255,255,255,0.05);
                     color: white;
+                }
+
+                .google-auth-btn {
+                    width: 100%;
+                    height: 56px;
+                    font-size: 17px;
+                    font-weight: 600;
+                    border-radius: 16px;
+                    border: 1px solid rgba(255,255,255,0.15);
+                    background: rgba(255,255,255,0.07);
+                    color: white;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 12px;
+                    transition: all 0.2s;
+                }
+
+                .google-auth-btn:hover {
+                    background: rgba(255,255,255,0.12);
+                    border-color: rgba(255,255,255,0.3);
+                }
+
+                .google-auth-btn:disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
                 }
             `}</style>
         </div>

@@ -36,6 +36,13 @@ export const authApi = createApi({
                 body: { idToken },
             }),
         }),
+        loginWithGoogle: builder.mutation({
+            query: (idToken) => ({
+                url: 'login-google',
+                method: 'POST',
+                body: { idToken },
+            }),
+        }),
         getProfile: builder.query({
             query: () => 'profile',
             providesTags: ['User'],
@@ -143,6 +150,7 @@ export const {
     useLazyGetUserByIdQuery,
     useGetUserByIdQuery,
     useLoginWithPhoneMutation,
+    useLoginWithGoogleMutation,
     useTransferBalanceMutation,
     useGetTransactionsQuery,
     useSendFriendRequestMutation,

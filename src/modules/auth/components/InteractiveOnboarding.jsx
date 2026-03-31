@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { message } from 'antd';
-import { useRegisterMutation, useUpdateProfileMutation, useProcessReferralMutation } from '../../../store/authApi';
+import { useRegisterMutation, useUpdateProfileMutation, useProcessReferralMutation, useLoginWithGoogleMutation } from '../../../store/authApi';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../../../store/store';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../../../components/LanguageSwitcher';
 
@@ -30,6 +32,8 @@ const InteractiveOnboarding = () => {
     const [register, { isLoading: registering }] = useRegisterMutation();
     const [updateProfile, { isLoading: updating }] = useUpdateProfileMutation();
     const [processReferral] = useProcessReferralMutation();
+    const [loginWithGoogle] = useLoginWithGoogleMutation();
+    const dispatch = useDispatch();
 
     const [currentStep, setCurrentStep] = useState(0);
     const [formData, setFormData] = useState({
@@ -72,7 +76,7 @@ const InteractiveOnboarding = () => {
                 name: formData.name?.trim().length >= 2,
                 position: !!formData.position,
                 playStyle: !!formData.playStyle,
-                auth: (formData.email || formData.phone) && formData.password && formData.password.length >= 6
+                auth: formData.googleIdToken || ((formData.email || formData.phone) && formData.password && formData.password.length >= 6)
             };
 
             if (step.id === 'name' && !validations.name) {
@@ -115,11 +119,11 @@ const InteractiveOnboarding = () => {
 
     const handleSubmitRegistration = async () => {
         // Allow email OR phone (one required)
-        if (!formData.email && !formData.phone) {
+        if (!formData.googleIdToken && !formData.email && !formData.phone) {
             message.warning(t('auth.registration.credentialsRequired'));
             return;
         }
-        if (!formData.password) {
+        if (!formData.googleIdToken && !formData.password) {
             message.warning(t('auth.registration.passwordRequired'));
             return;
         }
@@ -170,6 +174,45 @@ const InteractiveOnboarding = () => {
         }
     };
 
+    const handleGoogleAuth = async (idToken) => {
+        setIsSubmitting(true);
+        try {
+            const result = await loginWithGoogle(idToken).unwrap();
+
+            dispatch(setCredentials({ user: result.user, token: result.access_token }));
+            localStorage.setItem('token', result.access_token);
+            localStorage.setItem('user', JSON.stringify(result.user));
+
+            // Update profile with onboarding data
+            await updateProfile({
+                ...(formData.name && !result.user.name ? { name: formData.name } : {}),
+                position: formData.position,
+                playStyle: formData.playStyle,
+                speedRating: formData.speedRating || 50,
+                staminaRating: formData.staminaRating || 50,
+                attackRating: formData.attackRating || 50,
+                defenseRating: formData.defenseRating || 50,
+            }).unwrap();
+
+            // Process referral
+            const refCode = new URLSearchParams(window.location.search).get('ref')
+                || localStorage.getItem('pendingRef');
+            if (refCode && result.user?.id) {
+                try {
+                    await processReferral({ userId: result.user.id, referralCode: refCode }).unwrap();
+                } catch {}
+                localStorage.removeItem('pendingRef');
+            }
+
+            message.success(t('auth.registration.success'));
+            setCurrentStep(currentStep + 1);
+        } catch (error) {
+            message.error(error.data?.message || t('auth.registration.error'));
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     const handleComplete = () => {
         navigate('/games');
     };
@@ -192,6 +235,7 @@ const InteractiveOnboarding = () => {
                     onComplete={handleComplete}
                     isLoading={registering || updating || isSubmitting}
                     currentStep={currentStep}
+                    onGoogleAuth={handleGoogleAuth}
                     {...stepProps}
                 />
             </div>

@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { Tabs, Form, Input, Button, message, Modal, Select, Space, Radio } from 'antd';
 import { PhoneOutlined, UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-import { auth } from '../../../firebase';
+import { auth, signInWithGoogle } from '../../../firebase';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../../../store/store';
-import { useLoginMutation, useLoginWithPhoneMutation } from '../../../store/authApi';
+import { useLoginMutation, useLoginWithPhoneMutation, useLoginWithGoogleMutation } from '../../../store/authApi';
 import { useTranslation } from 'react-i18next';
 
 const { Option } = Select;
@@ -36,7 +36,27 @@ const UnifiedLoginForm = ({ onSuccess }) => {
     // Email/Username login
     const [login, { isLoading: emailLoading }] = useLoginMutation();
     const [loginWithPhone] = useLoginWithPhoneMutation();
+    const [loginWithGoogle] = useLoginWithGoogleMutation();
+    const [googleLoading, setGoogleLoading] = useState(false);
     const dispatch = useDispatch();
+
+    const onGoogleSubmit = async () => {
+        setGoogleLoading(true);
+        try {
+            const idToken = await signInWithGoogle();
+            const response = await loginWithGoogle(idToken).unwrap();
+            dispatch(setCredentials({ user: response.user, token: response.access_token }));
+            localStorage.setItem('token', response.access_token);
+            localStorage.setItem('user', JSON.stringify(response.user));
+            message.success(t('auth.unifiedLogin.successLogin'));
+            onSuccess();
+        } catch (error) {
+            console.error(error);
+            message.error(t('auth.unifiedLogin.loginError'));
+        } finally {
+            setGoogleLoading(false);
+        }
+    };
 
     // Phone login logic
     const onCaptchVerify = () => {
@@ -308,6 +328,23 @@ const UnifiedLoginForm = ({ onSuccess }) => {
                 className="login-tabs"
             />
 
+            <div style={{ margin: '16px 0 8px', textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: 14 }}>
+                — или —
+            </div>
+
+            <button
+                className="google-btn"
+                onClick={onGoogleSubmit}
+                disabled={googleLoading}
+            >
+                {googleLoading ? '⏳ ...' : (
+                    <>
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width={22} height={22} />
+                        Войти через Google
+                    </>
+                )}
+            </button>
+
             <Modal
                 title={t('auth.unifiedLogin.enterCode')}
                 open={isModalOpen}
@@ -561,6 +598,33 @@ const UnifiedLoginForm = ({ onSuccess }) => {
                     font-size: 13px !important;
                     margin-top: 4px !important;
                     margin-left: 16px !important;
+                }
+
+                .google-btn {
+                    width: 100%;
+                    height: 56px;
+                    font-size: 17px;
+                    font-weight: 600;
+                    border-radius: 16px;
+                    border: 1px solid rgba(255,255,255,0.15);
+                    background: rgba(255,255,255,0.07);
+                    color: white;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 12px;
+                    transition: all 0.2s;
+                }
+
+                .google-btn:hover {
+                    background: rgba(255,255,255,0.12);
+                    border-color: rgba(255,255,255,0.3);
+                }
+
+                .google-btn:disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
                 }
             `}</style>
         </>
