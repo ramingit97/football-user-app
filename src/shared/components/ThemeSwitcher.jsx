@@ -18,9 +18,12 @@ const ThemeSwitcher = () => {
                 size="large"
                 style={{
                     position: 'fixed',
-                    right: 24,
-                    bottom: 24,
+                    right: 16,
+                    bottom: 80,
                     zIndex: 1000,
+                    width: 44,
+                    height: 44,
+                    borderRadius: '50%',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
                 }}
                 onClick={() => setVisible(true)}

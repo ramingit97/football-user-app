@@ -20,6 +20,8 @@ const getFormatCfg = (fmt) => FORMAT_COLORS[fmt] || { color: '#00e87a', bg: 'rgb
 const GameCard = ({ game, onJoin }) => {
     const navigate = useNavigate();
     const { t } = useTranslation();
+    const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+    const isParticipant = currentUser && Array.isArray(game.players) && game.players.some(p => p.id === currentUser.id);
     const currentPlayers = game.players?.length || 0;
     const maxPlayers = game.maxPlayers || 0;
     const isFull = game.status === 'full' || currentPlayers >= maxPlayers;
@@ -177,25 +179,25 @@ const GameCard = ({ game, onJoin }) => {
                         {t('game.card.details')}
                     </button>
                     <button
-                        disabled={isFull}
-                        onClick={(e) => { e.stopPropagation(); onJoin && onJoin(game); }}
+                        disabled={isFull || isParticipant}
+                        onClick={(e) => { e.stopPropagation(); if (!isParticipant) onJoin && onJoin(game); }}
                         style={{
                             flex: 1,
                             height: 36,
-                            background: isFull ? 'var(--bg-raised)' : 'var(--green)',
-                            border: 'none',
+                            background: isParticipant ? 'rgba(0,232,122,0.1)' : isFull ? 'var(--bg-raised)' : 'var(--green)',
+                            border: isParticipant ? '1px solid rgba(0,232,122,0.3)' : 'none',
                             borderRadius: 8,
-                            color: isFull ? 'var(--text-tertiary)' : '#060c18',
+                            color: isParticipant ? 'var(--green)' : isFull ? 'var(--text-tertiary)' : '#060c18',
                             fontSize: 13,
                             fontFamily: 'Outfit, sans-serif',
                             fontWeight: 700,
-                            cursor: isFull ? 'default' : 'pointer',
+                            cursor: isFull || isParticipant ? 'default' : 'pointer',
                             transition: 'opacity 0.15s',
                         }}
-                        onMouseEnter={e => { if (!isFull) e.currentTarget.style.opacity = '0.88'; }}
+                        onMouseEnter={e => { if (!isFull && !isParticipant) e.currentTarget.style.opacity = '0.88'; }}
                         onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
                     >
-                        {isFull ? t('game.card.full') : t('game.card.join')}
+                        {isParticipant ? '✓ ' + t('game.card.joined') : isFull ? t('game.card.full') : t('game.card.join')}
                     </button>
                 </div>
             </div>
