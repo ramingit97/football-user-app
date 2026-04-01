@@ -560,6 +560,8 @@
       "nameLabel": "Отображаемое имя",
       "nameRequired": "Введите имя",
       "namePlaceholder": "Ваше имя",
+      "phoneLabel": "Телефон",
+      "emailLabel": "Email",
       "bioLabel": "О себе",
       "bioPlaceholder": "Расскажите о себе...",
       "basicInfo": "Основная информация",

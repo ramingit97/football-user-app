@@ -108,7 +108,8 @@ const SupportChat = ({ user }) => {
 
                 {tickets.map(ticket => (
                     <div key={ticket.id} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                        {/* User message */}
+                        {/* User message — skip for system notifications (empty message) */}
+                        {ticket.message && (
                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <div style={{
                                 background: 'var(--green)',
@@ -127,6 +128,7 @@ const SupportChat = ({ user }) => {
                                 </div>
                             </div>
                         </div>
+                        )}
 
                         {/* Support reply */}
                         {ticket.reply && (

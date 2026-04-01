@@ -560,6 +560,8 @@
       "nameLabel": "Görünən ad",
       "nameRequired": "Ad daxil edin",
       "namePlaceholder": "Adınız",
+      "phoneLabel": "Telefon",
+      "emailLabel": "Email",
       "bioLabel": "Özüm haqqında",
       "bioPlaceholder": "Özünüz haqqında danışın...",
       "basicInfo": "Əsas məlumatlar",

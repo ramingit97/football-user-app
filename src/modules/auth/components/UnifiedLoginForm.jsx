@@ -1,11 +1,9 @@
 import { useState } from 'react';
-import { Tabs, Form, Input, Button, message, Modal, Select, Space, Radio } from 'antd';
-import { PhoneOutlined, UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-import { auth, signInWithGoogle } from '../../../firebase';
+import { Tabs, Form, Input, message, Select, Space } from 'antd';
+import { signInWithGoogle } from '../../../firebase';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../../../store/store';
-import { useLoginMutation, useLoginWithPhoneMutation, useLoginWithGoogleMutation } from '../../../store/authApi';
+import { useLoginMutation, useLoginWithGoogleMutation } from '../../../store/authApi';
 import { useTranslation } from 'react-i18next';
 
 const { Option } = Select;
@@ -23,33 +21,27 @@ const countryCodes = [
 const UnifiedLoginForm = ({ onSuccess }) => {
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState('phone');
-    const [loginMode, setLoginMode] = useState('phone'); // 'phone' or 'username'
-
-    // Phone login state
     const [countryCode, setCountryCode] = useState('+994');
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [verificationCode, setVerificationCode] = useState('');
-    const [confirmationResult, setConfirmationResult] = useState(null);
-    const [phoneLoading, setPhoneLoading] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // Email/Username login
-    const [login, { isLoading: emailLoading }] = useLoginMutation();
-    const [loginWithPhone] = useLoginWithPhoneMutation();
+    const [login, { isLoading }] = useLoginMutation();
     const [loginWithGoogle] = useLoginWithGoogleMutation();
     const [googleLoading, setGoogleLoading] = useState(false);
     const dispatch = useDispatch();
+
+    const handleSuccess = (response) => {
+        dispatch(setCredentials({ user: response.user, token: response.access_token }));
+        localStorage.setItem('token', response.access_token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        message.success(t('auth.unifiedLogin.successLogin'));
+        onSuccess();
+    };
 
     const onGoogleSubmit = async () => {
         setGoogleLoading(true);
         try {
             const idToken = await signInWithGoogle();
             const response = await loginWithGoogle(idToken).unwrap();
-            dispatch(setCredentials({ user: response.user, token: response.access_token }));
-            localStorage.setItem('token', response.access_token);
-            localStorage.setItem('user', JSON.stringify(response.user));
-            message.success(t('auth.unifiedLogin.successLogin'));
-            onSuccess();
+            handleSuccess(response);
         } catch (error) {
             console.error(error);
             message.error(t('auth.unifiedLogin.loginError'));
@@ -58,90 +50,19 @@ const UnifiedLoginForm = ({ onSuccess }) => {
         }
     };
 
-    // Phone login logic
-    const onCaptchVerify = () => {
-        if (!window.recaptchaVerifier) {
-            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-                'size': 'invisible',
-                'callback': () => { },
-                'expired-callback': () => { }
-            });
-        }
-    };
-
-    const onPhoneSubmit = () => {
-        if (!phoneNumber) {
-            message.error(t('auth.unifiedLogin.phoneRequired'));
-            return;
-        }
-
-        setPhoneLoading(true);
-        onCaptchVerify();
-
-        const appVerifier = window.recaptchaVerifier;
-        const cleanPhone = phoneNumber.startsWith('0') ? phoneNumber.substring(1) : phoneNumber;
-        const formattedPhone = `${countryCode}${cleanPhone}`;
-
-        signInWithPhoneNumber(auth, formattedPhone, appVerifier)
-            .then((confirmationResult) => {
-                window.confirmationResult = confirmationResult;
-                setConfirmationResult(confirmationResult);
-                setPhoneLoading(false);
-                setIsModalOpen(true);
-                message.success(t('auth.unifiedLogin.codeSent'));
-            }).catch((error) => {
-                console.error("Firebase Auth Error:", error);
-                setPhoneLoading(false);
-                if (error.code === 'auth/invalid-phone-number') {
-                    message.error(t('auth.unifiedLogin.invalidPhone'));
-                } else if (error.code === 'auth/too-many-requests') {
-                    message.error(t('auth.unifiedLogin.tooManyAttempts'));
-                } else {
-                    message.error(`${t('auth.unifiedLogin.smsSendError')} ${error.message}`);
-                }
-            });
-    };
-
-    const verifyOtp = async () => {
-        setPhoneLoading(true);
+    const onPhoneSubmit = async (values) => {
         try {
-            const result = await confirmationResult.confirm(verificationCode);
-            const user = result.user;
-            const idToken = await user.getIdToken();
-
-            const response = await loginWithPhone(idToken).unwrap();
-
-            if (response) {
-                dispatch(setCredentials({
-                    user: response.user,
-                    token: response.access_token
-                }));
-                localStorage.setItem('token', response.access_token);
-                localStorage.setItem('user', JSON.stringify(response.user));
-                message.success(t('auth.unifiedLogin.successLogin'));
-                onSuccess();
-            }
+            const response = await login({ phone: `${countryCode}${values.phone}`, password: values.password }).unwrap();
+            handleSuccess(response);
         } catch (error) {
-            console.error(error);
-            if (error.code === 'auth/invalid-verification-code') {
-                message.error(t('auth.unifiedLogin.wrongCode'));
-            } else {
-                message.error(t('auth.unifiedLogin.codeVerifyError'));
-            }
-        } finally {
-            setPhoneLoading(false);
-            setIsModalOpen(false);
+            message.error(error.data?.message || t('auth.unifiedLogin.loginError'));
         }
     };
 
-    // Email/Username login logic
-    const onCredentialsSubmit = async (values) => {
+    const onEmailSubmit = async (values) => {
         try {
-            const result = await login(values).unwrap();
-            localStorage.setItem('token', result.access_token);
-            localStorage.setItem('user', JSON.stringify(result.user));
-            message.success(t('auth.unifiedLogin.loginSuccess'));
-            onSuccess();
+            const response = await login({ email: values.email, password: values.password }).unwrap();
+            handleSuccess(response);
         } catch (error) {
             message.error(error.data?.message || t('auth.unifiedLogin.loginError'));
         }
@@ -168,97 +89,46 @@ const UnifiedLoginForm = ({ onSuccess }) => {
             key: 'phone',
             label: (
                 <span style={{ fontSize: '16px', fontWeight: 500 }}>
-                    📱 {t('auth.unifiedLogin.phoneUsername')}
+                    📱 {t('auth.unifiedLogin.phone')}
                 </span>
             ),
             children: (
                 <div style={{ marginTop: '24px' }}>
-                    <Radio.Group
-                        value={loginMode}
-                        onChange={(e) => setLoginMode(e.target.value)}
-                        style={{
-                            marginBottom: '24px',
-                            display: 'flex',
-                            gap: '12px',
-                            width: '100%'
-                        }}
-                        buttonStyle="solid"
-                    >
-                        <Radio.Button value="phone" style={{ flex: 1, textAlign: 'center', height: '48px', lineHeight: '48px', fontSize: '16px' }}>
-                            📱 {t('auth.unifiedLogin.phone')}
-                        </Radio.Button>
-                        <Radio.Button value="username" style={{ flex: 1, textAlign: 'center', height: '48px', lineHeight: '48px', fontSize: '16px' }}>
-                            👤 {t('auth.unifiedLogin.username')}
-                        </Radio.Button>
-                    </Radio.Group>
-
-                    {loginMode === 'phone' ? (
-                        <>
-                            <div id="recaptcha-container"></div>
-                            <Form layout="vertical">
-                                <Form.Item>
-                                    <div className="phone-input-wrapper">
-                                        <Input
-                                            addonBefore={prefixSelector}
-                                            placeholder="70 123 45 67"
-                                            value={phoneNumber}
-                                            onChange={(e) => setPhoneNumber(e.target.value)}
-                                            className="phone-input"
-                                            size="large"
-                                        />
-                                    </div>
-                                </Form.Item>
-                                <button
-                                    type="button"
-                                    className="submit-btn"
-                                    onClick={onPhoneSubmit}
-                                    disabled={phoneLoading}
-                                >
-                                    {phoneLoading ? `⏳ ${t('auth.unifiedLogin.sending')}` : `🚀 ${t('auth.unifiedLogin.sendCode')}`}
-                                </button>
-                            </Form>
-                        </>
-                    ) : (
-                        <Form
-                            layout="vertical"
-                            onFinish={onCredentialsSubmit}
+                    <Form layout="vertical" onFinish={onPhoneSubmit}>
+                        <Form.Item
+                            name="phone"
+                            rules={[{ required: true, message: t('auth.unifiedLogin.phoneRequired') }]}
                         >
-                            <Form.Item
-                                name="username"
-                                rules={[{ required: true, message: t('auth.unifiedLogin.usernamePlaceholder') }]}
-                            >
-                                <div className="input-group">
-                                    <span className="input-icon">👤</span>
-                                    <Input
-                                        placeholder={t('auth.unifiedLogin.username')}
-                                        bordered={false}
-                                        className="auth-field-input"
-                                        size="large"
-                                    />
-                                </div>
-                            </Form.Item>
+                            <div className="phone-input-wrapper">
+                                <Input
+                                    addonBefore={prefixSelector}
+                                    placeholder="70 123 45 67"
+                                    className="phone-input"
+                                    size="large"
+                                />
+                            </div>
+                        </Form.Item>
 
-                            <Form.Item
-                                name="password"
-                                rules={[{ required: true, message: t('auth.unifiedLogin.passwordPlaceholder') }]}
-                            >
-                                <div className="input-group">
-                                    <span className="input-icon">🔒</span>
-                                    <Input.Password
-                                        placeholder={t('auth.unifiedLogin.passwordLabel')}
-                                        bordered={false}
-                                        className="auth-field-input"
-                                        iconRender={visible => (visible ? '🙈' : '👁️')}
-                                        size="large"
-                                    />
-                                </div>
-                            </Form.Item>
+                        <Form.Item
+                            name="password"
+                            rules={[{ required: true, message: t('auth.unifiedLogin.passwordPlaceholder') }]}
+                        >
+                            <div className="input-group">
+                                <span className="input-icon">🔒</span>
+                                <Input.Password
+                                    placeholder={t('auth.unifiedLogin.passwordLabel')}
+                                    bordered={false}
+                                    className="auth-field-input"
+                                    iconRender={visible => (visible ? '🙈' : '👁️')}
+                                    size="large"
+                                />
+                            </div>
+                        </Form.Item>
 
-                            <button type="submit" className="submit-btn" disabled={emailLoading}>
-                                {emailLoading ? `⏳ ${t('auth.unifiedLogin.signingIn')}` : `🚀 ${t('auth.unifiedLogin.signIn')}`}
-                            </button>
-                        </Form>
-                    )}
+                        <button type="submit" className="submit-btn" disabled={isLoading}>
+                            {isLoading ? `⏳ ${t('auth.unifiedLogin.signingIn')}` : `🚀 ${t('auth.unifiedLogin.signIn')}`}
+                        </button>
+                    </Form>
                 </div>
             ),
         },
@@ -271,10 +141,7 @@ const UnifiedLoginForm = ({ onSuccess }) => {
             ),
             children: (
                 <div style={{ marginTop: '24px' }}>
-                    <Form
-                        layout="vertical"
-                        onFinish={onCredentialsSubmit}
-                    >
+                    <Form layout="vertical" onFinish={onEmailSubmit}>
                         <Form.Item
                             name="email"
                             rules={[
@@ -309,8 +176,8 @@ const UnifiedLoginForm = ({ onSuccess }) => {
                             </div>
                         </Form.Item>
 
-                        <button type="submit" className="submit-btn" disabled={emailLoading}>
-                            {emailLoading ? `⏳ ${t('auth.unifiedLogin.signingIn')}` : `🚀 ${t('auth.unifiedLogin.signIn')}`}
+                        <button type="submit" className="submit-btn" disabled={isLoading}>
+                            {isLoading ? `⏳ ${t('auth.unifiedLogin.signingIn')}` : `🚀 ${t('auth.unifiedLogin.signIn')}`}
                         </button>
                     </Form>
                 </div>
@@ -344,30 +211,6 @@ const UnifiedLoginForm = ({ onSuccess }) => {
                     </>
                 )}
             </button>
-
-            <Modal
-                title={t('auth.unifiedLogin.enterCode')}
-                open={isModalOpen}
-                onOk={verifyOtp}
-                onCancel={() => setIsModalOpen(false)}
-                confirmLoading={phoneLoading}
-                okText={t('auth.unifiedLogin.confirm')}
-                cancelText={t('auth.unifiedLogin.cancel')}
-            >
-                <div style={{ textAlign: 'center', marginBottom: 10 }}>
-                    <p>{t('auth.unifiedLogin.codeSentTo', { code: countryCode, phone: phoneNumber })}</p>
-                    <p style={{ fontSize: 12, color: '#888' }}>
-                        {t('auth.unifiedLogin.testCode')}
-                    </p>
-                </div>
-                <Input
-                    placeholder="123456"
-                    value={verificationCode}
-                    onChange={(e) => setVerificationCode(e.target.value)}
-                    maxLength={6}
-                    style={{ textAlign: 'center', fontSize: '24px', letterSpacing: '8px' }}
-                />
-            </Modal>
 
             <style>{`
                 .login-tabs .ant-tabs-nav {
@@ -560,33 +403,6 @@ const UnifiedLoginForm = ({ onSuccess }) => {
                     opacity: 0.6;
                     cursor: not-allowed;
                     transform: none;
-                }
-
-                .ant-radio-button-wrapper {
-                    background: rgba(255,255,255,0.05) !important;
-                    border-color: rgba(255,255,255,0.15) !important;
-                    color: var(--text-secondary) !important;
-                    transition: all 0.3s ease !important;
-                }
-
-                .ant-radio-button-wrapper:hover {
-                    color: var(--primary-color) !important;
-                    border-color: var(--primary-color) !important;
-                }
-
-                .ant-radio-button-wrapper-checked {
-                    background: var(--primary-color) !important;
-                    border-color: var(--primary-color) !important;
-                    color: white !important;
-                }
-
-                .ant-radio-button-wrapper-checked:hover {
-                    background: var(--primary-hover) !important;
-                    border-color: var(--primary-hover) !important;
-                }
-
-                .ant-radio-button-wrapper::before {
-                    display: none !important;
                 }
 
                 .ant-form-item {

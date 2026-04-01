@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Divider } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +9,13 @@ const LoginPage = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            navigate('/games', { replace: true });
+        }
+    }, [navigate]);
 
     const handleSuccess = () => {
         navigate('/games');

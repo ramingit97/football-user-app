@@ -128,6 +128,27 @@ const ProfileForm = ({ initialData = {} }) => {
                         </Form.Item>
                     </div>
 
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
+                        <div>
+                            <FieldLabel>{t('profile.edit.phoneLabel')}</FieldLabel>
+                            <Input
+                                value={initialData.phone || '—'}
+                                readOnly
+                                size="large"
+                                style={{ background: 'var(--bg-raised)', color: 'var(--text-secondary)', cursor: 'default' }}
+                            />
+                        </div>
+                        <div>
+                            <FieldLabel>{t('profile.edit.emailLabel')}</FieldLabel>
+                            <Input
+                                value={initialData.email || '—'}
+                                readOnly
+                                size="large"
+                                style={{ background: 'var(--bg-raised)', color: 'var(--text-secondary)', cursor: 'default' }}
+                            />
+                        </div>
+                    </div>
+
                     <div>
                         <FieldLabel>{t('profile.edit.bioLabel')}</FieldLabel>
                         <Form.Item name="bio" style={{ marginBottom: 0 }}>
