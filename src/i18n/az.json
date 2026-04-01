@@ -229,6 +229,13 @@
       "cancelNo": "Xeyr",
       "cancelSuccess": "Qeydiyyatı uğurla ləğv etdiniz",
       "cancelError": "Qeydiyyatı ləğv etmək mümkün olmadı",
+      "cancelGameBtn": "Oyunu ləğv et",
+      "cancelGameTitle": "Oyunu ləğv etmək istəyirsiniz?",
+      "cancelGameWarning": "Bütün iştirakçılar oyunun ləğv edildiyi barədə xəbərdar ediləcək.",
+      "cancelGameRefund": "Hər iştirakçının pulqabısına 0.50 ₼ qaytarılacaq.",
+      "cancelGameOk": "Bəli, ləğv et",
+      "cancelGameSuccess": "Oyun ləğv edildi. Vəsait iştirakçılara qaytarıldı.",
+      "cancelGameError": "Oyunu ləğv etmək mümkün olmadı.",
       "balanceDistributed": "Komandalar bölündü! \"Saxla\" düyməsinə basın və ya yenidən qarışdırın.",
       "balanceError": "Komandaları bölmək mümkün olmadı:",
       "smartInviteSent": "{{n}} oyunçuya dəvətlər göndərildi!",
@@ -503,6 +510,7 @@
       "history": "Tarixçə",
       "achievements": "Nailiyyətlər",
       "stadiums": "Stadionlar",
+      "support": "Dəstək",
       "invitations": "Dəvətlər",
       "myTeams": "Mənim komandalarım"
     },
@@ -1210,6 +1218,14 @@
       "notInstalled": "Əvvəlcə tətbiqi ana ekrana əlavə edin!",
       "bonusError": "Bonus almaqda xəta"
     }
+  },
+  "support": {
+    "title": "Dəstək",
+    "online": "Onlayn",
+    "welcomeMsg": "Salam! Sizə necə kömək edə bilərik? Probleminizi təsvir edin, mümkün qədər tez cavab verəcəyik.",
+    "noMessages": "Bizə yazın — kömək edəcəyik!",
+    "inputPlaceholder": "Mesaj yazın...",
+    "send": "Göndər"
   },
   "stadium": {
     "suggest": {

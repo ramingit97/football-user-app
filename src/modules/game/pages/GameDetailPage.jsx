@@ -55,6 +55,7 @@ import {
     useCastMvpVoteMutation,
     useCompleteGameMutation,
     useBalanceTeamsMutation,
+    useCancelGameMutation,
 } from '../../../store/gamesApi';
 import { useGetProfileQuery } from '../../../store/authApi';
 import GameRatingModal from '../components/GameRatingModal';
@@ -154,6 +155,7 @@ const GameDetailPage = () => {
     const [joinGame, { isLoading: joining }] = useJoinGameMutation();
     const [finishGame, { isLoading: finishing }] = useFinishGameMutation();
     const [leaveGame, { isLoading: leaving }] = useLeaveGameMutation();
+    const [cancelGame, { isLoading: cancelling }] = useCancelGameMutation();
     const [smartInvite, { isLoading: inviting }] = useSmartInviteMutation();
     const { data: userProfile } = useGetProfileQuery();
 
@@ -551,6 +553,32 @@ const GameDetailPage = () => {
         });
     };
 
+    const handleCancelGame = () => {
+        Modal.confirm({
+            title: t('game.detail.cancelGameTitle'),
+            content: (
+                <div>
+                    <p style={{ color: 'var(--text-secondary)', marginBottom: 8 }}>
+                        {t('game.detail.cancelGameWarning')}
+                    </p>
+                    <p style={{ color: '#f04438', fontSize: 12 }}>
+                        {t('game.detail.cancelGameRefund')}
+                    </p>
+                </div>
+            ),
+            okText: t('game.detail.cancelGameOk'),
+            cancelText: t('common.cancel'),
+            okButtonProps: { danger: true, loading: cancelling },
+            onOk: async () => {
+                try {
+                    await cancelGame({ id: game.id, organizerId: currentUser.id }).unwrap();
+                    message.success(t('game.detail.cancelGameSuccess'));
+                    navigate('/games');
+                } catch { message.error(t('game.detail.cancelGameError')); }
+            }
+        });
+    };
+
     const handleBalanceTeams = async () => {
         try {
             const result = await balanceTeams(game.id).unwrap();
@@ -870,6 +898,15 @@ const GameDetailPage = () => {
                                 onClick={handleToggleUrgent}
                                 variant={game.isUrgent ? 'danger' : 'ghost'}
                             />
+                            {game.status !== 'cancelled' && (
+                                <ActionBtn
+                                    icon={<CloseOutlined />}
+                                    label={t('game.detail.cancelGameBtn')}
+                                    onClick={handleCancelGame}
+                                    loading={cancelling}
+                                    variant="danger"
+                                />
+                            )}
                         </>
                     )}
 

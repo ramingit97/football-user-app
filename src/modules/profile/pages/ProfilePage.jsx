@@ -6,7 +6,8 @@ import {
 import {
     UserOutlined, TrophyOutlined, HistoryOutlined, TeamOutlined,
     WalletOutlined, PlusCircleOutlined, CameraOutlined, UserAddOutlined,
-    StarFilled, ThunderboltFilled, GiftOutlined, RightOutlined, BankOutlined
+    StarFilled, ThunderboltFilled, GiftOutlined, RightOutlined, BankOutlined,
+    CustomerServiceOutlined
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import ProfileForm from '../components/ProfileForm';
@@ -15,6 +16,7 @@ import Achievements from '../components/Achievements';
 import GameHistory from '../components/GameHistory';
 import TeamInvitations from '../components/TeamInvitations';
 import MyStadiums from '../components/MyStadiums';
+import SupportChat from '../components/SupportChat';
 import TransferModal from '../../../components/TransferModal';
 import FifaPlayerCard from '../../../components/FifaPlayerCard';
 import ReferralSection from '../components/ReferralSection';
@@ -158,8 +160,9 @@ const ProfilePage = () => {
         { key: 'teams',         icon: <TeamOutlined />,    label: t('profile.tabs.teams') },
         { key: 'history',       icon: <HistoryOutlined />, label: t('profile.tabs.history') },
         { key: 'achievements',  icon: <TrophyOutlined />,  label: t('profile.tabs.achievements') },
-        { key: 'stadiums',      icon: <BankOutlined />,    label: t('profile.tabs.stadiums') },
-        { key: 'invitations',   icon: <TeamOutlined />,    label: t('profile.tabs.invitations') },
+        { key: 'stadiums',      icon: <BankOutlined />,             label: t('profile.tabs.stadiums') },
+        { key: 'support',       icon: <CustomerServiceOutlined />,  label: t('profile.tabs.support') },
+        { key: 'invitations',   icon: <TeamOutlined />,             label: t('profile.tabs.invitations') },
         { key: 'referral',      icon: <GiftOutlined />,    label: 'Referral' },
     ];
 
@@ -479,6 +482,11 @@ const ProfilePage = () => {
                     {activeTab === 'stadiums' && (
                         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 16, padding: 24 }}>
                             <MyStadiums userId={userProfile?.id} />
+                        </div>
+                    )}
+                    {activeTab === 'support' && (
+                        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 16, overflow: 'hidden' }}>
+                            <SupportChat user={userProfile} />
                         </div>
                     )}
                     {activeTab === 'invitations' && <TeamInvitations user={userProfile} />}

@@ -83,6 +83,14 @@ export const gamesApi = createApi({
             }),
             invalidatesTags: (result, error, { id }) => [{ type: 'Game', id }],
         }),
+        cancelGame: builder.mutation({
+            query: ({ id, organizerId, reason }) => ({
+                url: `games/${id}/cancel`,
+                method: 'POST',
+                body: { organizerId, reason },
+            }),
+            invalidatesTags: (result, error, { id }) => [{ type: 'Game', id }],
+        }),
         getMyTeamRequests: builder.query({
             query: (userId) => `teams/requests/my?userId=${userId}`,
             providesTags: ['TeamRequest'],
@@ -226,7 +234,8 @@ export const {
     useCompleteGameMutation,
     // Unified post-game
     useSubmitPostGameMutation,
-    useBalanceTeamsMutation
+    useBalanceTeamsMutation,
+    useCancelGameMutation,
 } = gamesApi;
 
 

@@ -7,6 +7,7 @@ import { notificationsApi } from './notificationsApi';
 import { paymentsApi } from './paymentsApi';
 import { locationsApi } from './locationsApi';
 import { stadiumsApi } from './stadiumsApi';
+import { supportApi } from './supportApi';
 import authReducer from './authSlice';
 
 export const store = configureStore({
@@ -19,6 +20,7 @@ export const store = configureStore({
         [paymentsApi.reducerPath]: paymentsApi.reducer,
         [locationsApi.reducerPath]: locationsApi.reducer,
         [stadiumsApi.reducerPath]: stadiumsApi.reducer,
+        [supportApi.reducerPath]: supportApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(
@@ -28,7 +30,8 @@ export const store = configureStore({
             notificationsApi.middleware,
             paymentsApi.middleware,
             locationsApi.middleware,
-            stadiumsApi.middleware
+            stadiumsApi.middleware,
+            supportApi.middleware,
         ),
 });
 
