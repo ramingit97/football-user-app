@@ -129,10 +129,15 @@ const MyStadiums = ({ userId }) => {
                 if (res.data.url) newImages.push(res.data.url);
             }
 
-            // 3. Update stadium with image URLs + re-trigger Telegram with photos
+            // 3. Update stadium with image URLs
             if (newImages.length > 0) {
                 await axios.put(`${API_BASE}/api/stadiums/${created.id}`, { images: newImages });
             }
+
+            // 4. Send Telegram notification (after photos are uploaded)
+            await axios.post(`${API_BASE}/api/stadiums/${created.id}/notify`, {
+                submitterName: currentUser?.name || userId,
+            });
 
             message.success(t('stadium.suggest.successMsg'));
             setModalOpen(false);
@@ -149,7 +154,7 @@ const MyStadiums = ({ userId }) => {
     const amenitiesOptions = [
         { value: 'shower',        label: `🚿 ${t('common.amenities.shower')}` },
         { value: 'parking',       label: `🅿️ ${t('common.amenities.parking')}` },
-        { value: 'changing_room', label: `👕 ${t('common.amenities.changingRoom')}` },
+        { value: 'changing_room', label: `👕 ${t('common.amenities.changing_room')}` },
         { value: 'lighting',      label: `💡 ${t('common.amenities.lighting')}` },
         { value: 'cafe',          label: `☕ ${t('common.amenities.cafe')}` },
         { value: 'equipment',     label: `⚽ ${t('common.amenities.equipment')}` },
