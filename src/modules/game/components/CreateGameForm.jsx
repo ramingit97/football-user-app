@@ -249,7 +249,7 @@ const CreateGameForm = ({ onSuccess }) => {
                 subtitle={t('game.create.stadiumHint')}
             />
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 0 }}>
+            <div className="form-grid-2col" style={{ marginBottom: 0 }}>
                 <Form.Item name="district" label={<span style={{ color: 'var(--text-secondary)', fontSize: 13, fontWeight: 500 }}>{t('game.create.districtLabel')}</span>} style={{ marginBottom: 16 }}>
                     <Select placeholder={t('game.create.districtAll')} size="large" allowClear onChange={handleDistrictChange}>
                         {districts.map(d => <Option key={d.id} value={d.name}>{d.name}</Option>)}
@@ -387,7 +387,7 @@ const CreateGameForm = ({ onSuccess }) => {
             {/* ── Тип игры ── */}
             <SectionHeader icon={<LockOutlined />} title={t('game.create.gameTypeLabel')} />
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
+            <div className="form-grid-2col" style={{ marginBottom: 20 }}>
                 {visibilityCards.map(card => {
                     const active = gameVisibility === card.value;
                     return (
@@ -429,7 +429,7 @@ const CreateGameForm = ({ onSuccess }) => {
             {/* ── Формат и состав ── */}
             <SectionHeader icon={<TeamOutlined />} title={t('game.create.formatLabel')} />
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+            <div className="form-grid-2col" style={{ marginBottom: 16 }}>
                 <Form.Item
                     name="format"
                     label={<span style={{ color: 'var(--text-secondary)', fontSize: 13, fontWeight: 500 }}>{t('game.create.formatSelect')}</span>}

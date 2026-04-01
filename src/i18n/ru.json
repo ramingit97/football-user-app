@@ -502,6 +502,7 @@
       "teams": "Команды",
       "history": "История",
       "achievements": "Награды",
+      "stadiums": "Стадионы",
       "invitations": "Приглашения",
       "myTeams": "Мои команды"
     },
@@ -1208,6 +1209,42 @@
       "iosInstructions": "Нажми «Поделиться» → «На экран Домой»",
       "notInstalled": "Сначала добавьте приложение на главный экран!",
       "bonusError": "Ошибка при получении бонуса"
+    }
+  },
+  "stadium": {
+    "suggest": {
+      "myStadiumsTitle": "Мои стадионы",
+      "addBtn": "Предложить стадион",
+      "noStadiums": "У вас пока нет предложенных стадионов",
+      "suggestFirst": "Предложить первый стадион",
+      "formTitle": "Предложить стадион",
+      "sectionBasic": "Основная информация",
+      "sectionSchedule": "Расписание и цена",
+      "sectionPhotos": "Фотографии",
+      "nameLabel": "Название стадиона",
+      "nameRequired": "Введите название",
+      "namePlaceholder": "Olimpik Arena",
+      "addressLabel": "Адрес",
+      "addressRequired": "Введите адрес",
+      "addressPlaceholder": "ул. Нефтяников 12, Баку",
+      "mapsLabel": "Ссылка на Google Maps",
+      "mapsHint": "Вставьте ссылку — координаты заполнятся автоматически",
+      "coordsParsed": "Координаты определены из ссылки",
+      "latLabel": "Широта",
+      "lngLabel": "Долгота",
+      "openTimeLabel": "Время открытия",
+      "closeTimeLabel": "Время закрытия",
+      "timeRequired": "Выберите время",
+      "priceLabel": "Цена аренды в час",
+      "priceRequired": "Укажите цену",
+      "amenitiesLabel": "Удобства",
+      "amenitiesPlaceholder": "Выберите удобства",
+      "descLabel": "Описание (необязательно)",
+      "descPlaceholder": "Искусственный газон, раздевалки, парковка рядом...",
+      "uploadBtn": "Загрузить",
+      "submitBtn": "Отправить на проверку",
+      "successMsg": "Стадион отправлен на проверку! Мы уведомим вас о решении.",
+      "errorMsg": "Ошибка при отправке. Попробуйте ещё раз."
     }
   }
 }

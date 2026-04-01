@@ -502,6 +502,7 @@
       "teams": "Komandalar",
       "history": "Tarixçə",
       "achievements": "Nailiyyətlər",
+      "stadiums": "Stadionlar",
       "invitations": "Dəvətlər",
       "myTeams": "Mənim komandalarım"
     },
@@ -1208,6 +1209,42 @@
       "iosInstructions": "\"Paylaş\" → \"Ana ekrana əlavə et\" basın",
       "notInstalled": "Əvvəlcə tətbiqi ana ekrana əlavə edin!",
       "bonusError": "Bonus almaqda xəta"
+    }
+  },
+  "stadium": {
+    "suggest": {
+      "myStadiumsTitle": "Mənim stadionlarım",
+      "addBtn": "Stadion təklif et",
+      "noStadiums": "Hələlik təklif edilmiş stadionunuz yoxdur",
+      "suggestFirst": "İlk stadionunu təklif et",
+      "formTitle": "Stadion təklif et",
+      "sectionBasic": "Əsas məlumat",
+      "sectionSchedule": "Cədvəl və qiymət",
+      "sectionPhotos": "Fotolar",
+      "nameLabel": "Stadionun adı",
+      "nameRequired": "Adı daxil edin",
+      "namePlaceholder": "Olimpik Arena",
+      "addressLabel": "Ünvan",
+      "addressRequired": "Ünvanı daxil edin",
+      "addressPlaceholder": "Neftçilər pr. 12, Bakı",
+      "mapsLabel": "Google Maps linki",
+      "mapsHint": "Linki yapışdırın — koordinatlar avtomatik doldurulacaq",
+      "coordsParsed": "Koordinatlar linkdən müəyyən edildi",
+      "latLabel": "Enlik",
+      "lngLabel": "Uzunluq",
+      "openTimeLabel": "Açılış vaxtı",
+      "closeTimeLabel": "Bağlanış vaxtı",
+      "timeRequired": "Vaxtı seçin",
+      "priceLabel": "Saatlıq icarə qiyməti",
+      "priceRequired": "Qiyməti göstərin",
+      "amenitiesLabel": "Şərait",
+      "amenitiesPlaceholder": "Şəraiti seçin",
+      "descLabel": "Açıqlama (isteğe bağlı)",
+      "descPlaceholder": "Süni çim, soyunma otağı, yaxınlıqda dayanacaq...",
+      "uploadBtn": "Yüklə",
+      "submitBtn": "Yoxlanışa göndər",
+      "successMsg": "Stadion yoxlanışa göndərildi! Qərar barədə sizi məlumatlandıracağıq.",
+      "errorMsg": "Göndərmə zamanı xəta. Yenidən cəhd edin."
     }
   }
 }

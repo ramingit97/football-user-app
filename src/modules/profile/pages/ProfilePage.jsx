@@ -6,7 +6,7 @@ import {
 import {
     UserOutlined, TrophyOutlined, HistoryOutlined, TeamOutlined,
     WalletOutlined, PlusCircleOutlined, CameraOutlined, UserAddOutlined,
-    StarFilled, ThunderboltFilled, GiftOutlined, RightOutlined
+    StarFilled, ThunderboltFilled, GiftOutlined, RightOutlined, BankOutlined
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import ProfileForm from '../components/ProfileForm';
@@ -14,6 +14,7 @@ import FriendsList from '../components/FriendsList';
 import Achievements from '../components/Achievements';
 import GameHistory from '../components/GameHistory';
 import TeamInvitations from '../components/TeamInvitations';
+import MyStadiums from '../components/MyStadiums';
 import TransferModal from '../../../components/TransferModal';
 import FifaPlayerCard from '../../../components/FifaPlayerCard';
 import ReferralSection from '../components/ReferralSection';
@@ -157,6 +158,7 @@ const ProfilePage = () => {
         { key: 'teams',         icon: <TeamOutlined />,    label: t('profile.tabs.teams') },
         { key: 'history',       icon: <HistoryOutlined />, label: t('profile.tabs.history') },
         { key: 'achievements',  icon: <TrophyOutlined />,  label: t('profile.tabs.achievements') },
+        { key: 'stadiums',      icon: <BankOutlined />,    label: t('profile.tabs.stadiums') },
         { key: 'invitations',   icon: <TeamOutlined />,    label: t('profile.tabs.invitations') },
         { key: 'referral',      icon: <GiftOutlined />,    label: 'Referral' },
     ];
@@ -474,6 +476,11 @@ const ProfilePage = () => {
 
                     {activeTab === 'history' && <GameHistory games={myGames} />}
                     {activeTab === 'achievements' && <Achievements user={userProfile} />}
+                    {activeTab === 'stadiums' && (
+                        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 16, padding: 24 }}>
+                            <MyStadiums userId={userProfile?.id} />
+                        </div>
+                    )}
                     {activeTab === 'invitations' && <TeamInvitations user={userProfile} />}
 
                     {activeTab === 'referral' && (
