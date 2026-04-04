@@ -180,7 +180,7 @@ const CreateGameForm = ({ onSuccess }) => {
             };
 
             const result = await createGame(gameData).unwrap();
-            message.success(t('game.create.success'));
+            message.success(t('game.create.pendingSuccess'), 6);
             form.resetFields();
             setSelectedDistrict(null);
             setSelectedMetro(null);

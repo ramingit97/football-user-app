@@ -42,7 +42,7 @@ const CreateGamePage = () => {
                     borderRadius: 16,
                     padding: '28px 28px 24px',
                 }}>
-                    <CreateGameForm onSuccess={(result) => navigate(`/games/${result.id}`)} />
+                    <CreateGameForm onSuccess={() => navigate('/games')} />
                 </div>
             </div>
         </div>

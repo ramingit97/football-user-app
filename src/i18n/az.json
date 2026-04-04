@@ -352,6 +352,7 @@
       "descriptionPlaceholder": "Qaydalar, nə gətirməli...",
       "createBtn": "Oyun yarat",
       "moderationNotice": "⚠️ Oyununuz moderator yoxlamasından sonra dərc ediləcək. Küfr və təhqiredici ifadələr qadağandır — pozucular bloklanacaq.",
+      "pendingSuccess": "Oyun moderasiyaya göndərildi. Təsdiqləndikdən sonra ümumi siyahıda görünəcək.",
       "validation": {
         "selectFormat": "Format seçin",
         "selectStadium": "Stadion seçin",
