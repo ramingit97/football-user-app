@@ -116,7 +116,7 @@ const GameChat = ({ gameId, currentUser }) => {
                 )}
                 <div ref={messagesEndRef} />
             </div>
-            <div style={{ padding: 16, borderTop: '1px solid #f0f0f0', display: 'flex', gap: 8 }}>
+            <div style={{ padding: '12px 16px 4px', borderTop: '1px solid #f0f0f0', display: 'flex', gap: 8 }}>
                 <Input
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
@@ -125,6 +125,9 @@ const GameChat = ({ gameId, currentUser }) => {
                 />
                 <Button type="primary" icon={<SendOutlined />} onClick={handleSendMessage} />
             </div>
+            <p style={{ margin: '2px 16px 8px', fontSize: 11, color: '#999', lineHeight: 1.4 }}>
+                {t('game.chat.moderationNotice')}
+            </p>
         </Card>
     );
 };

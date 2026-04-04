@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
     Form, Input, InputNumber, Select, TimePicker,
-    Upload, Modal, message, Spin, Empty,
+    Upload, Modal, message, Spin, Empty, Checkbox, Alert,
 } from 'antd';
 import {
     PlusOutlined, BankOutlined, EnvironmentOutlined,
@@ -109,6 +109,7 @@ const MyStadiums = ({ userId }) => {
                 pricePerHour: values.pricePerHour,
                 amenities: values.amenities || [],
                 description: values.description || '',
+                contactPhone: values.contactPhone || '',
                 ownerId: userId,
                 suggestedByName: currentUser?.name || userId,
             };
@@ -368,6 +369,40 @@ const MyStadiums = ({ userId }) => {
                         <Modal open={previewOpen} footer={null} onCancel={() => setPreviewOpen(false)}>
                             <img alt="preview" style={{ width: '100%' }} src={previewImage} />
                         </Modal>
+                    </Form.Item>
+
+                    {/* Contact phone */}
+                    <Form.Item
+                        name="contactPhone"
+                        label={<span style={{ color: 'var(--text-secondary)', fontSize: 13 }}>📞 Stadion əlaqə nömrəsi</span>}
+                        rules={[{ required: true, message: 'Stadionun əlaqə nömrəsini daxil edin' }]}
+                        style={{ marginBottom: 14 }}
+                    >
+                        <Input
+                            placeholder="+994 XX XXX XX XX"
+                            size="large"
+                        />
+                    </Form.Item>
+
+                    {/* Confirmation alert */}
+                    <Alert
+                        type="warning"
+                        showIcon
+                        style={{ marginBottom: 14, borderRadius: 10 }}
+                        message="Diqqət"
+                        description="Stadionla əlaqə saxlayıb razılıq aldığınızdan əmin olun. Yoxlanılmamış stadionlar rədd ediləcək."
+                    />
+
+                    {/* Confirmation checkbox */}
+                    <Form.Item
+                        name="confirmed"
+                        valuePropName="checked"
+                        rules={[{ validator: (_, v) => v ? Promise.resolve() : Promise.reject('Zəhmət olmasa təsdiqləyin') }]}
+                        style={{ marginBottom: 20 }}
+                    >
+                        <Checkbox style={{ color: 'var(--text-secondary)', fontSize: 13 }}>
+                            Stadion sahibi ilə əlaqə saxlamışam və onlar platformada iştirak etməyə razıdırlar
+                        </Checkbox>
                     </Form.Item>
 
                     <button

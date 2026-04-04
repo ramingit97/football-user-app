@@ -52,12 +52,14 @@ const InteractiveOnboarding = () => {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Сохраняем ref из URL в localStorage при открытии страницы регистрации
+    // Сохраняем ref из URL + уведомляем о начале регистрации
     useEffect(() => {
         const refCode = new URLSearchParams(window.location.search).get('ref');
         if (refCode) {
             localStorage.setItem('pendingRef', refCode);
         }
+        // Fire-and-forget: notify that someone opened the registration page
+        fetch('/api/analytics/registration-started', { method: 'POST' }).catch(() => {});
     }, []);
 
     const totalSteps = STEPS.filter(s => s.type !== 'feature' && s.type !== 'intro' && s.type !== 'completion').length;
@@ -165,6 +167,19 @@ const InteractiveOnboarding = () => {
                 localStorage.removeItem('pendingRef');
             }
 
+            // Notify analytics: registration completed
+            fetch('/api/analytics/registration-completed', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: formData.name,
+                    email: formData.email || undefined,
+                    phone: formData.phone || undefined,
+                    position: formData.position,
+                    playStyle: formData.playStyle,
+                }),
+            }).catch(() => {});
+
             message.success(t('auth.registration.success'));
             setCurrentStep(currentStep + 1); // Go to completion step
         } catch (error) {
@@ -203,6 +218,18 @@ const InteractiveOnboarding = () => {
                 } catch {}
                 localStorage.removeItem('pendingRef');
             }
+
+            // Notify analytics: registration completed via Google
+            fetch('/api/analytics/registration-completed', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: result.user.name || formData.name,
+                    email: result.user.email,
+                    position: formData.position,
+                    playStyle: formData.playStyle,
+                }),
+            }).catch(() => {});
 
             message.success(t('auth.registration.success'));
             setCurrentStep(currentStep + 1);

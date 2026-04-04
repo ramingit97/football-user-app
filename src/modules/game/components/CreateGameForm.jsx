@@ -554,6 +554,13 @@ const CreateGameForm = ({ onSuccess }) => {
                 </Select>
             </Form.Item>
 
+            <p style={{
+                fontSize: 11, color: 'var(--text-tertiary)', textAlign: 'center',
+                marginBottom: 12, lineHeight: 1.5,
+            }}>
+                {t('game.create.moderationNotice')}
+            </p>
+
             <button
                 type="submit"
                 disabled={isLoading}

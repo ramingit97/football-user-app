@@ -7,7 +7,7 @@ import {
     UserOutlined, TrophyOutlined, HistoryOutlined, TeamOutlined,
     WalletOutlined, PlusCircleOutlined, CameraOutlined, UserAddOutlined,
     StarFilled, ThunderboltFilled, GiftOutlined, RightOutlined, BankOutlined,
-    CustomerServiceOutlined
+    CustomerServiceOutlined, CalendarOutlined
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import ProfileForm from '../components/ProfileForm';
@@ -21,7 +21,7 @@ import TransferModal from '../../../components/TransferModal';
 import FifaPlayerCard from '../../../components/FifaPlayerCard';
 import ReferralSection from '../components/ReferralSection';
 import { useGetProfileQuery, useUpdateProfileMutation } from '../../../store/authApi';
-import { useGetGamesQuery } from '../../../store/gamesApi';
+import { useGetGamesByUserQuery } from '../../../store/gamesApi';
 import { useGetMyTeamsQuery, useCreateTeamMutation } from '../../../store/teamsApi';
 import axios from 'axios';
 import { API_BASE } from '../../../config.js';
@@ -77,7 +77,7 @@ const ProfilePage = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { data: userProfile, isLoading } = useGetProfileQuery();
-    const { data: allGamesData } = useGetGamesQuery({ page: 1, limit: 200 });
+    const { data: myGamesData } = useGetGamesByUserQuery(userProfile?.id, { skip: !userProfile?.id });
     const { data: myTeams, refetch: refetchTeams } = useGetMyTeamsQuery(userProfile?.id, { skip: !userProfile?.id });
     const [createTeam, { isLoading: isCreatingTeam }] = useCreateTeamMutation();
     const [updateProfile] = useUpdateProfileMutation();
@@ -151,7 +151,7 @@ const ProfilePage = () => {
     );
 
     const pos = getPOS(userProfile?.position);
-    const myGames = allGamesData?.data?.filter(g => g.players.some(p => p.id === userProfile?.id) || g.organizerId === userProfile?.id) || [];
+    const myGames = myGamesData || [];
     const completion = calculateProfileCompletion(userProfile);
 
     const TABS = [
@@ -159,6 +159,7 @@ const ProfilePage = () => {
         { key: 'friends',       icon: <UserAddOutlined />, label: t('profile.tabs.friends') },
         { key: 'teams',         icon: <TeamOutlined />,    label: t('profile.tabs.teams') },
         { key: 'history',       icon: <HistoryOutlined />, label: t('profile.tabs.history') },
+        { key: 'mygames',       icon: <CalendarOutlined />, label: t('profile.tabs.mygames') },
         { key: 'achievements',  icon: <TrophyOutlined />,  label: t('profile.tabs.achievements') },
         { key: 'stadiums',      icon: <BankOutlined />,             label: t('profile.tabs.stadiums') },
         { key: 'support',       icon: <CustomerServiceOutlined />,  label: t('profile.tabs.support') },
@@ -478,6 +479,47 @@ const ProfilePage = () => {
                     )}
 
                     {activeTab === 'history' && <GameHistory games={myGames} />}
+
+                    {activeTab === 'mygames' && (() => {
+                        const createdGames = myGames.filter(g => g.organizerId === userProfile?.id);
+                        const statusConfig = {
+                            pending:   { label: t('profile.mygames.statusPending'),   color: 'orange' },
+                            open:      { label: t('profile.mygames.statusOpen'),       color: 'green' },
+                            full:      { label: t('profile.mygames.statusFull'),       color: 'blue' },
+                            cancelled: { label: t('profile.mygames.statusCancelled'), color: 'red' },
+                            finished:  { label: t('profile.mygames.statusFinished'),  color: 'default' },
+                        };
+                        return (
+                            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 16, padding: 20 }}>
+                                <h3 style={{ color: 'var(--text-primary)', marginBottom: 16, fontSize: 16, fontWeight: 700 }}>
+                                    {t('profile.mygames.title')}
+                                </h3>
+                                {createdGames.length === 0 ? (
+                                    <Empty description={<span style={{ color: 'var(--text-secondary)' }}>{t('profile.mygames.empty')}</span>} />
+                                ) : (
+                                    <List
+                                        dataSource={createdGames}
+                                        renderItem={g => {
+                                            const cfg = statusConfig[g.status] || { label: g.status, color: 'default' };
+                                            return (
+                                                <List.Item
+                                                    style={{ borderBottom: '1px solid var(--border-color)', cursor: 'pointer', padding: '12px 0' }}
+                                                    onClick={() => navigate(`/games/${g.id}`)}
+                                                >
+                                                    <div style={{ flex: 1 }}>
+                                                        <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>{g.title}</div>
+                                                        <div style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{g.date} • {g.time} • {g.location}</div>
+                                                    </div>
+                                                    <Tag color={cfg.color} style={{ marginLeft: 8 }}>{cfg.label}</Tag>
+                                                </List.Item>
+                                            );
+                                        }}
+                                    />
+                                )}
+                            </div>
+                        );
+                    })()}
+
                     {activeTab === 'achievements' && <Achievements user={userProfile} />}
                     {activeTab === 'stadiums' && (
                         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 16, padding: 24 }}>

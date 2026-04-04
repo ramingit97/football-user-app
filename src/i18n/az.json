@@ -351,6 +351,7 @@
       "descriptionLabel": "Açıqlama",
       "descriptionPlaceholder": "Qaydalar, nə gətirməli...",
       "createBtn": "Oyun yarat",
+      "moderationNotice": "⚠️ Oyununuz moderator yoxlamasından sonra dərc ediləcək. Küfr və təhqiredici ifadələr qadağandır — pozucular bloklanacaq.",
       "validation": {
         "selectFormat": "Format seçin",
         "selectStadium": "Stadion seçin",
@@ -443,7 +444,8 @@
     "chat": {
       "title": "Oyun çatı",
       "noMessages": "Mesaj yoxdur",
-      "inputPlaceholder": "Mesaj yazın..."
+      "inputPlaceholder": "Mesaj yazın...",
+      "moderationNotice": "⚠️ Çat moderator tərəfindən izlənir. Küfr və təhqir qadağandır — pozucular bloklanacaq."
     },
     "smartDraft": {
       "description": "MMR-alqoritm {{n}} oyunçunu bir-bir iki bərabər komandaya bölüşdürəcək",
@@ -514,7 +516,17 @@
       "stadiums": "Stadionlar",
       "support": "Dəstək",
       "invitations": "Dəvətlər",
-      "myTeams": "Mənim komandalarım"
+      "myTeams": "Mənim komandalarım",
+      "mygames": "Oyunlarım"
+    },
+    "mygames": {
+      "title": "Mənim yaratdığım oyunlar",
+      "empty": "Hələ oyun yaratmamısınız",
+      "statusPending": "Moderasiyada",
+      "statusOpen": "Dərc edilib",
+      "statusFull": "Doludur",
+      "statusCancelled": "Rədd edildi / Ləğv edildi",
+      "statusFinished": "Tamamlandı"
     },
     "wallet": {
       "topUp": "Doldur",
