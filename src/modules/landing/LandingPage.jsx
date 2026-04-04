@@ -740,10 +740,23 @@ export default function LandingPage() {
   }, []);
 
   useEffect(() => {
-    fetch('/api/analytics/landing-visit', { method: 'POST' }).catch(() => {});
-    // Save referral code from ?ref= for use after registration
-    const ref = new URLSearchParams(location.search).get('ref');
+    const params = new URLSearchParams(location.search);
+
+    // Save referral code for after registration
+    const ref = params.get('ref');
     if (ref) localStorage.setItem('pendingRef', ref);
+
+    // Collect UTM params if present
+    const utm = {};
+    ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(k => {
+      const v = params.get(k); if (v) utm[k] = v;
+    });
+
+    fetch('/api/analytics/landing-visit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ referrer: document.referrer, utm }),
+    }).catch(() => {});
   }, []);
 
   const goLogin = () => navigate('/login');
