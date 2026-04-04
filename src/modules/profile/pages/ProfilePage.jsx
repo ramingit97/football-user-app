@@ -63,7 +63,7 @@ const TabBtn = ({ active, onClick, icon, label }) => (
 // ── Stat item ────────────────────────────────────────
 const StatItem = ({ value, label, color = 'var(--text-primary)' }) => (
     <div style={{ textAlign: 'center', padding: '0 8px' }}>
-        <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 22, color, lineHeight: 1 }}>
+        <div style={{ fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 800, fontSize: 22, color, lineHeight: 1 }}>
             {value}
         </div>
         <div style={{ color: 'var(--text-tertiary)', fontSize: 11, marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
@@ -228,7 +228,7 @@ const ProfilePage = () => {
                         <div style={{ flex: 1, paddingBottom: 20 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6, flexWrap: 'wrap' }}>
                                 <h1 style={{
-                                    fontFamily: 'Syne, sans-serif', fontWeight: 800,
+                                    fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 800,
                                     fontSize: 26, color: 'var(--text-primary)',
                                     margin: 0, letterSpacing: '-0.5px',
                                 }}>
@@ -277,7 +277,7 @@ const ProfilePage = () => {
                                     display: 'flex', alignItems: 'center', gap: 8,
                                 }}>
                                     <WalletOutlined style={{ color: 'var(--green)', fontSize: 14 }} />
-                                    <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 18, color: 'var(--green)' }}>
+                                    <span style={{ fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 800, fontSize: 18, color: 'var(--green)' }}>
                                         {(userProfile?.balance || 0).toFixed(2)} AZN
                                     </span>
                                 </div>
@@ -410,7 +410,7 @@ const ProfilePage = () => {
                     {activeTab === 'teams' && (
                         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 16, padding: 24 }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                                <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+                                <h2 style={{ fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
                                     {t('profile.tabs.myTeams')}
                                 </h2>
                                 <button onClick={() => setCreateTeamModalVisible(true)} style={{
@@ -437,7 +437,7 @@ const ProfilePage = () => {
                                         >
                                             <Avatar icon={<TeamOutlined />} src={team.flag || team.logo} style={{ backgroundColor: 'var(--green)', color: '#060c18', flexShrink: 0 }} />
                                             <div style={{ flex: 1 }}>
-                                                <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
+                                                <div style={{ fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
                                                     {team.name}
                                                 </div>
                                                 <div style={{ display: 'flex', gap: 6 }}>

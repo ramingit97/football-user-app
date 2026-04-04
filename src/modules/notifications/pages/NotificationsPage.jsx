@@ -282,7 +282,7 @@ const NotificationsPage = () => {
                 }}>
                     <div>
                         <h1 style={{
-                            fontFamily: 'Syne, sans-serif', fontSize: 30, fontWeight: 800,
+                            fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontSize: 30, fontWeight: 800,
                             color: 'var(--text-primary)', margin: '0 0 4px',
                             letterSpacing: '-0.5px',
                             display: 'flex', alignItems: 'center', gap: 12,

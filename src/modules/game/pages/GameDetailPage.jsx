@@ -706,7 +706,7 @@ const GameDetailPage = () => {
                         {/* Title + status */}
                         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 18 }}>
                             <h1 style={{
-                                fontFamily: 'Syne, sans-serif', fontWeight: 800,
+                                fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 800,
                                 fontSize: 22, color: 'var(--text-primary)',
                                 margin: 0, lineHeight: 1.25, flex: 1, minWidth: 0,
                             }}>
@@ -1000,7 +1000,7 @@ const GameDetailPage = () => {
                         <div style={{ fontSize: 12, color: 'var(--text-tertiary)', marginBottom: 10, fontFamily: 'Outfit, sans-serif', textTransform: 'uppercase', letterSpacing: 1 }}>
                             {t('game.detail.scoreBoard')}
                         </div>
-                        <div style={{ fontSize: 52, fontWeight: 800, fontFamily: 'Syne, sans-serif', lineHeight: 1 }}>
+                        <div style={{ fontSize: 52, fontWeight: 800, fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", lineHeight: 1 }}>
                             <span style={{ color: teamAColor }}>{game.scoreTeamA ?? 0}</span>
                             <span style={{ margin: '0 18px', color: 'var(--border-color)' }}>:</span>
                             <span style={{ color: teamBColor }}>{game.scoreTeamB ?? 0}</span>
@@ -1067,7 +1067,7 @@ const GameDetailPage = () => {
                         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                         marginBottom: 16,
                     }}>
-                        <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>
+                        <span style={{ fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>
                             {t('game.detail.registeredPlayers', { n: currentPlayers })}
                         </span>
                         <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>
@@ -1190,7 +1190,7 @@ const GameDetailPage = () => {
                             padding: '16px 20px', background: 'none', border: 'none', cursor: 'pointer',
                         }}
                     >
-                        <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>
+                        <span style={{ fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>
                             {t('game.detail.teamComposition')}
                         </span>
                         <span style={{ color: 'var(--text-tertiary)', fontSize: 12 }}>
@@ -1576,7 +1576,7 @@ const GameDetailPage = () => {
                         >
                             {!fullPlayerData.avatar && fullPlayerData.name?.charAt(0)?.toUpperCase()}
                         </Avatar>
-                        <h2 style={{ margin: '0 0 8px 0', fontSize: 22, fontFamily: 'Syne, sans-serif', fontWeight: 800 }}>
+                        <h2 style={{ margin: '0 0 8px 0', fontSize: 22, fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 800 }}>
                             {fullPlayerData.name || t('common.player')}
                         </h2>
                         {fullPlayerData.position && (
@@ -1591,7 +1591,7 @@ const GameDetailPage = () => {
                                 { label: t('game.detail.totalAssists'), value: fullPlayerData.totalAssists || 0, color: '#faad14' },
                             ].map(({ label, value, color }) => (
                                 <div key={label} style={{ padding: 12, background: 'var(--bg-raised)', borderRadius: 10 }}>
-                                    <div style={{ fontSize: 22, fontWeight: 800, color, fontFamily: 'Syne, sans-serif' }}>{value}</div>
+                                    <div style={{ fontSize: 22, fontWeight: 800, color, fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif" }}>{value}</div>
                                     <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{label}</div>
                                 </div>
                             ))}
@@ -1639,7 +1639,7 @@ const GameDetailPage = () => {
                                     background: bg, borderRadius: 10,
                                     border: `1px solid ${color}25`,
                                 }}>
-                                    <div style={{ fontSize: 22, fontWeight: 800, color, fontFamily: 'Syne, sans-serif' }}>{value}</div>
+                                    <div style={{ fontSize: 22, fontWeight: 800, color, fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif" }}>{value}</div>
                                     <div style={{ fontSize: 11, color: 'var(--text-tertiary)', fontFamily: 'Outfit, sans-serif' }}>{label}</div>
                                 </div>
                             ))}

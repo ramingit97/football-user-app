@@ -47,7 +47,7 @@ const TeamRow = ({ team, rank, navigate }) => {
             {/* Rank */}
             <div style={{
                 width: 28, textAlign: 'center', flexShrink: 0,
-                fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 13,
+                fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 800, fontSize: 13,
                 color: rank <= 3 ? '#faad14' : 'var(--text-tertiary)',
             }}>
                 {rank <= 3 ? ['🥇', '🥈', '🥉'][rank - 1] : rank}
@@ -89,7 +89,7 @@ const TeamRow = ({ team, rank, navigate }) => {
                 <div style={{ textAlign: 'center' }}>
                     <div style={{
                         fontSize: 13, fontWeight: 700,
-                        color: '#faad14', fontFamily: 'Syne, sans-serif',
+                        color: '#faad14', fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif",
                         display: 'flex', alignItems: 'center', gap: 3,
                     }}>
                         <TrophyOutlined style={{ fontSize: 11 }} />
@@ -99,7 +99,7 @@ const TeamRow = ({ team, rank, navigate }) => {
                 </div>
 
                 <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif' }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif" }}>
                         {team.gamesPlayed || 0}
                     </div>
                     <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>игр</div>
@@ -108,7 +108,7 @@ const TeamRow = ({ team, rank, navigate }) => {
                 {winRate !== null ? (
                     <div style={{ textAlign: 'center' }}>
                         <div style={{
-                            fontSize: 13, fontWeight: 700, fontFamily: 'Syne, sans-serif',
+                            fontSize: 13, fontWeight: 700, fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif",
                             color: winRate >= 50 ? '#52c41a' : winRate >= 33 ? '#faad14' : '#f04438',
                         }}>
                             {winRate}%
@@ -117,7 +117,7 @@ const TeamRow = ({ team, rank, navigate }) => {
                     </div>
                 ) : (
                     <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-tertiary)', fontFamily: 'Syne, sans-serif' }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-tertiary)', fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif" }}>
                             —
                         </div>
                         <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>побед</div>
@@ -194,7 +194,7 @@ const TeamsDiscoveryPage = () => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, gap: 12 }}>
                     <div>
                         <h1 style={{
-                            fontFamily: 'Syne, sans-serif',
+                            fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif",
                             fontSize: 30,
                             fontWeight: 800,
                             color: 'var(--text-primary)',
@@ -312,7 +312,7 @@ const TeamsDiscoveryPage = () => {
             {/* Create team modal */}
             <Modal
                 title={
-                    <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700 }}>
+                    <span style={{ fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 700 }}>
                         {t('profile.teams.createTitle')}
                     </span>
                 }

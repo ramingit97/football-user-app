@@ -36,7 +36,7 @@ const SectionHeader = ({ icon, title }) => (
             }}>
                 {icon}
             </div>
-            <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif' }}>
+            <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-primary)', fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif" }}>
                 {title}
             </span>
         </div>
@@ -170,7 +170,7 @@ const MyStadiums = ({ userId }) => {
         <div>
             {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, margin: 0, color: 'var(--text-primary)', fontSize: 18 }}>
+                <h2 style={{ fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 700, margin: 0, color: 'var(--text-primary)', fontSize: 18 }}>
                     {t('stadium.suggest.myStadiumsTitle')}
                 </h2>
                 <button
@@ -230,7 +230,7 @@ const MyStadiums = ({ userId }) => {
                                     </div>
                                 )}
                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                    <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 2, fontSize: 14 }}>
+                                    <div style={{ fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 700, color: 'var(--text-primary)', marginBottom: 2, fontSize: 14 }}>
                                         {stadium.name}
                                     </div>
                                     <div style={{ fontSize: 12, color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -265,7 +265,7 @@ const MyStadiums = ({ userId }) => {
                 onCancel={() => { setModalOpen(false); form.resetFields(); setFileList([]); }}
                 footer={null}
                 title={
-                    <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: 'var(--text-primary)' }}>
+                    <span style={{ fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 700, color: 'var(--text-primary)' }}>
                         🏟 {t('stadium.suggest.formTitle')}
                     </span>
                 }
@@ -378,7 +378,7 @@ const MyStadiums = ({ userId }) => {
                             background: isSubmitting || uploadingImages ? 'var(--bg-raised)' : 'var(--green)',
                             border: 'none', borderRadius: 10,
                             color: isSubmitting || uploadingImages ? 'var(--text-tertiary)' : '#060c18',
-                            fontFamily: 'Syne, sans-serif', fontWeight: 800,
+                            fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 800,
                             fontSize: 15, cursor: isSubmitting || uploadingImages ? 'default' : 'pointer',
                         }}
                     >

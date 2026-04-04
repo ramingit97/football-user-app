@@ -63,7 +63,7 @@ const SupportChat = ({ user }) => {
                     <CustomerServiceOutlined />
                 </div>
                 <div>
-                    <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>
+                    <div style={{ fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>
                         {t('support.title')}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 }}>

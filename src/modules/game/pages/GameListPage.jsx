@@ -114,7 +114,7 @@ const GameListPage = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28, flexWrap: 'wrap', gap: 16 }}>
                 <div>
                     <h1 style={{
-                        fontFamily: 'Syne, sans-serif', fontWeight: 800,
+                        fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 800,
                         fontSize: 28, color: 'var(--text-primary)',
                         margin: 0, letterSpacing: '-0.5px',
                     }}>

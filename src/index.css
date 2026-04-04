@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 /* ═══════════════════════════════════════
    ELECTRIC PITCH — Design System
@@ -89,7 +90,7 @@ body::before {
 }
 
 h1, h2, h3, h4, h5 {
-  font-family: 'Syne', sans-serif;
+  font-family: 'ClashDisplay-Variable', 'Clash Display', sans-serif;
 }
 
 /* ── Background wrapper ── */
@@ -160,7 +161,7 @@ h1, h2, h3, h4, h5 {
 }
 
 .auth-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'ClashDisplay-Variable', 'Clash Display', sans-serif;
   font-size: 28px;
   font-weight: 800;
   color: var(--text-primary);
@@ -189,7 +190,7 @@ h1, h2, h3, h4, h5 {
 }
 
 .page-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'ClashDisplay-Variable', 'Clash Display', sans-serif;
   font-size: 32px;
   font-weight: 800;
   color: var(--text-primary);
@@ -232,7 +233,7 @@ h1, h2, h3, h4, h5 {
 }
 
 .game-card-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'ClashDisplay-Variable', 'Clash Display', sans-serif;
   font-size: 15px;
   font-weight: 700;
   color: var(--text-primary);
@@ -436,7 +437,7 @@ h1, h2, h3, h4, h5 {
 
 .ant-modal-title {
   color: var(--text-primary) !important;
-  font-family: 'Syne', sans-serif !important;
+  font-family: 'ClashDisplay-Variable', 'Clash Display', sans-serif !important;
   font-weight: 700 !important;
 }
 
@@ -460,14 +461,14 @@ h1, h2, h3, h4, h5 {
   background: transparent !important;
   border-bottom: 1px solid var(--border-color) !important;
   color: var(--text-primary) !important;
-  font-family: 'Syne', sans-serif !important;
+  font-family: 'ClashDisplay-Variable', 'Clash Display', sans-serif !important;
   min-height: unset !important;
   padding: 16px 20px !important;
 }
 
 .ant-card-head-title {
   color: var(--text-primary) !important;
-  font-family: 'Syne', sans-serif !important;
+  font-family: 'ClashDisplay-Variable', 'Clash Display', sans-serif !important;
   font-weight: 700 !important;
 }
 
@@ -635,7 +636,7 @@ h1, h2, h3, h4, h5 {
 
 .ant-notification-notice-message {
   color: var(--text-primary) !important;
-  font-family: 'Syne', sans-serif !important;
+  font-family: 'ClashDisplay-Variable', 'Clash Display', sans-serif !important;
 }
 
 .ant-notification-notice-description {

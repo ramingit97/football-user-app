@@ -6,6 +6,9 @@ import { ThemeProvider, useTheme } from './shared/context/ThemeContext';
 import ThemeSwitcher from './shared/components/ThemeSwitcher';
 import { useTranslation } from 'react-i18next';
 
+// Landing
+import LandingPage from './modules/landing/LandingPage';
+
 // Auth Module
 import RegistrationPage from './modules/auth/pages/RegistrationPage';
 
@@ -39,8 +42,9 @@ const AppContent = () => {
     <ConfigProvider theme={themeConfig} locale={antdLocale}>
       <BrowserRouter>
         <Routes>
-          {/* Auth routes - without layout */}
-          <Route path="/" element={<LoginPage />} />
+          {/* Landing + Auth routes - without layout */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegistrationPage />} />
 
           {/* Game routes - with layout */}
@@ -107,7 +111,7 @@ const AppContent = () => {
           } />
 
           {/* Fallback */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
         <ThemeSwitcher />
       </BrowserRouter>

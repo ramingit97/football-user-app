@@ -90,7 +90,7 @@ const ProfileForm = ({ initialData = {} }) => {
                 marginBottom: 28,
             }}>
                 <span style={{
-                    fontFamily: 'Syne, sans-serif', fontWeight: 700,
+                    fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 700,
                     fontSize: 17, color: 'var(--text-primary)',
                 }}>
                     {t('profile.edit.title')}

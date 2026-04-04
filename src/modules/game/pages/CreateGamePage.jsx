@@ -25,7 +25,7 @@ const CreateGamePage = () => {
 
                 <div style={{ marginBottom: 24 }}>
                     <h1 style={{
-                        fontFamily: 'Syne, sans-serif', fontWeight: 800,
+                        fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 800,
                         fontSize: 26, color: 'var(--text-primary)',
                         margin: 0, letterSpacing: '-0.5px', marginBottom: 4,
                     }}>

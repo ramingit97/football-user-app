@@ -37,7 +37,7 @@ const getPos = (pos) => POSITION_CONFIG[pos] || POSITION_CONFIG.any;
 const StatPill = ({ label, value, color }) => (
     <div style={{ textAlign: 'center' }}>
         <div style={{
-            fontSize: 22, fontWeight: 800, fontFamily: 'Syne, sans-serif',
+            fontSize: 22, fontWeight: 800, fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif",
             color: color || 'var(--text-primary)', lineHeight: 1.1,
         }}>
             {value}
@@ -114,7 +114,7 @@ const RosterRow = ({ player, isCaptain, isCurrentUser, captainId, onTransfer, is
             <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexShrink: 0 }}>
                 {player.gamesPlayed > 0 && (
                     <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif' }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif" }}>
                             {player.gamesPlayed}
                         </div>
                         <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>игр</div>
@@ -122,7 +122,7 @@ const RosterRow = ({ player, isCaptain, isCurrentUser, captainId, onTransfer, is
                 )}
                 {player.averageRating > 0 && (
                     <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: '#faad14', fontFamily: 'Syne, sans-serif' }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: '#faad14', fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif" }}>
                             {player.averageRating.toFixed(1)}
                         </div>
                         <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>★</div>
@@ -477,7 +477,7 @@ const TeamDetailPage = () => {
                 </div>
                 <div>
                     <div style={{
-                        fontFamily: 'Syne, sans-serif', fontSize: 36, fontWeight: 800,
+                        fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontSize: 36, fontWeight: 800,
                         color: '#faad14', lineHeight: 1,
                     }}>
                         {(team.rating || 1000).toLocaleString()}
@@ -505,7 +505,7 @@ const TeamDetailPage = () => {
                         textAlign: 'center',
                     }}>
                         <div style={{
-                            fontFamily: 'Syne, sans-serif', fontSize: 32, fontWeight: 800,
+                            fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontSize: 32, fontWeight: 800,
                             color: s.color, lineHeight: 1,
                         }}>
                             {s.value}
@@ -527,12 +527,12 @@ const TeamDetailPage = () => {
                 }}>
                     <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
                         Всего игр:&nbsp;
-                        <strong style={{ color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif' }}>
+                        <strong style={{ color: 'var(--text-primary)', fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif" }}>
                             {team.gamesPlayed || 0}
                         </strong>
                     </span>
                     <span style={{
-                        fontFamily: 'Syne, sans-serif', fontSize: 20, fontWeight: 800,
+                        fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontSize: 20, fontWeight: 800,
                         color: winRate >= 50 ? '#52c41a' : winRate >= 33 ? '#faad14' : 'var(--text-secondary)',
                     }}>
                         {winRate}%
@@ -696,7 +696,7 @@ const TeamDetailPage = () => {
                     {/* Name + stats */}
                     <div style={{ flex: 1, minWidth: 0 }}>
                         <h1 style={{
-                            fontFamily: 'Syne, sans-serif', fontSize: 28, fontWeight: 800,
+                            fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontSize: 28, fontWeight: 800,
                             color: 'var(--text-primary)', margin: '0 0 14px',
                             letterSpacing: '-0.5px',
                         }}>

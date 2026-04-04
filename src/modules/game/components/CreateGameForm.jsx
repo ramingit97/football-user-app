@@ -39,7 +39,7 @@ const SectionHeader = ({ icon, title, subtitle }) => (
                 {icon}
             </div>
             <div>
-                <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', lineHeight: 1.2 }}>
+                <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)', fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", lineHeight: 1.2 }}>
                     {title}
                 </div>
                 {subtitle && (
@@ -408,7 +408,7 @@ const CreateGameForm = ({ onSuccess }) => {
                                 <CheckCircleFilled style={{ position: 'absolute', top: 10, right: 10, color: card.color, fontSize: 16 }} />
                             )}
                             <div style={{ fontSize: 18, marginBottom: 6, color: card.color }}>{card.icon}</div>
-                            <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 14, marginBottom: 2, color: 'var(--text-primary)' }}>
+                            <div style={{ fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 700, fontSize: 14, marginBottom: 2, color: 'var(--text-primary)' }}>
                                 {card.title}
                             </div>
                             <div style={{ fontSize: 12, color: 'var(--text-tertiary)', marginBottom: 6 }}>
@@ -520,7 +520,7 @@ const CreateGameForm = ({ onSuccess }) => {
                     </div>
                     <div style={{ textAlign: 'right' }}>
                         <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 2 }}>Взнос с игрока</div>
-                        <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 22, color: 'var(--green)' }}>
+                        <div style={{ fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 800, fontSize: 22, color: 'var(--green)' }}>
                             ~{pricePerPlayer} ₼
                         </div>
                     </div>
@@ -547,7 +547,7 @@ const CreateGameForm = ({ onSuccess }) => {
                     background: isLoading ? 'var(--bg-raised)' : 'var(--green)',
                     border: 'none', borderRadius: 10,
                     color: isLoading ? 'var(--text-tertiary)' : '#060c18',
-                    fontFamily: 'Syne, sans-serif', fontWeight: 800,
+                    fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 800,
                     fontSize: 16, cursor: isLoading ? 'default' : 'pointer',
                     transition: 'opacity 0.15s',
                     boxShadow: isLoading ? 'none' : '0 0 24px rgba(0,232,122,0.3)',

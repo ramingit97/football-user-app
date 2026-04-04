@@ -56,7 +56,7 @@ const GameCard = ({ game, onJoin }) => {
                 {/* Заголовок + бейджи */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10, gap: 8 }}>
                     <h3 style={{
-                        fontFamily: 'Syne, sans-serif',
+                        fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif",
                         fontWeight: 700,
                         fontSize: 15,
                         color: 'var(--text-primary)',
@@ -77,7 +77,7 @@ const GameCard = ({ game, onJoin }) => {
                         borderRadius: 6,
                         fontSize: 11,
                         fontWeight: 700,
-                        fontFamily: 'Syne, sans-serif',
+                        fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif",
                         letterSpacing: '0.3px',
                         flexShrink: 0,
                     }}>
@@ -109,7 +109,7 @@ const GameCard = ({ game, onJoin }) => {
                 {/* Цена + свободных мест */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                     <span style={{
-                        fontFamily: 'Syne, sans-serif',
+                        fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif",
                         fontWeight: 800,
                         fontSize: 18,
                         color: game.price === 0 ? '#00e87a' : 'var(--text-primary)',

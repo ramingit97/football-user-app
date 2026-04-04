@@ -45,7 +45,7 @@ const PlayerRow = ({ player, rank, navigate, t }) => {
             {/* Rank */}
             <div style={{
                 width: 28, textAlign: 'center', flexShrink: 0,
-                fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 13,
+                fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 800, fontSize: 13,
                 color: rank <= 3 ? '#faad14' : 'var(--text-tertiary)',
             }}>
                 {rank <= 3 ? ['🥇','🥈','🥉'][rank - 1] : rank}
@@ -83,19 +83,19 @@ const PlayerRow = ({ player, rank, navigate, t }) => {
             {/* Stats */}
             <div style={{ display: 'flex', gap: 20, alignItems: 'center', flexShrink: 0 }}>
                 <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif' }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif" }}>
                         {player.gamesPlayed || 0}
                     </div>
                     <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>{t('players.stat.games') || 'игр'}</div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: '#f04438', fontFamily: 'Syne, sans-serif' }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#f04438', fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif" }}>
                         {player.totalGoals || 0}
                     </div>
                     <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>⚽</div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: '#faad14', fontFamily: 'Syne, sans-serif' }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#faad14', fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif" }}>
                         {player.averageRating > 0 ? player.averageRating.toFixed(1) : '—'}
                     </div>
                     <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>★</div>
@@ -222,7 +222,7 @@ const PlayersPage = () => {
                 {/* Header */}
                 <div style={{ marginBottom: 24 }}>
                     <h1 style={{
-                        fontFamily: 'Syne, sans-serif',
+                        fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif",
                         fontSize: 30,
                         fontWeight: 800,
                         color: 'var(--text-primary)',
