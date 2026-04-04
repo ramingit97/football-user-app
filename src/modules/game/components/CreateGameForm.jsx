@@ -176,6 +176,7 @@ const CreateGameForm = ({ onSuccess }) => {
                 status: 'open',
                 organizerId: currentUser?.id,
                 organizerName: currentUser?.name,
+                recurrence: values.recurrence || 'none',
             };
 
             const result = await createGame(gameData).unwrap();
@@ -531,12 +532,26 @@ const CreateGameForm = ({ onSuccess }) => {
             <Form.Item
                 name="description"
                 label={<span style={{ color: 'var(--text-secondary)', fontSize: 13, fontWeight: 500 }}>{t('game.create.descriptionLabel')}</span>}
-                style={{ marginBottom: 28 }}
+                style={{ marginBottom: 16 }}
             >
                 <TextArea
                     placeholder={t('game.create.descriptionPlaceholder')}
                     rows={3} maxLength={500} showCount
                 />
+            </Form.Item>
+
+            {/* ── Повторяющаяся игра ── */}
+            <Form.Item
+                name="recurrence"
+                label={<span style={{ color: 'var(--text-secondary)', fontSize: 13, fontWeight: 500 }}>🔄 Təkrarlanan oyun</span>}
+                initialValue="none"
+                style={{ marginBottom: 28 }}
+            >
+                <Select size="large">
+                    <Option value="none">Yox (tək oyun)</Option>
+                    <Option value="weekly">Hər həftə avtomatik yaradılsın</Option>
+                    <Option value="biweekly">Hər 2 həftədən bir yaradılsın</Option>
+                </Select>
             </Form.Item>
 
             <button

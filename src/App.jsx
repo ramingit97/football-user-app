@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import ruRU from 'antd/locale/ru_RU';
 import enUS from 'antd/locale/en_US';
@@ -8,6 +8,12 @@ import { useTranslation } from 'react-i18next';
 
 // Landing
 import LandingPage from './modules/landing/LandingPage';
+
+// Leaderboard
+import LeaderboardPage from './modules/leaderboard/LeaderboardPage';
+
+// Stadiums
+import StadiumsPage from './modules/stadiums/StadiumsPage';
 
 // Auth Module
 import RegistrationPage from './modules/auth/pages/RegistrationPage';
@@ -33,6 +39,12 @@ import ProtectedRoute from './shared/components/ProtectedRoute';
 import AppLayout from './shared/components/AppLayout';
 import LoginPage from './modules/auth/pages/LoginPage';
 
+const ThemeSwitcherConditional = () => {
+  const { pathname } = useLocation();
+  if (pathname === '/') return null;
+  return <ThemeSwitcher />;
+};
+
 const AppContent = () => {
   const { themeConfig } = useTheme();
   const { i18n } = useTranslation();
@@ -41,6 +53,7 @@ const AppContent = () => {
   return (
     <ConfigProvider theme={themeConfig} locale={antdLocale}>
       <BrowserRouter>
+        <ThemeSwitcherConditional />
         <Routes>
           {/* Landing + Auth routes - without layout */}
           <Route path="/" element={<LandingPage />} />
@@ -110,10 +123,23 @@ const AppContent = () => {
             </AppLayout>
           } />
 
+          {/* Leaderboard */}
+          <Route path="/leaderboard" element={
+            <AppLayout>
+              <LeaderboardPage />
+            </AppLayout>
+          } />
+
+          {/* Stadiums */}
+          <Route path="/stadiums" element={
+            <AppLayout>
+              <StadiumsPage />
+            </AppLayout>
+          } />
+
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
-        <ThemeSwitcher />
       </BrowserRouter>
     </ConfigProvider>
   );

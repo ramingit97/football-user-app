@@ -5,7 +5,9 @@ import {
     PlusCircleOutlined,
     LogoutOutlined,
     TeamOutlined,
-    BellOutlined
+    BellOutlined,
+    TrophyOutlined,
+    BankOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -26,6 +28,8 @@ const NAV = [
     { key: '/games/create', icon: PlusCircleOutlined, labelKey: 'nav.createGame' },
     { key: '/players',      icon: TeamOutlined,        labelKey: 'nav.players' },
     { key: '/teams',        icon: TeamOutlined,        labelKey: 'nav.teams' },
+    { key: '/leaderboard',  icon: TrophyOutlined,      labelKey: 'nav.leaderboard' },
+    { key: '/stadiums',     icon: BankOutlined,        labelKey: 'nav.stadiums' },
     { key: '/notifications',icon: BellOutlined,        labelKey: 'nav.notifications' },
     { key: '/profile',      icon: UserOutlined,        labelKey: 'nav.profile' },
 ];
@@ -34,7 +38,7 @@ const NAV = [
 const BOTTOM_NAV = [
     { key: '/games',        icon: HomeOutlined,        labelKey: 'nav.games' },
     { key: '/games/create', icon: PlusCircleOutlined,  labelKey: 'nav.createGame' },
-    { key: '/players',      icon: TeamOutlined,         labelKey: 'nav.players' },
+    { key: '/leaderboard',  icon: TrophyOutlined,       labelKey: 'nav.leaderboard' },
     { key: '/notifications',icon: BellOutlined,         labelKey: 'nav.notifications' },
     { key: '/profile',      icon: UserOutlined,         labelKey: 'nav.profile' },
 ];

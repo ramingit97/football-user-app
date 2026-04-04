@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 /* ─────────────────────────────────────────────────────────
    GLOBAL STYLES  (injected once)
@@ -727,6 +727,7 @@ function useWindowWidth() {
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
   const winW = useWindowWidth();
@@ -740,6 +741,9 @@ export default function LandingPage() {
 
   useEffect(() => {
     fetch('/api/analytics/landing-visit', { method: 'POST' }).catch(() => {});
+    // Save referral code from ?ref= for use after registration
+    const ref = new URLSearchParams(location.search).get('ref');
+    if (ref) localStorage.setItem('pendingRef', ref);
   }, []);
 
   const goLogin = () => navigate('/login');
@@ -767,12 +771,22 @@ export default function LandingPage() {
             Topu<span style={{ color:'var(--green)' }}>.az</span>
           </span>
         </div>
-        <button className="lp-btn-primary" onClick={goLogin} style={{
-          background:'var(--green)', color:'#060c18', border:'none',
-          borderRadius:10, padding:'9px 22px',
-          fontFamily:'Outfit,sans-serif', fontWeight:700, fontSize:14,
-          cursor:'pointer', boxShadow:'0 2px 14px var(--green-glow)',
-        }}>Daxil ol</button>
+        <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+          {!isMobile && (
+            <button className="lp-btn-secondary" onClick={() => navigate('/leaderboard')} style={{
+              background:'transparent', color:'var(--text-secondary)', border:'1px solid var(--border-color)',
+              borderRadius:10, padding:'9px 18px',
+              fontFamily:'Outfit,sans-serif', fontWeight:600, fontSize:13,
+              cursor:'pointer',
+            }}>🏆 Liderboard</button>
+          )}
+          <button className="lp-btn-primary" onClick={goLogin} style={{
+            background:'var(--green)', color:'#060c18', border:'none',
+            borderRadius:10, padding:'9px 22px',
+            fontFamily:'Outfit,sans-serif', fontWeight:700, fontSize:14,
+            cursor:'pointer', boxShadow:'0 2px 14px var(--green-glow)',
+          }}>Daxil ol</button>
+        </div>
       </nav>
 
       {/* ══════════════════════════ HERO ══════════════════════════ */}
@@ -828,8 +842,8 @@ export default function LandingPage() {
         {/* Headline */}
         <h1 className="landing-hero-headline" style={{
           fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800,
-          fontSize:'clamp(40px,8vw,86px)', lineHeight:1.05,
-          letterSpacing:'-2px', color:'var(--text-primary)',
+          fontSize:'clamp(40px,8vw,86px)', lineHeight:1.1,
+          letterSpacing:'-0.5px', color:'var(--text-primary)',
           maxWidth:880, marginBottom:26,
         }}>
           Oyun tap.{' '}

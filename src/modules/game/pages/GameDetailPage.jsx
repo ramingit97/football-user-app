@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { QRCodeSVG } from 'qrcode.react';
 import {
     Spin,
     Avatar,
@@ -28,6 +29,7 @@ import {
     CheckCircleOutlined,
     TrophyOutlined,
     StarOutlined,
+    QrcodeOutlined,
     LogoutOutlined,
     ThunderboltOutlined,
     ShareAltOutlined,
@@ -192,6 +194,7 @@ const GameDetailPage = () => {
         }
     }, [searchParams, setSearchParams]);
 
+    const [isQrModalVisible, setIsQrModalVisible] = useState(false);
     const [isFinishModalVisible, setIsFinishModalVisible] = useState(false);
     const [isClaimStatsModalVisible, setIsClaimStatsModalVisible] = useState(false);
     const [isValidateStatsModalVisible, setIsValidateStatsModalVisible] = useState(false);
@@ -986,6 +989,12 @@ const GameDetailPage = () => {
                             onClick={handleShareWhatsApp}
                             variant="whatsapp"
                         />
+                        <ActionBtn
+                            icon={<QrcodeOutlined />}
+                            label="QR"
+                            onClick={() => setIsQrModalVisible(true)}
+                            variant="ghost"
+                        />
                     </div>
                 </div>
 
@@ -1612,6 +1621,32 @@ const GameDetailPage = () => {
                         </Button>
                     </div>
                 ) : null}
+            </Modal>
+
+            {/* QR Code Modal */}
+            <Modal
+                open={isQrModalVisible}
+                onCancel={() => setIsQrModalVisible(false)}
+                footer={null}
+                centered
+                width={300}
+                styles={{ body: { textAlign: 'center', padding: '24px 24px 16px' } }}
+            >
+                <div style={{ fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 700, fontSize: 16, color: 'var(--text-primary)', marginBottom: 16 }}>
+                    {game?.title || t('game.detail.qrTitle', 'QR — Oyun linki')}
+                </div>
+                <div style={{ display: 'inline-block', padding: 12, background: '#fff', borderRadius: 12 }}>
+                    <QRCodeSVG
+                        value={`${window.location.origin}/games/${game?.id}`}
+                        size={200}
+                        fgColor="#060c18"
+                        bgColor="#ffffff"
+                        level="M"
+                    />
+                </div>
+                <p style={{ marginTop: 14, fontSize: 12, color: 'var(--text-tertiary)', fontFamily: 'Outfit, sans-serif' }}>
+                    {t('game.detail.qrScan', 'QR kodu skan edin — oyuna qoşulun')}
+                </p>
             </Modal>
 
             {/* Invites Drawer */}

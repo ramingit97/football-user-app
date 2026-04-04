@@ -19,6 +19,9 @@ export const gamesApi = createApi({
             query: () => '/games/hot',
             providesTags: ['Game'],
         }),
+        getLeaderboard: builder.query({
+            query: () => '/games/leaderboard',
+        }),
         getGames: builder.query({
             query: ({ page = 1, limit = 12, status, format, district, metro } = {}) => {
                 const params = new URLSearchParams({ page: String(page), limit: String(limit) });
@@ -210,6 +213,7 @@ export const gamesApi = createApi({
 
 export const {
     useGetHotGamesQuery,
+    useGetLeaderboardQuery,
     useGetGamesQuery,
     useGetGamesByTeamQuery,
     useGetNearbyGamesQuery,
