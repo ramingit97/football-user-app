@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Spin, Avatar } from 'antd';
@@ -214,6 +215,13 @@ const LeaderboardPage = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const { data, isLoading } = useGetLeaderboardQuery();
+    const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+
+    useEffect(() => {
+        const handler = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handler);
+        return () => window.removeEventListener('resize', handler);
+    }, []);
 
     return (
         <div style={{ minHeight: '100vh', padding: '32px 20px 100px' }}>
@@ -250,9 +258,12 @@ const LeaderboardPage = () => {
                     {t('nav.leaderboardPage.empty')}
                 </div>
             ) : (
-                <div className="leaderboard-grid">
+                <div style={{
+                    display: 'flex', gap: 16, alignItems: 'flex-start',
+                    flexDirection: isMobile ? 'column' : 'row',
+                }}>
                     {SECTIONS.map(section => (
-                        <div key={section.key} style={{ flex: 1, minWidth: 0 }}>
+                        <div key={section.key} style={{ flex: 1, minWidth: 0, width: '100%' }}>
                             <Section
                                 section={section}
                                 rows={data[section.key] || []}
@@ -261,18 +272,6 @@ const LeaderboardPage = () => {
                         </div>
                     ))}
                 </div>
-                <style>{`
-                    .leaderboard-grid {
-                        display: flex;
-                        gap: 16px;
-                        align-items: flex-start;
-                    }
-                    @media (max-width: 767px) {
-                        .leaderboard-grid {
-                            flex-direction: column;
-                        }
-                    }
-                `}</style>
             )}
         </div>
     );
