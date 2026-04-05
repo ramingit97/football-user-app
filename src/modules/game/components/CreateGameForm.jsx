@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import {
     Form, Input, DatePicker, InputNumber,
-    Select, message, Spin, Image, Alert
+    Select, message, Spin, Image, Alert, Checkbox
 } from 'antd';
 import {
     EnvironmentOutlined, TeamOutlined, InfoCircleOutlined,
@@ -552,6 +552,18 @@ const CreateGameForm = ({ onSuccess }) => {
                     <Option value="weekly">Hər həftə avtomatik yaradılsın</Option>
                     <Option value="biweekly">Hər 2 həftədən bir yaradılsın</Option>
                 </Select>
+            </Form.Item>
+
+            {/* ── Подтверждение брони стадиона ── */}
+            <Form.Item
+                name="stadiumConfirmed"
+                valuePropName="checked"
+                rules={[{ validator: (_, val) => val ? Promise.resolve() : Promise.reject(t('game.create.stadiumConfirmRequired')) }]}
+                style={{ marginBottom: 20 }}
+            >
+                <Checkbox style={{ fontFamily: 'Outfit,sans-serif', fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                    {t('game.create.stadiumConfirmLabel')}
+                </Checkbox>
             </Form.Item>
 
             <p style={{

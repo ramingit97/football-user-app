@@ -128,7 +128,7 @@ const AppLayout = ({ children }) => {
             }}>
                 {/* Logo */}
                 <div
-                    onClick={() => navigate('/games')}
+                    onClick={() => navigate('/')}
                     style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', userSelect: 'none', marginLeft: 16 }}
                 >
                     <img

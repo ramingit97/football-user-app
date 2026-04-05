@@ -645,7 +645,7 @@ const Carousel = () => {
             transition:'all .2s ease',
             minWidth:0,
           }}>
-            <div style={{ fontFamily:'Outfit,sans-serif', fontWeight:600, fontSize:10, color: active === i ? 'var(--green)' : 'var(--text-tertiary)', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
+            <div style={{ fontFamily:'Outfit,sans-serif', fontWeight:600, fontSize:13, color: active === i ? 'var(--green)' : 'var(--text-tertiary)', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
               {s.title}
             </div>
           </button>
@@ -759,7 +759,8 @@ export default function LandingPage() {
     }).catch(() => {});
   }, []);
 
-  const goLogin = () => navigate('/login');
+  const isLoggedIn = !!localStorage.getItem('token');
+  const goLogin = () => navigate(isLoggedIn ? '/games' : '/login');
 
   return (
     <>
@@ -769,20 +770,17 @@ export default function LandingPage() {
       <nav className="lp-nav" style={{
         position:'fixed', top:0, left:0, right:0, zIndex:100,
         display:'flex', alignItems:'center', justifyContent:'space-between',
-        padding:'0 clamp(20px,5vw,64px)', height:64,
+        padding:'10px clamp(20px,5vw,64px)', height:'auto',
         background: scrolled ? 'rgba(6,12,24,0.94)' : 'transparent',
         borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : '1px solid transparent',
         backdropFilter: scrolled ? 'blur(18px)' : 'none',
       }}>
-        <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-          <div style={{
-            width:34, height:34, borderRadius:'50%',
-            background:'var(--green)', boxShadow:'0 0 16px var(--green-glow)',
-            display:'flex', alignItems:'center', justifyContent:'center', fontSize:18,
-          }}>⚽</div>
-          <span style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:22, color:'var(--text-primary)', letterSpacing:'-0.5px' }}>
-            Topu<span style={{ color:'var(--green)' }}>.az</span>
-          </span>
+        <div style={{ marginLeft:28, cursor:'pointer' }} onClick={() => navigate('/')}>
+          <img
+            src="/logo.png"
+            alt="logo"
+            style={{ height:85, width:'auto', objectFit:'contain', filter:'brightness(0) invert(1)' }}
+          />
         </div>
         <div style={{ display:'flex', alignItems:'center', gap:10 }}>
           {!isMobile && (
@@ -798,7 +796,7 @@ export default function LandingPage() {
             borderRadius:10, padding:'9px 22px',
             fontFamily:'Outfit,sans-serif', fontWeight:700, fontSize:14,
             cursor:'pointer', boxShadow:'0 2px 14px var(--green-glow)',
-          }}>Daxil ol</button>
+          }}>{isLoggedIn ? 'Oyunlara keç →' : 'Daxil ol'}</button>
         </div>
       </nav>
 
@@ -821,25 +819,6 @@ export default function LandingPage() {
         {/* Orbs */}
         <div style={{ position:'absolute', top:'15%', left:'55%', width:560, height:560, borderRadius:'50%', background:'radial-gradient(circle,rgba(0,232,122,0.16) 0%,transparent 65%)', animation:'orb-pulse 6s ease-in-out infinite,orb-drift 12s ease-in-out infinite', pointerEvents:'none', filter:'blur(4px)' }}/>
         <div style={{ position:'absolute', bottom:'10%', right:'60%', width:380, height:380, borderRadius:'50%', background:'radial-gradient(circle,rgba(79,134,247,0.09) 0%,transparent 65%)', animation:'orb-drift 16s ease-in-out infinite reverse', pointerEvents:'none' }}/>
-
-        {/* FREE badge */}
-        <div style={{
-          display:'inline-flex', alignItems:'center', gap:8,
-          background:'linear-gradient(135deg,rgba(245,158,11,0.15),rgba(245,158,11,0.08))',
-          border:'1px solid rgba(245,158,11,0.35)',
-          borderRadius:100, padding:'7px 18px', marginBottom:20,
-          animation:'fade-up .6s cubic-bezier(.22,1,.36,1) both',
-        }}>
-          <span style={{ fontSize:16 }}>🎁</span>
-          <span style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:13, color:'#f59e0b', letterSpacing:.5 }}>
-            İlk 5 oyun — PULSUZ!
-          </span>
-          <span style={{
-            background:'rgba(245,158,11,0.2)', color:'#f59e0b',
-            borderRadius:20, padding:'1px 8px', fontSize:10, fontWeight:700,
-            fontFamily:'Outfit,sans-serif', border:'1px solid rgba(245,158,11,0.3)',
-          }}>YENİ</span>
-        </div>
 
         {/* City pill */}
         <div style={{
@@ -876,15 +855,6 @@ export default function LandingPage() {
         }}>
           Bakıda həvəskar futbol üçün ilk platforma.
           Oyunlar tap, komandaya qoşul, reytinqini artır.
-        </p>
-
-        {/* Free games note */}
-        <p style={{
-          fontFamily:'Outfit,sans-serif', fontSize:13,
-          color:'rgba(245,158,11,0.75)', marginBottom:36,
-          animation:'fade-up .9s cubic-bezier(.22,1,.36,1) .32s both',
-        }}>
-          🎁 Qeydiyyatdan keçin — ilk 5 oyununuz tamamilə pulsuzdur
         </p>
 
         {/* CTAs */}
@@ -1131,7 +1101,7 @@ export default function LandingPage() {
 
               <p style={{
                 fontFamily:'Outfit,sans-serif', fontSize:16, color:'var(--text-secondary)',
-                lineHeight:1.75, marginBottom:36,
+                lineHeight:1.9, marginBottom:36,
               }}>
                 Hər həftə dostlarınla sahəyə çıxın. Oyun başlamazdan əvvəl sadəcə bir düymə ilə
                 bütün oyunçular <b style={{ color:'var(--text-primary)' }}>avtomatik olaraq bərabər iki komandaya</b> bölünür —
@@ -1139,7 +1109,7 @@ export default function LandingPage() {
               </p>
 
               {/* Feature points */}
-              <div style={{ display:'flex', flexDirection:'column', gap:16, marginBottom:36 }}>
+              <div style={{ display:'flex', flexDirection:'column', gap:20, marginBottom:36 }}>
                 {[
                   { icon:'🧮', title:'MMR reytinqinə görə', desc:'Hər oyunçunun gücü hesablanır və komandalar bərabərləşdirilir' },
                   { icon:'🔀', title:'Snake-draft metodu', desc:'Növbəli seçim — heç bir komanda üstünlük qazanmır' },
