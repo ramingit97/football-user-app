@@ -3,125 +3,156 @@ import { theme } from 'antd';
 
 const ThemeContext = createContext();
 
+// Accent color presets
+export const ACCENT_COLORS = [
+    { key: 'green',  label: 'Electric',  color: '#00e87a', dim: 'rgba(0,232,122,0.1)',  glow: 'rgba(0,232,122,0.22)',  border: 'rgba(0,232,122,0.28)'  },
+    { key: 'blue',   label: 'Ocean',     color: '#3b82f6', dim: 'rgba(59,130,246,0.1)', glow: 'rgba(59,130,246,0.22)', border: 'rgba(59,130,246,0.28)' },
+    { key: 'purple', label: 'Midnight',  color: '#a855f7', dim: 'rgba(168,85,247,0.1)', glow: 'rgba(168,85,247,0.22)', border: 'rgba(168,85,247,0.28)' },
+    { key: 'orange', label: 'Sunset',    color: '#f97316', dim: 'rgba(249,115,22,0.1)', glow: 'rgba(249,115,22,0.22)', border: 'rgba(249,115,22,0.28)' },
+    { key: 'red',    label: 'Fire',      color: '#ef4444', dim: 'rgba(239,68,68,0.1)',  glow: 'rgba(239,68,68,0.22)',  border: 'rgba(239,68,68,0.28)'  },
+    { key: 'amber',  label: 'Gold',      color: '#f59e0b', dim: 'rgba(245,158,11,0.1)', glow: 'rgba(245,158,11,0.22)', border: 'rgba(245,158,11,0.28)' },
+];
+
+// Dark theme variants (background palettes)
 export const THEMES = {
-    FIELD: {
-        key: 'field',
-        name: 'Electric Pitch (Default)',
-        token: {
-            colorPrimary: '#00e87a',
-            colorBgContainer: '#0c1526',
-            colorBgElevated: '#131e33',
-            colorBgBase: '#060c18',
-            colorBgLayout: '#060c18',
-            colorBorder: 'rgba(255,255,255,0.07)',
-            colorBorderSecondary: 'rgba(255,255,255,0.05)',
-            colorText: '#edf2ff',
-            colorTextSecondary: 'rgba(237,242,255,0.58)',
-            colorTextTertiary: 'rgba(237,242,255,0.33)',
-            borderRadius: 10,
-        },
-        components: {
-            Button: { primaryShadow: '0 2px 12px rgba(0,232,122,0.3)' },
-            Input: { activeBorderColor: 'rgba(0,232,122,0.4)', hoverBorderColor: 'rgba(0,232,122,0.3)' },
-            Select: { optionSelectedBg: 'rgba(0,232,122,0.1)' },
-        }
+    DARK: {
+        key: 'dark',
+        name: '🌑 Dark',
+        isDark: true,
+        bg: { base: '#060c18', card: '#0c1526', raised: '#131e33', hover: '#1a2740' },
+        text: { primary: '#edf2ff', secondary: 'rgba(237,242,255,0.58)', tertiary: 'rgba(237,242,255,0.33)' },
+        border: 'rgba(255,255,255,0.07)',
     },
-    OCEAN: {
-        key: 'ocean',
-        name: 'Ocean',
-        token: {
-            colorPrimary: '#1890ff',
-            colorBgContainer: 'rgba(16, 35, 50, 0.8)',
-            colorBgElevated: '#0a1a2a',
-            colorBorder: 'rgba(24, 144, 255, 0.3)',
-            borderRadius: 16,
-        },
-        components: {
-            Button: { primaryShadow: '0 4px 16px rgba(24, 144, 255, 0.3)' },
-            Input: { activeBorderColor: '#1890ff', hoverBorderColor: '#40a9ff' },
-            Select: { optionSelectedBg: 'rgba(24, 144, 255, 0.2)' },
-        }
+    CARBON: {
+        key: 'carbon',
+        name: '⬛ Carbon',
+        isDark: true,
+        bg: { base: '#0a0a0a', card: '#141414', raised: '#1c1c1c', hover: '#242424' },
+        text: { primary: '#f5f5f5', secondary: 'rgba(245,245,245,0.55)', tertiary: 'rgba(245,245,245,0.3)' },
+        border: 'rgba(255,255,255,0.08)',
     },
-    SUNSET: {
-        key: 'sunset',
-        name: 'Sunset',
-        token: {
-            colorPrimary: '#fa541c',
-            colorBgContainer: 'rgba(40, 20, 20, 0.8)',
-            colorBgElevated: '#2a1010',
-            colorBorder: 'rgba(250, 84, 28, 0.3)',
-            borderRadius: 8,
-        },
-        components: {
-            Button: { primaryShadow: '0 4px 16px rgba(250, 84, 28, 0.3)' },
-            Input: { activeBorderColor: '#fa541c', hoverBorderColor: '#ff7a45' },
-            Select: { optionSelectedBg: 'rgba(250, 84, 28, 0.2)' },
-        }
+    NAVY: {
+        key: 'navy',
+        name: '🔷 Navy',
+        isDark: true,
+        bg: { base: '#030712', card: '#0f172a', raised: '#1e293b', hover: '#273449' },
+        text: { primary: '#f1f5f9', secondary: 'rgba(241,245,249,0.55)', tertiary: 'rgba(241,245,249,0.3)' },
+        border: 'rgba(255,255,255,0.08)',
     },
-    MIDNIGHT: {
-        key: 'midnight',
-        name: 'Midnight',
-        token: {
-            colorPrimary: '#722ed1',
-            colorBgContainer: 'rgba(20, 10, 30, 0.9)',
-            colorBgElevated: '#120320',
-            colorBorder: 'rgba(114, 46, 209, 0.3)',
-            borderRadius: 4,
-        },
-        components: {
-            Button: { primaryShadow: '0 4px 16px rgba(114, 46, 209, 0.4)' },
-            Input: { activeBorderColor: '#722ed1', hoverBorderColor: '#9254de' },
-            Select: { optionSelectedBg: 'rgba(114, 46, 209, 0.2)' },
-        }
-    }
+    LIGHT: {
+        key: 'light',
+        name: '☀️ Light',
+        isDark: false,
+        bg: { base: '#f0f2f5', card: '#ffffff', raised: '#f8fafc', hover: '#e8ecf0' },
+        text: { primary: '#0f172a', secondary: 'rgba(15,23,42,0.6)', tertiary: 'rgba(15,23,42,0.38)' },
+        border: 'rgba(0,0,0,0.08)',
+    },
 };
 
+export const FONT_SIZES = [
+    { key: 'small',  label: 'S', base: 14, body: 13 },
+    { key: 'medium', label: 'M', base: 16, body: 15 },
+    { key: 'large',  label: 'L', base: 18, body: 17 },
+];
+
+function applyCssVars(themeObj, accentObj, fontSizeObj) {
+    const r = document.documentElement.style;
+    // Backgrounds
+    r.setProperty('--bg-base',   themeObj.bg.base);
+    r.setProperty('--bg-card',   themeObj.bg.card);
+    r.setProperty('--bg-raised', themeObj.bg.raised);
+    r.setProperty('--bg-hover',  themeObj.bg.hover);
+    r.setProperty('--bg-primary',  themeObj.bg.base);
+    r.setProperty('--bg-secondary', themeObj.bg.card);
+    r.setProperty('--bg-glass',  themeObj.bg.card);
+    r.setProperty('--bg-input',  themeObj.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)');
+    // Text
+    r.setProperty('--text-primary',   themeObj.text.primary);
+    r.setProperty('--text-secondary', themeObj.text.secondary);
+    r.setProperty('--text-tertiary',  themeObj.text.tertiary);
+    // Borders
+    r.setProperty('--border-color', themeObj.border);
+    // Accent
+    r.setProperty('--green',        accentObj.color);
+    r.setProperty('--green-dim',    accentObj.dim);
+    r.setProperty('--green-glow',   accentObj.glow);
+    r.setProperty('--green-border', accentObj.border);
+    r.setProperty('--primary-color', accentObj.color);
+    r.setProperty('--primary-hover', accentObj.color);
+    // Font size
+    r.setProperty('--font-size', `${fontSizeObj.base}px`);
+    document.body.style.fontSize = `${fontSizeObj.body}px`;
+}
+
 export const ThemeProvider = ({ children }) => {
-    const [currentThemeKey, setCurrentThemeKey] = useState(() => {
-        return localStorage.getItem('app-theme') || 'FIELD';
-    });
+    const [currentThemeKey, setCurrentThemeKey] = useState(
+        () => localStorage.getItem('app-theme') || 'DARK'
+    );
+    const [accentKey, setAccentKey] = useState(
+        () => localStorage.getItem('app-accent') || 'green'
+    );
+    const [fontSizeKey, setFontSizeKey] = useState(
+        () => localStorage.getItem('app-font-size') || 'medium'
+    );
+    const [isCompact, setIsCompact] = useState(
+        () => localStorage.getItem('app-compact') === 'true'
+    );
 
-    const [isCompact, setIsCompact] = useState(false);
+    const currentTheme  = THEMES[currentThemeKey] || THEMES.DARK;
+    const currentAccent = ACCENT_COLORS.find(a => a.key === accentKey) || ACCENT_COLORS[0];
+    const currentFont   = FONT_SIZES.find(f => f.key === fontSizeKey) || FONT_SIZES[1];
 
+    // Apply CSS vars whenever any setting changes
     useEffect(() => {
-        localStorage.setItem('app-theme', currentThemeKey);
-        // Update body class for global CSS overrides if needed
+        applyCssVars(currentTheme, currentAccent, currentFont);
         document.body.setAttribute('data-theme', currentThemeKey.toLowerCase());
-    }, [currentThemeKey]);
-
-    const currentTheme = THEMES[currentThemeKey];
+        localStorage.setItem('app-theme', currentThemeKey);
+        localStorage.setItem('app-accent', accentKey);
+        localStorage.setItem('app-font-size', fontSizeKey);
+        localStorage.setItem('app-compact', String(isCompact));
+    }, [currentThemeKey, accentKey, fontSizeKey, isCompact]);
 
     const themeConfig = {
-        algorithm: [theme.darkAlgorithm, isCompact ? theme.compactAlgorithm : undefined].filter(Boolean),
+        algorithm: [
+            currentTheme.isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
+            isCompact ? theme.compactAlgorithm : undefined,
+        ].filter(Boolean),
         token: {
-            ...currentTheme.token,
+            colorPrimary: currentAccent.color,
+            colorBgContainer: currentTheme.bg.card,
+            colorBgElevated: currentTheme.bg.raised,
+            colorBgBase: currentTheme.bg.base,
+            colorBgLayout: currentTheme.bg.base,
+            colorBorder: currentTheme.border,
+            colorBorderSecondary: currentTheme.border,
+            colorText: currentTheme.text.primary,
+            colorTextSecondary: currentTheme.text.secondary,
+            colorTextTertiary: currentTheme.text.tertiary,
+            borderRadius: 10,
             fontFamily: "'Outfit', -apple-system, BlinkMacSystemFont, sans-serif",
             controlHeight: isCompact ? 32 : 48,
-            fontSize: isCompact ? 14 : 16,
+            fontSize: currentFont.base,
         },
         components: {
-            ...currentTheme.components,
-            Menu: {
-                darkItemBg: 'transparent',
-                darkSubMenuItemBg: 'transparent',
-            }
-        }
-    };
-
-    const changeTheme = (key) => {
-        const themeEntry = Object.entries(THEMES).find(([_, value]) => value.key === key);
-        if (themeEntry) {
-            setCurrentThemeKey(themeEntry[0]);
+            Button: { primaryShadow: `0 2px 12px ${currentAccent.glow}` },
+            Input: { activeBorderColor: currentAccent.border, hoverBorderColor: currentAccent.dim },
+            Select: { optionSelectedBg: currentAccent.dim },
+            Menu: { darkItemBg: 'transparent', darkSubMenuItemBg: 'transparent' },
         }
     };
 
     return (
         <ThemeContext.Provider value={{
             currentThemeKey,
-            changeTheme,
-            themeConfig,
+            changeTheme: (key) => setCurrentThemeKey(key),
+            accentKey,
+            changeAccent: (key) => setAccentKey(key),
+            fontSizeKey,
+            changeFontSize: (key) => setFontSizeKey(key),
             isCompact,
-            toggleCompact: () => setIsCompact(!isCompact)
+            toggleCompact: () => setIsCompact(p => !p),
+            themeConfig,
+            isDark: currentTheme.isDark,
         }}>
             {children}
         </ThemeContext.Provider>

@@ -1,109 +1,170 @@
 import { useState } from 'react';
-import { Button, Drawer, Radio, Switch, Space, Typography, Divider } from 'antd';
-import { SettingOutlined, BgColorsOutlined } from '@ant-design/icons';
-import { useTheme, THEMES } from '../context/ThemeContext';
-
-const { Text, Title } = Typography;
+import { Drawer, Switch } from 'antd';
+import { SettingOutlined } from '@ant-design/icons';
+import { useTheme, THEMES, ACCENT_COLORS, FONT_SIZES } from '../context/ThemeContext';
 
 const ThemeSwitcher = () => {
     const [visible, setVisible] = useState(false);
-    const { currentThemeKey, changeTheme, isCompact, toggleCompact } = useTheme();
+    const {
+        currentThemeKey, changeTheme,
+        accentKey, changeAccent,
+        fontSizeKey, changeFontSize,
+        isCompact, toggleCompact,
+    } = useTheme();
 
     return (
         <>
-            <Button
-                type="primary"
-                shape="circle"
-                icon={<SettingOutlined spin={visible} />}
-                size="large"
-                style={{
-                    position: 'fixed',
-                    right: 16,
-                    bottom: 80,
-                    zIndex: 1000,
-                    width: 44,
-                    height: 44,
-                    borderRadius: '50%',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-                }}
+            <button
                 onClick={() => setVisible(true)}
-            />
+                style={{
+                    position: 'fixed', right: 16, bottom: 80, zIndex: 1000,
+                    width: 44, height: 44, borderRadius: '50%',
+                    background: 'var(--green)', border: 'none', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 4px 16px var(--green-glow)',
+                    transition: 'transform 0.2s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.transform = 'rotate(30deg) scale(1.08)'}
+                onMouseLeave={e => e.currentTarget.style.transform = 'none'}
+            >
+                <SettingOutlined style={{ fontSize: 18, color: '#060c18' }} />
+            </button>
 
             <Drawer
                 title={
-                    <Space>
-                        <BgColorsOutlined />
-                        <span>Настройки оформления</span>
-                    </Space>
+                    <span style={{ fontFamily: "'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight: 700, fontSize: 16 }}>
+                        ⚙️ Görünüş
+                    </span>
                 }
                 placement="right"
                 onClose={() => setVisible(false)}
                 open={visible}
-                width={320}
-                styles={{
-                    body: { padding: '24px' }
-                }}
+                width={300}
+                styles={{ body: { padding: '20px 16px' } }}
             >
-                <div style={{ marginBottom: 24 }}>
-                    <Title level={5} style={{ marginBottom: 16 }}>Тема оформления</Title>
-                    <Radio.Group
-                        value={currentThemeKey}
-                        onChange={(e) => changeTheme(e.target.value)}
-                        style={{ width: '100%' }}
-                    >
-                        <Space direction="vertical" style={{ width: '100%' }}>
-                            {Object.values(THEMES).map((theme) => (
-                                <Radio.Button
-                                    key={theme.key}
-                                    value={theme.key}
+                {/* ── Background theme ── */}
+                <Section label="Fon">
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                        {Object.values(THEMES).map(t => {
+                            const active = currentThemeKey === t.key.toUpperCase();
+                            return (
+                                <button
+                                    key={t.key}
+                                    onClick={() => changeTheme(t.key.toUpperCase())}
                                     style={{
-                                        width: '100%',
-                                        textAlign: 'left',
-                                        marginBottom: 8,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        height: 'auto',
-                                        padding: '12px'
+                                        padding: '10px 8px', borderRadius: 10, cursor: 'pointer',
+                                        border: active ? '2px solid var(--green)' : '1px solid var(--border-color)',
+                                        background: active ? 'var(--green-dim)' : t.bg.card,
+                                        color: active ? 'var(--green)' : t.text.primary,
+                                        fontFamily: 'Outfit, sans-serif', fontWeight: active ? 700 : 400,
+                                        fontSize: 13, transition: 'all 0.15s',
+                                        display: 'flex', alignItems: 'center', gap: 6,
                                     }}
                                 >
-                                    <Space>
-                                        <div style={{
-                                            width: 24,
-                                            height: 24,
-                                            borderRadius: '50%',
-                                            background: theme.token.colorPrimary,
-                                            border: '2px solid rgba(255,255,255,0.2)'
-                                        }} />
-                                        <span>{theme.name}</span>
-                                    </Space>
-                                </Radio.Button>
-                            ))}
-                        </Space>
-                    </Radio.Group>
-                </div>
+                                    <span style={{
+                                        width: 14, height: 14, borderRadius: '50%', flexShrink: 0,
+                                        background: t.bg.raised, border: `2px solid ${t.border}`,
+                                    }} />
+                                    {t.name}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </Section>
 
                 <Divider />
 
-                <div style={{ marginBottom: 24 }}>
-                    <Title level={5} style={{ marginBottom: 16 }}>Интерфейс</Title>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Text>Компактный режим</Text>
-                        <Switch checked={isCompact} onChange={toggleCompact} />
+                {/* ── Accent color ── */}
+                <Section label="Accent rəng">
+                    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                        {ACCENT_COLORS.map(a => {
+                            const active = accentKey === a.key;
+                            return (
+                                <button
+                                    key={a.key}
+                                    onClick={() => changeAccent(a.key)}
+                                    title={a.label}
+                                    style={{
+                                        width: 36, height: 36, borderRadius: '50%',
+                                        background: a.color, border: 'none', cursor: 'pointer',
+                                        outline: active ? `3px solid ${a.color}` : '2px solid transparent',
+                                        outlineOffset: 2,
+                                        boxShadow: active ? `0 0 12px ${a.glow}` : 'none',
+                                        transition: 'all 0.15s',
+                                        transform: active ? 'scale(1.15)' : 'scale(1)',
+                                    }}
+                                />
+                            );
+                        })}
                     </div>
-                </div>
+                </Section>
 
-                <div style={{
-                    marginTop: 'auto',
-                    paddingTop: 24,
-                    textAlign: 'center',
-                    color: 'var(--text-tertiary)',
-                    fontSize: 12
-                }}>
-                    Football App v1.0
+                <Divider />
+
+                {/* ── Font size ── */}
+                <Section label="Şrift ölçüsü">
+                    <div style={{ display: 'flex', gap: 8 }}>
+                        {FONT_SIZES.map(f => {
+                            const active = fontSizeKey === f.key;
+                            return (
+                                <button
+                                    key={f.key}
+                                    onClick={() => changeFontSize(f.key)}
+                                    style={{
+                                        flex: 1, padding: '8px 0', borderRadius: 8,
+                                        border: active ? '2px solid var(--green)' : '1px solid var(--border-color)',
+                                        background: active ? 'var(--green-dim)' : 'transparent',
+                                        color: active ? 'var(--green)' : 'var(--text-secondary)',
+                                        fontFamily: 'Outfit, sans-serif',
+                                        fontWeight: active ? 700 : 400,
+                                        fontSize: f.key === 'small' ? 12 : f.key === 'large' ? 16 : 14,
+                                        cursor: 'pointer', transition: 'all 0.15s',
+                                    }}
+                                >
+                                    {f.label}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </Section>
+
+                <Divider />
+
+                {/* ── Compact mode ── */}
+                <Section label="">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: 13, color: 'var(--text-secondary)' }}>
+                            Kompakt rejim
+                        </span>
+                        <Switch checked={isCompact} onChange={toggleCompact} size="small" />
+                    </div>
+                </Section>
+
+                <div style={{ marginTop: 32, textAlign: 'center', fontSize: 11, color: 'var(--text-tertiary)', fontFamily: 'Outfit, sans-serif' }}>
+                    Topin v1.0
                 </div>
             </Drawer>
         </>
     );
 };
+
+const Section = ({ label, children }) => (
+    <div style={{ marginBottom: 4 }}>
+        {label && (
+            <div style={{
+                fontFamily: 'Outfit, sans-serif', fontWeight: 600, fontSize: 11,
+                color: 'var(--text-tertiary)', textTransform: 'uppercase',
+                letterSpacing: 1, marginBottom: 10,
+            }}>
+                {label}
+            </div>
+        )}
+        {children}
+    </div>
+);
+
+const Divider = () => (
+    <div style={{ height: 1, background: 'var(--border-color)', margin: '18px 0' }} />
+);
 
 export default ThemeSwitcher;
