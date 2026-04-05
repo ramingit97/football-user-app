@@ -75,7 +75,8 @@ const GameRatingModal = ({ visible, onClose, players, gameId }) => {
             title={t('game.rating.title')}
             open={visible}
             onCancel={onClose}
-            width={600}
+            width="min(600px, 95vw)"
+        style={{ top: 20 }}
             footer={[
                 <Button key="cancel" onClick={onClose}>
                     {t('game.rating.cancel')}
@@ -95,10 +96,10 @@ const GameRatingModal = ({ visible, onClose, players, gameId }) => {
                     <StarOutlined style={{ color: '#faad14' }} />
                     <span style={{ color: '#faad14' }}>{t('game.rating.mvpTitle')}</span>
                 </h4>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     <span>{t('game.rating.mvpQuestion')}</span>
                     <Select
-                        style={{ width: 250 }}
+                        style={{ width: '100%' }}
                         placeholder={t('game.rating.mvpSelect')}
                         onChange={(val) => setMvpVote(val)}
                         value={mvpVote}
@@ -126,15 +127,15 @@ const GameRatingModal = ({ visible, onClose, players, gameId }) => {
                             title={player.name}
                             description={
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                        <span>{t('game.rating.skill')}</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                                        <span style={{ minWidth: 60, fontSize: 13 }}>{t('game.rating.skill')}</span>
                                         <Rate
                                             value={ratings[player.id]?.skill || 0}
                                             onChange={(val) => handleRateChange(player.id, 'skill', val)}
                                         />
                                     </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                        <span>{t('game.rating.behavior')}</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                                        <span style={{ minWidth: 60, fontSize: 13 }}>{t('game.rating.behavior')}</span>
                                         <Rate
                                             value={ratings[player.id]?.behavior || 0}
                                             onChange={(val) => handleRateChange(player.id, 'behavior', val)}

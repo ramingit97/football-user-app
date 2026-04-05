@@ -879,8 +879,8 @@ const GameDetailPage = () => {
                     border: '1px solid var(--border-color)',
                     borderRadius: 12,
                 }}>
-                    {/* Organizer tools */}
-                    {isOrganizer && !isFinished && (
+                    {/* Organizer tools — only when game is active (not pending_stats, not finished) */}
+                    {isOrganizer && game.gamePhase === 'active' && !isFinished && (
                         <>
                             <ActionBtn
                                 icon={<ThunderboltOutlined />}
@@ -910,26 +910,60 @@ const GameDetailPage = () => {
                                     variant="danger"
                                 />
                             )}
+                            <ActionBtn
+                                icon={<TrophyOutlined />}
+                                label={t('game.detail.finish')}
+                                onClick={() => setIsFinishModalVisible(true)}
+                                variant="danger"
+                            />
                         </>
                     )}
 
-                    {/* Post-game organizer actions */}
-                    {game.gamePhase === 'active' && isOrganizer && (
-                        <ActionBtn
-                            icon={<TrophyOutlined />}
-                            label={t('game.detail.finish')}
-                            onClick={() => setIsFinishModalVisible(true)}
-                            variant="danger"
-                        />
+                    {/* pending_stats phase — only validate (organizer) or claim stats (participant) */}
+                    {game.gamePhase === 'pending_stats' && (
+                        <>
+                            {isOrganizer && (
+                                <ActionBtn
+                                    icon={<CheckCircleOutlined />}
+                                    label={t('game.detail.check')}
+                                    onClick={() => setIsValidateStatsModalVisible(true)}
+                                    variant="purple"
+                                />
+                            )}
+                            {isParticipant && !hasClaimedStats && (
+                                <button
+                                    onClick={() => setIsPostGameModalVisible(true)}
+                                    style={{
+                                        display: 'flex', alignItems: 'center', gap: 8,
+                                        padding: '10px 20px', borderRadius: 12, border: 'none',
+                                        background: 'linear-gradient(135deg, #a855f7, #7c3aed)',
+                                        color: '#fff', cursor: 'pointer',
+                                        fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: 14,
+                                        boxShadow: '0 0 20px rgba(168,85,247,0.45)',
+                                        animation: 'pulse-stats 1.8s ease-in-out infinite',
+                                    }}
+                                >
+                                    <TrophyOutlined />
+                                    ⚽ {t('game.detail.stats')}
+                                </button>
+                            )}
+                            {hasClaimedStats && (
+                                <span style={{
+                                    display: 'flex', alignItems: 'center', gap: 6,
+                                    padding: '8px 14px', borderRadius: 9,
+                                    background: 'rgba(0,232,122,0.08)',
+                                    border: '1px solid rgba(0,232,122,0.2)',
+                                    fontSize: 13, color: '#00e87a',
+                                    fontFamily: 'Outfit, sans-serif', fontWeight: 600,
+                                }}>
+                                    <CheckCircleOutlined />
+                                    {t('game.detail.statsSubmitted', { sent: Object.keys(game.pendingPlayerStats || {}).length, total: game.players?.length })}
+                                </span>
+                            )}
+                        </>
                     )}
-                    {game.gamePhase === 'pending_stats' && isOrganizer && (
-                        <ActionBtn
-                            icon={<CheckCircleOutlined />}
-                            label={t('game.detail.check')}
-                            onClick={() => setIsValidateStatsModalVisible(true)}
-                            variant="purple"
-                        />
-                    )}
+
+                    {/* voting phase */}
                     {game.gamePhase === 'voting' && isOrganizer && (
                         <ActionBtn
                             icon={<TrophyOutlined />}
@@ -940,39 +974,7 @@ const GameDetailPage = () => {
                         />
                     )}
 
-                    {/* Participant: claim stats — highlighted CTA */}
-                    {game.gamePhase === 'pending_stats' && isParticipant && !hasClaimedStats && (
-                        <button
-                            onClick={() => setIsPostGameModalVisible(true)}
-                            style={{
-                                display: 'flex', alignItems: 'center', gap: 8,
-                                padding: '10px 20px', borderRadius: 12, border: 'none',
-                                background: 'linear-gradient(135deg, #a855f7, #7c3aed)',
-                                color: '#fff', cursor: 'pointer',
-                                fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: 14,
-                                boxShadow: '0 0 20px rgba(168,85,247,0.45)',
-                                animation: 'pulse-stats 1.8s ease-in-out infinite',
-                            }}
-                        >
-                            <TrophyOutlined />
-                            ⚽ {t('game.detail.stats')}
-                        </button>
-                    )}
-                    {hasClaimedStats && game.gamePhase === 'pending_stats' && (
-                        <span style={{
-                            display: 'flex', alignItems: 'center', gap: 6,
-                            padding: '8px 14px', borderRadius: 9,
-                            background: 'rgba(0,232,122,0.08)',
-                            border: '1px solid rgba(0,232,122,0.2)',
-                            fontSize: 13, color: '#00e87a',
-                            fontFamily: 'Outfit, sans-serif', fontWeight: 600,
-                        }}>
-                            <CheckCircleOutlined />
-                            {t('game.detail.statsSubmitted', { sent: Object.keys(game.pendingPlayerStats || {}).length, total: game.players?.length })}
-                        </span>
-                    )}
-
-                    {/* MVP vote + rating */}
+                    {/* finished — rate players */}
                     {isFinished && isParticipant && !hasAlreadyRated && (
                         <ActionBtn
                             icon={<StarOutlined />}
@@ -982,8 +984,8 @@ const GameDetailPage = () => {
                         />
                     )}
 
-                    {/* Shared: invite friends, whatsapp — hidden when finished */}
-                    {!isFinished && (
+                    {/* Shared: invite friends, whatsapp — only when active */}
+                    {game.gamePhase === 'active' && !isFinished && (
                         <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
                             {(isOrganizer || isParticipant) && (
                                 <ActionBtn
@@ -1454,7 +1456,8 @@ const GameDetailPage = () => {
                 open={isValidateStatsModalVisible}
                 onCancel={() => setIsValidateStatsModalVisible(false)}
                 footer={null}
-                width={900}
+                width="min(860px, 95vw)"
+                style={{ top: 20 }}
             >
                 <div style={{ textAlign: 'center', marginBottom: 20 }}>
                     <div style={{
@@ -1467,26 +1470,26 @@ const GameDetailPage = () => {
                     </div>
                 </div>
                 <Form form={validateForm} layout="vertical">
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
                         <Card title={<span style={{ color: '#ff4d4f' }}>🔴 {t('game.validateStats.teamA')}</span>} size="small" style={{ borderColor: '#ff4d4f' }}>
                             {(game.players || []).filter((_, idx) => idx < (game.maxPlayers || 10) / 2).map(player => {
                                 const claimed = game.pendingPlayerStats?.[player.id];
                                 return (
                                     <div key={player.id} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12, padding: 8, background: 'rgba(255,77,79,0.05)', borderRadius: 8 }}>
-                                        <Avatar size={48} src={player.avatar} icon={<UserOutlined />} style={{ border: '2px solid #ff4d4f' }}>
+                                                        <Avatar size={36} src={player.avatar} icon={<UserOutlined />} style={{ border: '2px solid #ff4d4f', flexShrink: 0 }}>
                                             {player.name?.charAt(0)}
                                         </Avatar>
-                                        <div style={{ flex: 1 }}>
-                                            <div style={{ fontWeight: 500 }}>{player.name}</div>
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <div style={{ fontWeight: 500, fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{player.name}</div>
                                             <div style={{ fontSize: 11, color: '#888' }}>
-                                                {claimed ? `${t('game.validateStats.claimed')} ⚽${claimed.goals} 👟${claimed.assists}` : t('game.validateStats.notClaimed')}
+                                                {claimed ? `⚽${claimed.goals} 👟${claimed.assists}` : t('game.validateStats.notClaimed')}
                                             </div>
                                         </div>
-                                        <Form.Item name={[player.id, 'goals']} initialValue={claimed?.goals || 0} style={{ marginBottom: 0, width: 60 }}>
-                                            <InputNumber min={0} size="small" placeholder="⚽" style={{ width: 55 }} />
+                                        <Form.Item name={[player.id, 'goals']} initialValue={claimed?.goals || 0} style={{ marginBottom: 0, width: 52 }}>
+                                            <InputNumber min={0} size="small" placeholder="⚽" style={{ width: 48 }} />
                                         </Form.Item>
-                                        <Form.Item name={[player.id, 'assists']} initialValue={claimed?.assists || 0} style={{ marginBottom: 0, width: 60 }}>
-                                            <InputNumber min={0} size="small" placeholder="👟" style={{ width: 55 }} />
+                                        <Form.Item name={[player.id, 'assists']} initialValue={claimed?.assists || 0} style={{ marginBottom: 0, width: 52 }}>
+                                            <InputNumber min={0} size="small" placeholder="👟" style={{ width: 48 }} />
                                         </Form.Item>
                                     </div>
                                 );
@@ -1496,21 +1499,21 @@ const GameDetailPage = () => {
                             {(game.players || []).filter((_, idx) => idx >= (game.maxPlayers || 10) / 2).map(player => {
                                 const claimed = game.pendingPlayerStats?.[player.id];
                                 return (
-                                    <div key={player.id} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12, padding: 8, background: 'rgba(24,144,255,0.05)', borderRadius: 8 }}>
-                                        <Avatar size={48} src={player.avatar} icon={<UserOutlined />} style={{ border: '2px solid #1890ff' }}>
+                                    <div key={player.id} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12, padding: 8, background: 'rgba(24,144,255,0.05)', borderRadius: 8 }}>
+                                        <Avatar size={36} src={player.avatar} icon={<UserOutlined />} style={{ border: '2px solid #1890ff', flexShrink: 0 }}>
                                             {player.name?.charAt(0)}
                                         </Avatar>
-                                        <div style={{ flex: 1 }}>
-                                            <div style={{ fontWeight: 500 }}>{player.name}</div>
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <div style={{ fontWeight: 500, fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{player.name}</div>
                                             <div style={{ fontSize: 11, color: '#888' }}>
-                                                {claimed ? `${t('game.validateStats.claimed')} ⚽${claimed.goals} 👟${claimed.assists}` : t('game.validateStats.notClaimed')}
+                                                {claimed ? `⚽${claimed.goals} 👟${claimed.assists}` : t('game.validateStats.notClaimed')}
                                             </div>
                                         </div>
-                                        <Form.Item name={[player.id, 'goals']} initialValue={claimed?.goals || 0} style={{ marginBottom: 0, width: 60 }}>
-                                            <InputNumber min={0} size="small" placeholder="⚽" style={{ width: 55 }} />
+                                        <Form.Item name={[player.id, 'goals']} initialValue={claimed?.goals || 0} style={{ marginBottom: 0, width: 52 }}>
+                                            <InputNumber min={0} size="small" placeholder="⚽" style={{ width: 48 }} />
                                         </Form.Item>
-                                        <Form.Item name={[player.id, 'assists']} initialValue={claimed?.assists || 0} style={{ marginBottom: 0, width: 60 }}>
-                                            <InputNumber min={0} size="small" placeholder="👟" style={{ width: 55 }} />
+                                        <Form.Item name={[player.id, 'assists']} initialValue={claimed?.assists || 0} style={{ marginBottom: 0, width: 52 }}>
+                                            <InputNumber min={0} size="small" placeholder="👟" style={{ width: 48 }} />
                                         </Form.Item>
                                     </div>
                                 );

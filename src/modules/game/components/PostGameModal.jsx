@@ -201,7 +201,7 @@ const PostGameModal = ({ visible, onClose, game, currentUser }) => {
 
     // ─── Step 2: Stats / MVP / Badges ───
     return (
-        <Modal title={null} open={visible} onCancel={onClose} footer={null} centered width={500}>
+        <Modal title={null} open={visible} onCancel={onClose} footer={null} centered width="min(500px, 95vw)" style={{ top: 20 }}>
             <div style={{ textAlign: 'center' }}>
                 {/* Score */}
                 <div style={{
@@ -238,8 +238,8 @@ const PostGameModal = ({ visible, onClose, game, currentUser }) => {
                 >
                     <div style={{
                         display: 'grid',
-                        gridTemplateColumns: `repeat(${Math.min(teammates.length, 4)}, 1fr)`,
-                        gap: 12, justifyItems: 'center'
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))',
+                        gap: 10, justifyItems: 'center'
                     }}>
                         {teammates.map(player => (
                             <div
@@ -296,7 +296,7 @@ const PostGameModal = ({ visible, onClose, game, currentUser }) => {
                                 </Avatar>
                                 <span style={{ fontSize: 13, fontWeight: 500 }}>{player.name?.split(' ')[0] || t('common.player')}</span>
                             </div>
-                            <div style={{ display: 'flex', gap: 6, paddingLeft: 38 }}>
+                            <div style={{ display: 'flex', gap: 6, paddingLeft: 38, flexWrap: 'wrap' }}>
                                 {BADGE_TYPES.map(badge => {
                                     const active = hasBadge(player.id, badge.key);
                                     const badgeLabel = t(badge.labelKey);
