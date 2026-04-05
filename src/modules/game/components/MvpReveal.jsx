@@ -27,7 +27,12 @@ const MvpReveal = ({ visible, mvpPlayer, onClose }) => {
     return (
         <AnimatePresence>
             {visible && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+                <div style={{
+                        position: 'fixed', inset: 0, zIndex: 1050,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(6px)',
+                        padding: '16px',
+                    }}>
                     {showConfetti && <Confetti numberOfPieces={200} recycle={false} />}
 
                     <motion.div
@@ -35,54 +40,70 @@ const MvpReveal = ({ visible, mvpPlayer, onClose }) => {
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.5, opacity: 0 }}
                         transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                        className="bg-transparent text-center p-8 rounded-2xl max-w-md w-full mx-4 relative"
+                        style={{
+                            background: 'transparent', textAlign: 'center',
+                            padding: '32px 24px', borderRadius: 24,
+                            maxWidth: 400, width: '100%', position: 'relative',
+                            boxSizing: 'border-box',
+                        }}
                     >
-                        {/* Glowing Effect Background */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-orange-500/20 blur-xl rounded-full" />
+                        {/* Glowing background */}
+                        <div style={{
+                            position: 'absolute', inset: 0,
+                            background: 'radial-gradient(ellipse at center, rgba(245,158,11,0.2) 0%, rgba(249,115,22,0.1) 60%, transparent 100%)',
+                            filter: 'blur(20px)', borderRadius: '50%',
+                            pointerEvents: 'none',
+                        }} />
 
                         <motion.div
-                            animate={{
-                                y: [0, -20, 0],
-                                rotate: [0, 5, -5, 0]
-                            }}
-                            transition={{
-                                duration: 2,
-                                repeat: Infinity,
-                                repeatType: "reverse"
-                            }}
-                            className="relative z-10 mb-6"
+                            animate={{ y: [0, -16, 0], rotate: [0, 5, -5, 0] }}
+                            transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+                            style={{ position: 'relative', zIndex: 1, marginBottom: 20 }}
                         >
-                            <TrophyOutlined style={{ fontSize: 80, color: '#f59e0b', filter: 'drop-shadow(0 0 15px gold)' }} />
+                            <TrophyOutlined style={{ fontSize: 72, color: '#f59e0b', filter: 'drop-shadow(0 0 15px gold)' }} />
                         </motion.div>
 
-                        <Title level={2} style={{ color: 'white', marginBottom: 8, textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+                        <Title level={2} style={{ color: 'white', marginBottom: 8, textShadow: '0 2px 10px rgba(0,0,0,0.5)', fontSize: 'clamp(18px, 5vw, 24px)' }}>
                             MAN OF THE MATCH
                         </Title>
 
-                        <div className="relative inline-block mb-6">
+                        <div style={{ position: 'relative', display: 'inline-block', marginBottom: 32, paddingBottom: 16 }}>
                             <Avatar
-                                size={120}
+                                size={110}
                                 src={mvpPlayer.avatar}
-                                style={{
-                                    border: '4px solid gold',
-                                    boxShadow: '0 0 30px rgba(255, 215, 0, 0.6)'
-                                }}
-                            />
-                            <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 bg-yellow-500 text-black font-bold px-4 py-1 rounded-full text-lg shadow-lg">
+                                style={{ border: '4px solid gold', boxShadow: '0 0 30px rgba(255,215,0,0.6)' }}
+                            >
+                                {!mvpPlayer.avatar && (mvpPlayer.name?.[0] || '?').toUpperCase()}
+                            </Avatar>
+                            <div style={{
+                                position: 'absolute', bottom: 0, left: '50%',
+                                transform: 'translateX(-50%)',
+                                background: '#f59e0b', color: '#000',
+                                fontWeight: 800, padding: '3px 16px',
+                                borderRadius: 20, fontSize: 14,
+                                whiteSpace: 'nowrap',
+                                boxShadow: '0 2px 10px rgba(245,158,11,0.5)',
+                            }}>
                                 MVP
                             </div>
                         </div>
 
-                        <Title level={3} style={{ color: '#fbbf24', margin: 0 }}>
+                        <Title level={3} style={{ color: '#fbbf24', margin: '0 0 8px', fontSize: 'clamp(16px, 5vw, 22px)' }}>
                             {mvpPlayer.name}
                         </Title>
-                        <Text className="text-gray-300 text-lg block mt-2">
+                        <Text style={{ color: '#d1d5db', fontSize: 16, display: 'block', marginBottom: 28 }}>
                             {t('game.mvpReveal.legendary')}
                         </Text>
 
                         <button
                             onClick={onClose}
-                            className="mt-8 bg-white/10 hover:bg-white/20 text-white border border-white/30 px-6 py-2 rounded-full transition-all"
+                            style={{
+                                background: 'rgba(255,255,255,0.1)', color: '#fff',
+                                border: '1px solid rgba(255,255,255,0.3)',
+                                padding: '8px 28px', borderRadius: 24,
+                                fontSize: 14, cursor: 'pointer',
+                                fontFamily: 'Outfit, sans-serif', fontWeight: 600,
+                            }}
                         >
                             {t('game.mvpReveal.close')}
                         </button>

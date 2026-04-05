@@ -940,14 +940,23 @@ const GameDetailPage = () => {
                         />
                     )}
 
-                    {/* Participant: claim stats */}
+                    {/* Participant: claim stats — highlighted CTA */}
                     {game.gamePhase === 'pending_stats' && isParticipant && !hasClaimedStats && (
-                        <ActionBtn
-                            icon={<TrophyOutlined />}
-                            label={t('game.detail.stats')}
+                        <button
                             onClick={() => setIsPostGameModalVisible(true)}
-                            variant="purple"
-                        />
+                            style={{
+                                display: 'flex', alignItems: 'center', gap: 8,
+                                padding: '10px 20px', borderRadius: 12, border: 'none',
+                                background: 'linear-gradient(135deg, #a855f7, #7c3aed)',
+                                color: '#fff', cursor: 'pointer',
+                                fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: 14,
+                                boxShadow: '0 0 20px rgba(168,85,247,0.45)',
+                                animation: 'pulse-stats 1.8s ease-in-out infinite',
+                            }}
+                        >
+                            <TrophyOutlined />
+                            ⚽ {t('game.detail.stats')}
+                        </button>
                     )}
                     {hasClaimedStats && game.gamePhase === 'pending_stats' && (
                         <span style={{
@@ -973,29 +982,31 @@ const GameDetailPage = () => {
                         />
                     )}
 
-                    {/* Shared: invite friends, whatsapp */}
-                    <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
-                        {(isOrganizer || isParticipant) && !isFinished && (
+                    {/* Shared: invite friends, whatsapp — hidden when finished */}
+                    {!isFinished && (
+                        <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
+                            {(isOrganizer || isParticipant) && (
+                                <ActionBtn
+                                    icon={<UserAddOutlined />}
+                                    label={t('game.detail.friends')}
+                                    onClick={() => setPrivateInviteModalVisible(true)}
+                                    variant="ghost"
+                                />
+                            )}
                             <ActionBtn
-                                icon={<UserAddOutlined />}
-                                label={t('game.detail.friends')}
-                                onClick={() => setPrivateInviteModalVisible(true)}
+                                icon={<ShareAltOutlined />}
+                                label="WhatsApp"
+                                onClick={handleShareWhatsApp}
+                                variant="whatsapp"
+                            />
+                            <ActionBtn
+                                icon={<QrcodeOutlined />}
+                                label="QR"
+                                onClick={() => setIsQrModalVisible(true)}
                                 variant="ghost"
                             />
-                        )}
-                        <ActionBtn
-                            icon={<ShareAltOutlined />}
-                            label="WhatsApp"
-                            onClick={handleShareWhatsApp}
-                            variant="whatsapp"
-                        />
-                        <ActionBtn
-                            icon={<QrcodeOutlined />}
-                            label="QR"
-                            onClick={() => setIsQrModalVisible(true)}
-                            variant="ghost"
-                        />
-                    </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* ── SCORE BOARD (finished) ────────────────── */}
@@ -1727,6 +1738,13 @@ const GameDetailPage = () => {
                     />
                 )}
             </Drawer>
+
+            <style>{`
+                @keyframes pulse-stats {
+                    0%, 100% { box-shadow: 0 0 20px rgba(168,85,247,0.45); }
+                    50% { box-shadow: 0 0 32px rgba(168,85,247,0.75), 0 0 48px rgba(168,85,247,0.25); }
+                }
+            `}</style>
         </div>
     );
 };

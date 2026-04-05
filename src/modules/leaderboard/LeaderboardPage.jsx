@@ -250,7 +250,7 @@ const LeaderboardPage = () => {
                     {t('nav.leaderboardPage.empty')}
                 </div>
             ) : (
-                <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+                <div className="leaderboard-grid">
                     {SECTIONS.map(section => (
                         <div key={section.key} style={{ flex: 1, minWidth: 0 }}>
                             <Section
@@ -261,6 +261,18 @@ const LeaderboardPage = () => {
                         </div>
                     ))}
                 </div>
+                <style>{`
+                    .leaderboard-grid {
+                        display: flex;
+                        gap: 16px;
+                        align-items: flex-start;
+                    }
+                    @media (max-width: 767px) {
+                        .leaderboard-grid {
+                            flex-direction: column;
+                        }
+                    }
+                `}</style>
             )}
         </div>
     );
