@@ -210,19 +210,11 @@ h1, h2, h3, h4, h5 {
   gap: 16px;
 }
 
-/* ── Game Card ── */
+/* ── Game Card ── (hover handled inline, class kept for grid) */
 .game-card {
   padding: 0;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-  border: 1px solid var(--border-color) !important;
-}
-
-.game-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--green-border) !important;
-  box-shadow: var(--shadow-card), 0 0 24px var(--green-glow) !important;
 }
 
 .game-card-header {

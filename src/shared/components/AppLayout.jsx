@@ -1,13 +1,8 @@
 import { Layout, Avatar, Dropdown, notification } from 'antd';
 import {
-    HomeOutlined,
-    UserOutlined,
-    PlusCircleOutlined,
-    LogoutOutlined,
-    TeamOutlined,
-    BellOutlined,
-    TrophyOutlined,
-    BankOutlined,
+    UserOutlined, LogoutOutlined, TeamOutlined,
+    TrophyOutlined, BellOutlined, PlusOutlined,
+    HomeOutlined, SettingOutlined, UsergroupAddOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -23,24 +18,21 @@ import { useTranslation } from 'react-i18next';
 
 const { Content } = Layout;
 
-const NAV = [
-    { key: '/games',        icon: HomeOutlined,       labelKey: 'nav.games' },
-    { key: '/games/create', icon: PlusCircleOutlined, labelKey: 'nav.createGame' },
-    { key: '/players',      icon: TeamOutlined,        labelKey: 'nav.players' },
-    { key: '/teams',        icon: TeamOutlined,        labelKey: 'nav.teams' },
-    { key: '/leaderboard',  icon: TrophyOutlined,      labelKey: 'nav.leaderboard' },
-    { key: '/stadiums',     icon: BankOutlined,        labelKey: 'nav.stadiums' },
-    { key: '/notifications',icon: BellOutlined,        labelKey: 'nav.notifications' },
-    { key: '/profile',      icon: UserOutlined,        labelKey: 'nav.profile' },
+// Desktop nav — 4 core items only
+const DESKTOP_NAV = [
+    { key: '/games',       icon: HomeOutlined,          labelKey: 'nav.games' },
+    { key: '/teams',       icon: TeamOutlined,          labelKey: 'nav.teams' },
+    { key: '/players',     icon: UsergroupAddOutlined,  labelKey: 'nav.players' },
+    { key: '/leaderboard', icon: TrophyOutlined,        labelKey: 'nav.leaderboard' },
 ];
 
-// Bottom nav items (mobile) — 5 max
-const BOTTOM_NAV = [
-    { key: '/games',        icon: HomeOutlined,        labelKey: 'nav.games' },
-    { key: '/games/create', icon: PlusCircleOutlined,  labelKey: 'nav.createGame' },
-    { key: '/leaderboard',  icon: TrophyOutlined,       labelKey: 'nav.leaderboard' },
-    { key: '/notifications',icon: BellOutlined,         labelKey: 'nav.notifications' },
-    { key: '/profile',      icon: UserOutlined,         labelKey: 'nav.profile' },
+// Mobile bottom nav — 4 items + central FAB
+const MOBILE_NAV = [
+    { key: '/games',       icon: HomeOutlined,   labelKey: 'nav.games' },
+    { key: '/teams',       icon: TeamOutlined,   labelKey: 'nav.teams' },
+    null, // FAB placeholder
+    { key: '/leaderboard', icon: TrophyOutlined, labelKey: 'nav.leaderboard' },
+    { key: '/profile',     icon: UserOutlined,   labelKey: 'nav.profile', authOnly: true },
 ];
 
 const AppLayout = ({ children }) => {
@@ -50,6 +42,7 @@ const AppLayout = ({ children }) => {
     const [logout] = useLogoutMutation();
     const [api, contextHolder] = notification.useNotification();
     const { t, i18n } = useTranslation();
+    const [hasUnread, setHasUnread] = useState(false);
 
     useEffect(() => {
         const localLang = localStorage.getItem('lang');
@@ -67,9 +60,9 @@ const AppLayout = ({ children }) => {
                         .catch(err => console.error('Failed to update FCM token', err));
                 }
             });
-
             const unsubscribe = onMessage(messaging, (payload) => {
                 if (payload) {
+                    setHasUnread(true);
                     api.info({
                         message: payload.notification?.title || t('nav.newNotification'),
                         description: payload.notification?.body || '',
@@ -95,6 +88,12 @@ const AppLayout = ({ children }) => {
             label: t('nav.profile'),
             onClick: () => navigate('/profile'),
         },
+        {
+            key: 'notifications',
+            icon: <BellOutlined />,
+            label: t('nav.notifications'),
+            onClick: () => { navigate('/notifications'); setHasUnread(false); },
+        },
         { type: 'divider' },
         {
             key: 'logout',
@@ -105,111 +104,164 @@ const AppLayout = ({ children }) => {
         },
     ];
 
-    const active = (key) => {
+    const isActive = (key) => {
         if (key === '/games') return location.pathname === '/games' || location.pathname === '/';
         return location.pathname.startsWith(key);
     };
+
+    const visibleMobileNav = MOBILE_NAV.filter(item => {
+        if (!item) return true; // FAB always shown
+        if (item.authOnly && !user) return false;
+        return true;
+    });
 
     return (
         <Layout style={{ minHeight: '100vh', background: 'var(--bg-base)' }}>
             {contextHolder}
 
-            {/* ── Top navbar ── */}
+            {/* ── Desktop header ── */}
             <header style={{
-                position: 'sticky',
-                top: 0,
-                zIndex: 1000,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '10px 24px',
-                background: 'rgba(6, 12, 24, 0.92)',
-                backdropFilter: 'blur(20px)',
+                position: 'sticky', top: 0, zIndex: 1000,
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '0 28px',
+                height: 60,
+                background: 'rgba(6,12,24,0.94)',
+                backdropFilter: 'blur(24px)',
                 borderBottom: '1px solid var(--border-color)',
             }}>
                 {/* Logo */}
                 <div
                     onClick={() => navigate('/')}
-                    style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', userSelect: 'none', marginLeft: 16 }}
+                    style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', userSelect: 'none', flexShrink: 0 }}
                 >
                     <img
-                        src="/logo.png"
-                        alt="logo"
-                        style={{
-                            height: 82,
-                            width: 'auto',
-                            objectFit: 'contain',
-                            filter: 'brightness(0) invert(1)',
-                        }}
+                        src="/logo.png" alt="logo"
+                        style={{ height: 72, width: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
                     />
-                   
                 </div>
 
                 {/* Desktop nav */}
-                <nav style={{ display: 'flex', alignItems: 'center', gap: 4 }} className="desktop-nav">
-                    {NAV.filter(({ key }) => {
-                        if (!user && (key === '/notifications' || key === '/profile')) return false;
-                        return true;
-                    }).map(({ key, icon: Icon, labelKey }) => {
-                        const isActive = active(key);
+                <nav style={{ display: 'flex', alignItems: 'center', gap: 2 }} className="desktop-nav">
+                    {DESKTOP_NAV.map(({ key, icon: Icon, labelKey }) => {
+                        const active = isActive(key);
                         return (
                             <button
                                 key={key}
                                 onClick={() => navigate(key)}
                                 style={{
-                                    background: 'none',
+                                    position: 'relative',
+                                    background: active ? 'rgba(0,232,122,0.08)' : 'transparent',
                                     border: 'none',
                                     cursor: 'pointer',
-                                    padding: '6px 14px',
-                                    borderRadius: 8,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 6,
-                                    color: isActive ? 'var(--green)' : 'var(--text-tertiary)',
+                                    padding: '7px 16px',
+                                    borderRadius: 10,
+                                    display: 'flex', alignItems: 'center', gap: 7,
+                                    color: active ? 'var(--green)' : 'var(--text-tertiary)',
                                     fontFamily: 'Outfit, sans-serif',
-                                    fontWeight: isActive ? 600 : 400,
-                                    fontSize: 16,
+                                    fontWeight: active ? 600 : 400,
+                                    fontSize: 14,
                                     transition: 'all 0.15s ease',
-                                    position: 'relative',
+                                    whiteSpace: 'nowrap',
                                 }}
                                 onMouseEnter={e => {
-                                    if (!isActive) {
+                                    if (!active) {
                                         e.currentTarget.style.color = 'var(--text-secondary)';
-                                        e.currentTarget.style.background = 'var(--bg-raised)';
+                                        e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
                                     }
                                 }}
                                 onMouseLeave={e => {
-                                    if (!isActive) {
+                                    if (!active) {
                                         e.currentTarget.style.color = 'var(--text-tertiary)';
                                         e.currentTarget.style.background = 'transparent';
                                     }
                                 }}
                             >
-                                <Icon style={{ fontSize: 16 }} />
+                                <Icon style={{ fontSize: 15 }} />
                                 {t(labelKey)}
+                                {active && (
+                                    <span style={{
+                                        position: 'absolute', bottom: -1, left: '50%',
+                                        transform: 'translateX(-50%)',
+                                        width: 16, height: 2,
+                                        background: 'var(--green)',
+                                        borderRadius: 2,
+                                        boxShadow: '0 0 6px rgba(0,232,122,0.6)',
+                                    }} />
+                                )}
                             </button>
                         );
                     })}
+
+                    {/* Create — special CTA button */}
+                    <button
+                        onClick={() => navigate('/games/create')}
+                        style={{
+                            marginLeft: 8,
+                            display: 'flex', alignItems: 'center', gap: 7,
+                            background: isActive('/games/create') ? '#00c868' : 'var(--green)',
+                            border: 'none',
+                            borderRadius: 10,
+                            padding: '7px 16px',
+                            color: '#060c18',
+                            fontFamily: 'Outfit, sans-serif',
+                            fontWeight: 700,
+                            fontSize: 14,
+                            cursor: 'pointer',
+                            transition: 'opacity 0.15s, transform 0.15s',
+                            boxShadow: '0 0 16px rgba(0,232,122,0.2)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.opacity = '0.88'; e.currentTarget.style.transform = 'scale(1.02)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'scale(1)'; }}
+                    >
+                        <PlusOutlined style={{ fontSize: 13 }} />
+                        {t('nav.createGame')}
+                    </button>
                 </nav>
 
                 {/* Right section */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
                     <LanguageSwitcher userId={user?.id} />
 
-                    {isLoading ? (
-                        <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'var(--bg-raised)' }} />
-                    ) : user ? (
-                        <Dropdown
-                            menu={{ items: userMenuItems }}
-                            placement="bottomRight"
-                            trigger={['click']}
-                        >
-                            <div style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 8,
+                    {/* Notification bell — only if logged in */}
+                    {user && (
+                        <button
+                            onClick={() => { navigate('/notifications'); setHasUnread(false); }}
+                            style={{
+                                position: 'relative',
+                                width: 36, height: 36,
+                                borderRadius: 10,
+                                background: location.pathname === '/notifications' ? 'rgba(0,232,122,0.08)' : 'transparent',
+                                border: '1px solid var(--border-color)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 cursor: 'pointer',
-                                padding: '4px 8px 4px 4px',
+                                color: location.pathname === '/notifications' ? 'var(--green)' : 'var(--text-tertiary)',
+                                transition: 'all 0.15s',
+                            }}
+                            onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.color = location.pathname === '/notifications' ? 'var(--green)' : 'var(--text-tertiary)'; }}
+                        >
+                            <BellOutlined style={{ fontSize: 16 }} />
+                            {hasUnread && (
+                                <span style={{
+                                    position: 'absolute', top: 6, right: 6,
+                                    width: 7, height: 7, borderRadius: '50%',
+                                    background: '#f04438',
+                                    border: '1.5px solid var(--bg-base)',
+                                    boxShadow: '0 0 6px rgba(240,68,56,0.8)',
+                                }} />
+                            )}
+                        </button>
+                    )}
+
+                    {isLoading ? (
+                        <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--bg-raised)' }} />
+                    ) : user ? (
+                        <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" trigger={['click']}>
+                            <div style={{
+                                display: 'flex', alignItems: 'center', gap: 8,
+                                cursor: 'pointer',
+                                padding: '4px 10px 4px 4px',
                                 borderRadius: 40,
                                 border: '1px solid var(--border-color)',
                                 background: 'var(--bg-raised)',
@@ -219,13 +271,13 @@ const AppLayout = ({ children }) => {
                                 onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
                             >
                                 <Avatar
-                                    size={34}
+                                    size={32}
                                     src={user.avatar}
                                     icon={<UserOutlined />}
-                                    style={{ backgroundColor: 'var(--green)', color: '#060c18', fontSize: 15 }}
+                                    style={{ backgroundColor: 'var(--green)', color: '#060c18', fontSize: 14, flexShrink: 0 }}
                                 />
-                                <span style={{ color: 'var(--text-secondary)', fontSize: 16, fontWeight: 500 }} className="user-name">
-                                    {user.name || user.email}
+                                <span style={{ color: 'var(--text-secondary)', fontSize: 14, fontWeight: 500, fontFamily: 'Outfit,sans-serif' }} className="user-name">
+                                    {user.name?.split(' ')[0] || user.email}
                                 </span>
                             </div>
                         </Dropdown>
@@ -233,16 +285,18 @@ const AppLayout = ({ children }) => {
                         <button
                             onClick={() => navigate('/')}
                             style={{
-                                background: 'var(--green)',
-                                border: 'none',
-                                borderRadius: 8,
-                                padding: '7px 16px',
-                                color: '#060c18',
+                                background: 'transparent',
+                                border: '1px solid var(--border-color)',
+                                borderRadius: 10,
+                                padding: '7px 18px',
+                                color: 'var(--text-secondary)',
                                 fontFamily: 'Outfit, sans-serif',
-                                fontWeight: 700,
-                                fontSize: 14,
+                                fontWeight: 600, fontSize: 14,
                                 cursor: 'pointer',
+                                transition: 'border-color 0.15s, color 0.15s',
                             }}
+                            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--green-border)'; e.currentTarget.style.color = 'var(--green)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
                         >
                             {t('nav.login')}
                         </button>
@@ -256,67 +310,91 @@ const AppLayout = ({ children }) => {
             </Content>
 
             {/* ── Mobile bottom nav ── */}
-            <nav style={{
-                position: 'fixed',
-                bottom: 0,
-                left: 0,
-                right: 0,
+            <nav className="mobile-bottom-nav" style={{
+                position: 'fixed', bottom: 0, left: 0, right: 0,
                 height: 64,
-                background: 'rgba(6, 12, 24, 0.97)',
-                backdropFilter: 'blur(20px)',
+                background: 'rgba(6,12,24,0.97)',
+                backdropFilter: 'blur(24px)',
                 borderTop: '1px solid var(--border-color)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-around',
+                display: 'flex', alignItems: 'center',
                 zIndex: 1000,
-                padding: '0 4px',
-            }} className="mobile-bottom-nav">
-                {BOTTOM_NAV.filter(({ key }) => {
-                    if (!user && (key === '/notifications' || key === '/profile')) return false;
-                    return true;
-                }).map(({ key, icon: Icon, labelKey }) => {
-                    const isActive = active(key);
+                paddingBottom: 'env(safe-area-inset-bottom)',
+            }}>
+                {visibleMobileNav.map((item, idx) => {
+                    // FAB — create game
+                    if (!item) {
+                        return (
+                            <div key="fab" style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <button
+                                    onClick={() => navigate('/games/create')}
+                                    style={{
+                                        width: 50, height: 50,
+                                        borderRadius: '50%',
+                                        background: 'var(--green)',
+                                        border: '3px solid var(--bg-base)',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        cursor: 'pointer',
+                                        boxShadow: '0 0 20px rgba(0,232,122,0.45), 0 4px 16px rgba(0,0,0,0.5)',
+                                        transform: 'translateY(-10px)',
+                                        transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+                                        flexShrink: 0,
+                                    }}
+                                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-12px) scale(1.06)'; e.currentTarget.style.boxShadow = '0 0 28px rgba(0,232,122,0.6), 0 6px 20px rgba(0,0,0,0.5)'; }}
+                                    onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(-10px)'; e.currentTarget.style.boxShadow = '0 0 20px rgba(0,232,122,0.45), 0 4px 16px rgba(0,0,0,0.5)'; }}
+                                >
+                                    <PlusOutlined style={{ fontSize: 22, color: '#060c18', fontWeight: 900 }} />
+                                </button>
+                            </div>
+                        );
+                    }
+
+                    const active = isActive(item.key);
+                    const Icon = item.icon;
+
                     return (
                         <button
-                            key={key}
-                            onClick={() => navigate(key)}
+                            key={item.key}
+                            onClick={() => navigate(item.key)}
                             style={{
                                 flex: 1,
-                                background: 'none',
-                                border: 'none',
+                                background: 'none', border: 'none',
                                 cursor: 'pointer',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: 3,
-                                padding: '8px 4px',
-                                borderRadius: 10,
-                                color: isActive ? 'var(--green)' : 'var(--text-tertiary)',
+                                display: 'flex', flexDirection: 'column',
+                                alignItems: 'center', justifyContent: 'center',
+                                gap: 4,
+                                padding: '10px 4px',
+                                color: active ? 'var(--green)' : 'var(--text-tertiary)',
                                 transition: 'color 0.15s',
                                 position: 'relative',
                             }}
                         >
-                            {isActive && (
-                                <span style={{
-                                    position: 'absolute',
-                                    top: 4,
-                                    left: '50%',
-                                    transform: 'translateX(-50%)',
-                                    width: 20,
-                                    height: 2,
-                                    background: 'var(--green)',
-                                    borderRadius: 2,
-                                }} />
-                            )}
-                            <Icon style={{ fontSize: 20 }} />
+                            {/* Icon pill background when active */}
+                            <div style={{
+                                width: 34, height: 28,
+                                borderRadius: 8,
+                                background: active ? 'rgba(0,232,122,0.1)' : 'transparent',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                transition: 'background 0.15s',
+                            }}>
+                                <Icon style={{ fontSize: 18 }} />
+                                {item.key === '/notifications' && hasUnread && (
+                                    <span style={{
+                                        position: 'absolute', top: 8, left: '50%',
+                                        transform: 'translateX(2px)',
+                                        width: 6, height: 6, borderRadius: '50%',
+                                        background: '#f04438',
+                                        border: '1.5px solid var(--bg-base)',
+                                    }} />
+                                )}
+                            </div>
                             <span style={{
                                 fontSize: 10,
                                 fontFamily: 'Outfit, sans-serif',
-                                fontWeight: isActive ? 600 : 400,
+                                fontWeight: active ? 600 : 400,
                                 lineHeight: 1,
+                                letterSpacing: '0.1px',
                             }}>
-                                {t(labelKey)}
+                                {t(item.labelKey)}
                             </span>
                         </button>
                     );
@@ -328,15 +406,12 @@ const AppLayout = ({ children }) => {
 
             <style>{`
                 @media (min-width: 768px) {
-                    .logo-text { display: inline !important; }
                     .user-name { display: inline !important; }
                     .mobile-bottom-nav { display: none !important; }
                     .main-content-wrap { padding-bottom: 0 !important; }
                 }
-
                 @media (max-width: 767px) {
                     .desktop-nav { display: none !important; }
-                    .logo-text { display: none; }
                     .user-name { display: none; }
                 }
             `}</style>
