@@ -1279,6 +1279,155 @@ export default function LandingPage() {
         </FadeSection>
       </section>
 
+      {/* ══════════════════════════ OWN GAME + SMART INVITE ══════════════════════════ */}
+      <section style={{ padding:'100px clamp(20px,5vw,80px)', position:'relative', overflow:'hidden' }}>
+        <div style={{ position:'absolute', top:'50%', left:'30%', transform:'translate(-50%,-50%)', width:600, height:600, borderRadius:'50%', background:'radial-gradient(circle,rgba(0,232,122,0.05) 0%,transparent 65%)', pointerEvents:'none' }}/>
+
+        <FadeSection>
+          <div style={{ maxWidth:1100, margin:'0 auto', display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 48 : 72, alignItems:'center' }}>
+
+            {/* Left: text */}
+            <div>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:8, background:'rgba(0,232,122,0.1)', border:'1px solid rgba(0,232,122,0.25)', borderRadius:100, padding:'6px 18px', marginBottom:20 }}>
+                <span style={{ fontSize:14 }}>⚽</span>
+                <span style={{ fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, color:'var(--green)', letterSpacing:'2px', textTransform:'uppercase' }}>Öz oyunun</span>
+              </div>
+
+              <h2 style={{ fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:800, fontSize:'clamp(26px,4vw,46px)', color:'var(--text-primary)', letterSpacing:'-1px', lineHeight:1.1, marginBottom:18 }}>
+                Komandan var,<br/>
+                <span style={{ color:'var(--green)' }}>1-2 nəfər çatmır?</span>
+              </h2>
+
+              <p style={{ fontFamily:'Outfit,sans-serif', fontSize:16, color:'var(--text-secondary)', lineHeight:1.7, marginBottom:32, maxWidth:480 }}>
+                Öz yerini tap, neçə nəfər gətirdiyini yaz — sistem avtomatik açıq yerlər yaradır. Legionerlər birbaşa siyahıdan yazılır.
+              </p>
+
+              {/* Steps */}
+              <div style={{ display:'flex', flexDirection:'column', gap:16, marginBottom:36 }}>
+                {[
+                  { n:'1', label:'Öz oyununu yarat', sub:'Ünvan, vaxt, format — 30 saniyədə' },
+                  { n:'2', label:'Dostlarını əlavə et', sub:'Sistemdə olsun ya olmasın — sadəcə say yaz' },
+                  { n:'3', label:'Smart Invite işə düşür', sub:'Sistem uyğun oyunçuları tapıb dəvətnamə göndərir' },
+                ].map(s => (
+                  <div key={s.n} style={{ display:'flex', alignItems:'flex-start', gap:14 }}>
+                    <div style={{
+                      width:28, height:28, borderRadius:'50%', flexShrink:0,
+                      background:'rgba(0,232,122,0.12)', border:'1px solid rgba(0,232,122,0.3)',
+                      display:'flex', alignItems:'center', justifyContent:'center',
+                      fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif",
+                      fontWeight:800, fontSize:12, color:'var(--green)',
+                    }}>{s.n}</div>
+                    <div>
+                      <div style={{ fontFamily:'Outfit,sans-serif', fontWeight:600, fontSize:14, color:'var(--text-primary)', lineHeight:1.3 }}>{s.label}</div>
+                      <div style={{ fontFamily:'Outfit,sans-serif', fontSize:12, color:'var(--text-tertiary)', marginTop:2 }}>{s.sub}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => navigate('/games/create')}
+                style={{
+                  display:'inline-flex', alignItems:'center', gap:10,
+                  background:'var(--green)', border:'none', borderRadius:12,
+                  padding:'13px 28px', cursor:'pointer',
+                  fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif",
+                  fontWeight:800, fontSize:15, color:'#060c18',
+                  boxShadow:'0 0 28px rgba(0,232,122,0.3)',
+                  transition:'transform 0.15s, opacity 0.15s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.opacity='0.88'; e.currentTarget.style.transform='scale(1.03)'; }}
+                onMouseLeave={e => { e.currentTarget.style.opacity='1'; e.currentTarget.style.transform='scale(1)'; }}
+              >
+                ⚽ Oyun yarat
+              </button>
+            </div>
+
+            {/* Right: visual mockup */}
+            <div style={{ position:'relative' }}>
+              <div style={{ position:'absolute', inset:-20, borderRadius:24, background:'radial-gradient(ellipse at center,rgba(0,232,122,0.08) 0%,transparent 70%)', pointerEvents:'none' }}/>
+
+              <div style={{
+                background:'var(--bg-card)', border:'1px solid var(--border-color)',
+                borderRadius:20, overflow:'hidden',
+                boxShadow:'0 24px 80px rgba(0,0,0,0.4)',
+              }}>
+                {/* Header bar */}
+                <div style={{ background:'var(--bg-raised)', borderBottom:'1px solid var(--border-color)', padding:'12px 16px', display:'flex', alignItems:'center', gap:8 }}>
+                  {['#f04438','#f59e0b','#00e87a'].map(c => (
+                    <div key={c} style={{ width:9, height:9, borderRadius:'50%', background:c, opacity:0.8 }}/>
+                  ))}
+                  <div style={{ marginLeft:10, fontFamily:'Outfit,sans-serif', fontSize:12, color:'var(--text-tertiary)' }}>Cümə axşamı 6×6 · Maştağa</div>
+                  <div style={{ marginLeft:'auto', background:'rgba(0,232,122,0.15)', border:'1px solid rgba(0,232,122,0.3)', borderRadius:6, padding:'2px 10px', fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, color:'var(--green)' }}>Açıqdır</div>
+                </div>
+
+                <div style={{ padding:'20px 20px 8px' }}>
+                  {/* Slot summary */}
+                  <div style={{ display:'flex', gap:10, marginBottom:20 }}>
+                    {[
+                      { label:'Öz oyunçular', n:'10', color:'#a590f7', bg:'rgba(124,106,247,0.1)' },
+                      { label:'Açıq yerlər', n:'2', color:'var(--green)', bg:'rgba(0,232,122,0.1)' },
+                    ].map(b => (
+                      <div key={b.label} style={{ flex:1, background:b.bg, border:`1px solid ${b.color}30`, borderRadius:12, padding:'12px 14px', textAlign:'center' }}>
+                        <div style={{ fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:800, fontSize:26, color:b.color }}>{b.n}</div>
+                        <div style={{ fontFamily:'Outfit,sans-serif', fontSize:11, color:'var(--text-tertiary)', marginTop:2 }}>{b.label}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Smart invite pulse */}
+                  <div style={{ background:'rgba(0,232,122,0.06)', border:'1px solid rgba(0,232,122,0.2)', borderRadius:12, padding:'14px 16px', marginBottom:14 }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
+                      <span style={{ fontSize:18 }}>⚡</span>
+                      <div>
+                        <div style={{ fontFamily:'Outfit,sans-serif', fontWeight:700, fontSize:13, color:'var(--green)' }}>Smart Invite işə düşdü</div>
+                        <div style={{ fontFamily:'Outfit,sans-serif', fontSize:11, color:'var(--text-tertiary)' }}>Uyğun oyunçular tapıldı</div>
+                      </div>
+                      <div style={{ marginLeft:'auto', fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:800, fontSize:16, color:'var(--green)' }}>14</div>
+                    </div>
+
+                    {/* Mini player list */}
+                    {[
+                      { name:'Elçin M.', mmr:74, dist:'1.2 km', match:'GK' },
+                      { name:'Rauf A.',  mmr:68, dist:'0.8 km', match:'MID' },
+                      { name:'Tural K.', mmr:71, dist:'2.1 km', match:'DEF' },
+                    ].map((p, i) => (
+                      <div key={p.name} style={{
+                        display:'flex', alignItems:'center', gap:10,
+                        padding:'8px 10px', borderRadius:8, marginBottom: i < 2 ? 6 : 0,
+                        background:'var(--bg-raised)', border:'1px solid var(--border-color)',
+                      }}>
+                        <div style={{ width:30, height:30, borderRadius:'50%', background:`hsl(${i*80+140},60%,35%)`, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:800, fontSize:11, color:'#fff', flexShrink:0 }}>
+                          {p.name[0]}
+                        </div>
+                        <div style={{ flex:1, minWidth:0 }}>
+                          <div style={{ fontFamily:'Outfit,sans-serif', fontWeight:600, fontSize:12, color:'var(--text-primary)' }}>{p.name}</div>
+                          <div style={{ fontFamily:'Outfit,sans-serif', fontSize:10, color:'var(--text-tertiary)' }}>{p.dist} · {p.match}</div>
+                        </div>
+                        <div style={{ background:'rgba(0,232,122,0.12)', border:'1px solid rgba(0,232,122,0.25)', borderRadius:6, padding:'2px 8px', fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:700, fontSize:11, color:'var(--green)' }}>{p.mmr}</div>
+                        <button style={{ background:'var(--green)', border:'none', borderRadius:6, width:26, height:26, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', fontSize:13, color:'#060c18', fontWeight:700 }}>+</button>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Payment type badge */}
+                  <div style={{ display:'flex', alignItems:'center', gap:8, padding:'10px 14px', background:'rgba(245,166,35,0.06)', border:'1px solid rgba(245,166,35,0.2)', borderRadius:10 }}>
+                    <span style={{ fontSize:16 }}>🤝</span>
+                    <div>
+                      <div style={{ fontFamily:'Outfit,sans-serif', fontWeight:600, fontSize:12, color:'var(--text-primary)' }}>Ödəniş — yerindəcə</div>
+                      <div style={{ fontFamily:'Outfit,sans-serif', fontSize:11, color:'var(--text-tertiary)' }}>Legionerlər pulsuz yazılır</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ height:14 }} />
+              </div>
+            </div>
+
+          </div>
+        </FadeSection>
+      </section>
+
       {/* ══════════════════════════ PARTNER TEASER ══════════════════════════ */}
       <section style={{ padding:'80px clamp(20px,5vw,80px)', background:'var(--bg-card)', borderTop:'1px solid var(--border-color)', borderBottom:'1px solid var(--border-color)', position:'relative', overflow:'hidden' }}>
         <div style={{ position:'absolute', right:-100, top:'50%', transform:'translateY(-50%)', width:500, height:500, borderRadius:'50%', background:'radial-gradient(circle,rgba(79,134,247,0.06) 0%,transparent 70%)', pointerEvents:'none' }}/>

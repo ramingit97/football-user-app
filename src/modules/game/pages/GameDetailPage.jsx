@@ -58,6 +58,8 @@ import {
     useCompleteGameMutation,
     useBalanceTeamsMutation,
     useCancelGameMutation,
+    useUpdatePaymentTrackingMutation,
+    useUpdateGuestsMutation,
 } from '../../../store/gamesApi';
 import { useGetProfileQuery } from '../../../store/authApi';
 import GameRatingModal from '../components/GameRatingModal';
@@ -72,6 +74,7 @@ import GameMap from '../components/GameMap';
 import UrgentBanner from '../components/UrgentBanner';
 import GameChat from '../components/GameChat';
 import PostGameModal from '../components/PostGameModal';
+import PaymentPanel from '../components/PaymentPanel';
 import MvpReveal from '../components/MvpReveal';
 import PrivateInviteModal from '../components/PrivateInviteModal';
 import DualTeamFieldView from '../components/DualTeamFieldView';
@@ -393,6 +396,16 @@ const GameDetailPage = () => {
             });
             return;
         }
+
+        // Own games with cash/organizer payment — skip payment modal, join directly
+        const skipPayment = game.gameMode === 'own' &&
+            (game.legionPaymentType === 'cash' || game.legionPaymentType === 'organizer');
+
+        if (skipPayment) {
+            handlePaymentSuccess();
+            return;
+        }
+
         setIsPaymentModalVisible(true);
     };
 
@@ -1021,6 +1034,11 @@ const GameDetailPage = () => {
                         </div>
                     )}
                 </div>
+
+                {/* ── PAYMENT PANEL (own games, organizer only) ── */}
+                {isOrganizer && game.gameMode === 'own' && !isFinished && (
+                    <PaymentPanel game={game} currentUser={currentUser} />
+                )}
 
                 {/* ── SCORE BOARD (finished) ────────────────── */}
                 {isFinished && (

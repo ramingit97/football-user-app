@@ -213,6 +213,24 @@ export const gamesApi = createApi({
             }),
             invalidatesTags: (result, error, { id }) => [{ type: 'GameInvite', id }],
         }),
+
+        updatePaymentTracking: builder.mutation({
+            query: ({ id, organizerId, tracking }) => ({
+                url: `games/${id}/payment-tracking`,
+                method: 'PATCH',
+                body: { organizerId, tracking },
+            }),
+            invalidatesTags: (result, error, { id }) => [{ type: 'Game', id }],
+        }),
+
+        updateGuests: builder.mutation({
+            query: ({ id, organizerId, guests }) => ({
+                url: `games/${id}/guests`,
+                method: 'PATCH',
+                body: { organizerId, guests },
+            }),
+            invalidatesTags: (result, error, { id }) => [{ type: 'Game', id }],
+        }),
     }),
 });
 
@@ -246,6 +264,8 @@ export const {
     useSubmitPostGameMutation,
     useBalanceTeamsMutation,
     useCancelGameMutation,
+    useUpdatePaymentTrackingMutation,
+    useUpdateGuestsMutation,
 } = gamesApi;
 
 

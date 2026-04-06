@@ -367,9 +367,11 @@ const PlayerNode = ({
     const { t } = useTranslation();
     const isOccupied = !!player;
 
+    const isGuest = player?.isGuest || player?.type === 'guest';
+
     const handleClick = () => {
         if (shufflePhase !== 'idle') return;
-        if (isOccupied && player?.id) {
+        if (isOccupied && player?.id && !isGuest) {
             onPlayerClick?.(player);
         } else if (!isOccupied && isSelectionMode) {
             onPositionClick?.(pos);
@@ -431,14 +433,17 @@ const PlayerNode = ({
                         isOccupied ? (
                             <div style={{ textAlign: 'center' }}>
                                 <div style={{ fontWeight: 700 }}>{player.name}</div>
-                                {player.averageRating > 0 && (
+                                {isGuest && <div style={{ fontSize: 11, color: '#a590f7', marginTop: 2 }}>Qonaq</div>}
+                                {!isGuest && player.averageRating > 0 && (
                                     <div style={{ fontSize: 12, color: '#faad14' }}>
                                         ⭐ {player.averageRating?.toFixed(1)}
                                     </div>
                                 )}
-                                <div style={{ fontSize: 11, marginTop: 4, color: 'rgba(255,255,255,0.6)' }}>
-                                    {t('game.fieldView.clickForProfile')}
-                                </div>
+                                {!isGuest && (
+                                    <div style={{ fontSize: 11, marginTop: 4, color: 'rgba(255,255,255,0.6)' }}>
+                                        {t('game.fieldView.clickForProfile')}
+                                    </div>
+                                )}
                             </div>
                         ) : isSelectionMode ? t('game.fieldView.clickToOccupy') : t('game.fieldView.free')
                     )
@@ -448,15 +453,21 @@ const PlayerNode = ({
                 <div style={{
                     width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden',
                     border: isOccupied
-                        ? `3px solid rgba(255,215,0,0.85)`
+                        ? isGuest
+                            ? '3px dashed rgba(165,144,247,0.85)'
+                            : `3px solid rgba(255,215,0,0.85)`
                         : isSelectionMode
                             ? '2px solid rgba(82,196,26,0.8)'
                             : '2px dashed rgba(255,255,255,0.3)',
                     boxShadow: isOccupied
-                        ? `0 5px 18px rgba(0,0,0,0.45), 0 0 18px rgba(255,215,0,0.25), 0 0 22px ${teamColor}35`
+                        ? isGuest
+                            ? '0 5px 18px rgba(0,0,0,0.35), 0 0 14px rgba(165,144,247,0.25)'
+                            : `0 5px 18px rgba(0,0,0,0.45), 0 0 18px rgba(255,215,0,0.25), 0 0 22px ${teamColor}35`
                         : isSelectionMode ? '0 0 10px rgba(82,196,26,0.35)' : 'none',
                     background: isOccupied
-                        ? `linear-gradient(145deg, ${teamColor}ee, ${teamColor}88)`
+                        ? isGuest
+                            ? 'linear-gradient(145deg, #7c6af7cc, #5c4fd6aa)'
+                            : `linear-gradient(145deg, ${teamColor}ee, ${teamColor}88)`
                         : 'rgba(0,0,0,0.32)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     position: 'relative',
