@@ -13,12 +13,14 @@ const LoginPage = () => {
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
-            navigate('/games', { replace: true });
+            const returnTo = new URLSearchParams(location.search).get('returnTo');
+            navigate(returnTo || '/games', { replace: true });
         }
     }, [navigate]);
 
     const handleSuccess = () => {
-        navigate('/games');
+        const returnTo = new URLSearchParams(location.search).get('returnTo');
+        navigate(returnTo || '/games', { replace: true });
     };
 
     const handleRegister = (e) => {

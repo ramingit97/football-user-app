@@ -1143,6 +1143,142 @@ export default function LandingPage() {
         </FadeSection>
       </section>
 
+      {/* ══════════════════════════ TEAMS ══════════════════════════ */}
+      <section style={{ padding:'100px clamp(20px,5vw,80px)', background:'var(--bg-card)', borderTop:'1px solid var(--border-color)', borderBottom:'1px solid var(--border-color)', position:'relative', overflow:'hidden' }}>
+        <div style={{ position:'absolute', left:'50%', top:'50%', transform:'translate(-50%,-50%)', width:800, height:800, borderRadius:'50%', background:'radial-gradient(circle,rgba(168,85,247,0.05) 0%,transparent 65%)', pointerEvents:'none' }}/>
+        <FadeSection>
+          <div style={{ maxWidth:1100, margin:'0 auto' }}>
+
+            {/* Header */}
+            <div style={{ textAlign:'center', marginBottom:64 }}>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:8, background:'rgba(168,85,247,0.1)', border:'1px solid rgba(168,85,247,0.25)', borderRadius:100, padding:'6px 18px', marginBottom:20 }}>
+                <span style={{ fontSize:14 }}>🛡️</span>
+                <span style={{ fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, color:'#a855f7', letterSpacing:'2px', textTransform:'uppercase' }}>Komanda rejimi</span>
+              </div>
+              <h2 style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:'clamp(28px,5vw,50px)', color:'var(--text-primary)', letterSpacing:'-1px', lineHeight:1.1, marginBottom:18 }}>
+                Komanda yarat.<br/>
+                <span style={{ color:'#a855f7' }}>Rəqibə meydan oxu.</span>
+              </h2>
+              <p style={{ fontFamily:'Outfit,sans-serif', fontSize:16, color:'var(--text-secondary)', lineHeight:1.7, maxWidth:520, margin:'0 auto' }}>
+                Tək oyun kifayət deyil? Öz komanданızı yaradın, dostları dəvət edin və rəqib komandalarla üz-üzə gəlin.
+              </p>
+            </div>
+
+            {/* Feature cards */}
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(260px,1fr))', gap:24, marginBottom:56 }}>
+              {[
+                {
+                  icon:'🛡️',
+                  color:'#a855f7',
+                  bg:'rgba(168,85,247,0.08)',
+                  border:'rgba(168,85,247,0.2)',
+                  title:'Komanda yarat',
+                  desc:'Adını seç, bayraq yüklə, kapitanlığı üstlən. Komandanı istədiyin qədər böyüt.',
+                },
+                {
+                  icon:'⚔️',
+                  color:'#f59e0b',
+                  bg:'rgba(245,158,11,0.08)',
+                  border:'rgba(245,158,11,0.2)',
+                  title:'Meydan oxu',
+                  desc:'İstənilən komandaya challenge göndər — tarix, vaxt, yer seç. Cavab gəldi — meydana çıx.',
+                },
+                {
+                  icon:'🏆',
+                  color:'#00e87a',
+                  bg:'rgba(0,232,122,0.08)',
+                  border:'rgba(0,232,122,0.2)',
+                  title:'MMR & Statistika',
+                  desc:'Hər oyun komandanın reytinqini dəyişir. Qalib gəl — cədvəldə yuxarı qalx.',
+                },
+              ].map((f, i) => (
+                <FadeSection key={i} delay={i * 0.1}>
+                  <div style={{
+                    background:'var(--bg-raised)',
+                    border:`1px solid ${f.border}`,
+                    borderRadius:20,
+                    padding:'32px 28px',
+                    height:'100%',
+                    transition:'transform 0.2s ease, box-shadow 0.2s ease',
+                  }}
+                    onMouseEnter={e => { e.currentTarget.style.transform='translateY(-4px)'; e.currentTarget.style.boxShadow=`0 16px 48px ${f.bg}`; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow='none'; }}
+                  >
+                    <div style={{ width:52, height:52, borderRadius:14, background:f.bg, border:`1px solid ${f.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:24, marginBottom:20 }}>
+                      {f.icon}
+                    </div>
+                    <h3 style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:700, fontSize:20, color:'var(--text-primary)', marginBottom:10, lineHeight:1.2 }}>
+                      {f.title}
+                    </h3>
+                    <p style={{ fontFamily:'Outfit,sans-serif', fontSize:14, color:'var(--text-secondary)', lineHeight:1.7, margin:0 }}>
+                      {f.desc}
+                    </p>
+                  </div>
+                </FadeSection>
+              ))}
+            </div>
+
+            {/* Mini leaderboard mockup */}
+            <FadeSection delay={0.2}>
+              <div style={{
+                maxWidth:560, margin:'0 auto',
+                background:'var(--bg-raised)',
+                border:'1px solid rgba(168,85,247,0.2)',
+                borderRadius:20,
+                overflow:'hidden',
+                boxShadow:'0 24px 80px rgba(168,85,247,0.08)',
+              }}>
+                {/* Top bar */}
+                <div style={{ background:'rgba(168,85,247,0.08)', borderBottom:'1px solid rgba(168,85,247,0.15)', padding:'12px 20px', display:'flex', alignItems:'center', gap:10 }}>
+                  <span style={{ fontSize:16 }}>🛡️</span>
+                  <span style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:700, fontSize:14, color:'var(--text-primary)' }}>Komanda reytinqi</span>
+                  <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:6, background:'rgba(0,232,122,0.1)', border:'1px solid rgba(0,232,122,0.2)', borderRadius:100, padding:'3px 10px' }}>
+                    <div style={{ width:6, height:6, borderRadius:'50%', background:'var(--green)' }}/>
+                    <span style={{ fontFamily:'Outfit,sans-serif', fontSize:11, color:'var(--green)', fontWeight:600 }}>Canlı</span>
+                  </div>
+                </div>
+                {/* Rows */}
+                {[
+                  { rank:1, name:'Neftçi Legends',  mmr:1840, w:12, l:3,  emoji:'🥇' },
+                  { rank:2, name:'Baku United',      mmr:1720, w:9,  l:4,  emoji:'🥈' },
+                  { rank:3, name:'Sabail FC Amateur', mmr:1650, w:8,  l:5,  emoji:'🥉' },
+                  { rank:4, name:'Surakhani Boys',   mmr:1580, w:7,  l:6,  emoji:'4' },
+                ].map((row, i) => (
+                  <div key={i} style={{
+                    display:'flex', alignItems:'center', gap:14,
+                    padding:'13px 20px',
+                    borderBottom: i < 3 ? '1px solid var(--border-color)' : 'none',
+                    background: i === 0 ? 'rgba(250,173,20,0.04)' : 'transparent',
+                  }}>
+                    <span style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:14, width:24, textAlign:'center', flexShrink:0, color: i < 3 ? '#faad14' : 'var(--text-tertiary)' }}>
+                      {row.emoji}
+                    </span>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ fontFamily:'Outfit,sans-serif', fontWeight:600, fontSize:13, color:'var(--text-primary)', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{row.name}</div>
+                    </div>
+                    <div style={{ display:'flex', gap:16, alignItems:'center', flexShrink:0 }}>
+                      <div style={{ textAlign:'center' }}>
+                        <div style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:700, fontSize:13, color:'#faad14' }}>{row.mmr}</div>
+                        <div style={{ fontSize:9, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>MMR</div>
+                      </div>
+                      <div style={{ textAlign:'center' }}>
+                        <div style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:700, fontSize:13, color:'#52c41a' }}>{row.w}W</div>
+                        <div style={{ fontSize:9, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>Qələbə</div>
+                      </div>
+                      <div style={{ textAlign:'center' }}>
+                        <div style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:700, fontSize:13, color:'#f04438' }}>{row.l}L</div>
+                        <div style={{ fontSize:9, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>Məğlub</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </FadeSection>
+
+          </div>
+        </FadeSection>
+      </section>
+
       {/* ══════════════════════════ PARTNER TEASER ══════════════════════════ */}
       <section style={{ padding:'80px clamp(20px,5vw,80px)', background:'var(--bg-card)', borderTop:'1px solid var(--border-color)', borderBottom:'1px solid var(--border-color)', position:'relative', overflow:'hidden' }}>
         <div style={{ position:'absolute', right:-100, top:'50%', transform:'translateY(-50%)', width:500, height:500, borderRadius:'50%', background:'radial-gradient(circle,rgba(79,134,247,0.06) 0%,transparent 70%)', pointerEvents:'none' }}/>

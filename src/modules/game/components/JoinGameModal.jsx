@@ -16,6 +16,20 @@ const JoinGameModal = ({ game, visible, onClose, onSuccess }) => {
 
     if (!game) return null;
 
+    const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+    const userAge = currentUser?.age ?? null;
+    const gameMinAge = game.minAge ?? null;
+    const gameMaxAge = game.maxAge ?? null;
+
+    const ageLabel = gameMinAge
+        ? (gameMaxAge ? `${gameMinAge}–${gameMaxAge} лет` : `${gameMinAge}+`)
+        : null;
+
+    const hasAgeRestriction = !!gameMinAge;
+    const ageMatches = !hasAgeRestriction ||
+        (userAge !== null && userAge >= gameMinAge && (!gameMaxAge || userAge <= gameMaxAge));
+    const showAgeWarning = hasAgeRestriction && (userAge === null || !ageMatches);
+
     const formatDate = (dateStr) => {
         const date = new Date(dateStr);
         const options = { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' };
@@ -142,21 +156,40 @@ const JoinGameModal = ({ game, visible, onClose, onSuccess }) => {
                     </div>
                 )}
 
-                <div style={{
-                    marginTop: 24,
-                    padding: 16,
-                    background: 'rgba(255, 193, 7, 0.1)',
-                    borderRadius: 12,
-                    border: '1px solid rgba(255, 193, 7, 0.3)'
-                }}>
-                    <p style={{
-                        color: '#faad14',
-                        margin: 0,
-                        fontSize: 13
+                {showAgeWarning ? (
+                    <div style={{
+                        marginTop: 20,
+                        padding: 16,
+                        background: 'rgba(245,158,11,0.08)',
+                        borderRadius: 12,
+                        border: '1px solid rgba(245,158,11,0.35)',
                     }}>
-                        ⚠️ {t('game.join.warning')}
-                    </p>
-                </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                            <span style={{ fontSize: 16 }}>⚠️</span>
+                            <span style={{ color: '#f59e0b', fontWeight: 700, fontSize: 13 }}>
+                                {t('game.join.ageRestriction')}: {ageLabel}
+                            </span>
+                        </div>
+                        <p style={{ color: '#d97706', margin: 0, fontSize: 13, lineHeight: 1.5 }}>
+                            {userAge === null
+                                ? t('game.join.ageWarningNoAge', { label: ageLabel })
+                                : t('game.join.ageWarningMismatch', { age: userAge, label: ageLabel })
+                            }
+                        </p>
+                    </div>
+                ) : (
+                    <div style={{
+                        marginTop: 20,
+                        padding: 16,
+                        background: 'rgba(255, 193, 7, 0.1)',
+                        borderRadius: 12,
+                        border: '1px solid rgba(255, 193, 7, 0.3)'
+                    }}>
+                        <p style={{ color: '#faad14', margin: 0, fontSize: 13 }}>
+                            ⚠️ {t('game.join.warning')}
+                        </p>
+                    </div>
+                )}
 
                 <div style={{ marginTop: 24, display: 'flex', gap: 12 }}>
                     <Button
@@ -173,7 +206,7 @@ const JoinGameModal = ({ game, visible, onClose, onSuccess }) => {
                         style={{ flex: 2 }}
                         size="large"
                     >
-                        {t('game.join.confirm')}
+                        {showAgeWarning ? t('game.join.confirm') : t('game.join.confirmOk')}
                     </Button>
                 </div>
             </div>

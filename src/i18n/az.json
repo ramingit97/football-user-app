@@ -164,6 +164,9 @@
         "districtAll": "Bütün rayonlar",
         "metro": "Metro:",
         "metroAll": "Bütün stansiyalar",
+        "age": "Yaş:",
+        "ageAll": "İstənilən yaş",
+        "ageNone": "Məhdudiyyətsiz",
         "reset": "Sıfırla",
         "refresh": "Yenilə"
       },
@@ -368,6 +371,9 @@
       "skillLevelBeginner": "Başlanğıc",
       "skillLevelIntermediate": "Orta",
       "skillLevelAdvanced": "İrəliləmiş",
+      "ageGroupLabel": "Yaş qrupu",
+      "ageGroupAny": "İstənilən yaş",
+      "ageGroupNone": "Məhdudiyyətsiz",
       "descriptionLabel": "Açıqlama",
       "descriptionPlaceholder": "Qaydalar, nə gətirməli...",
       "createBtn": "Oyun yarat",
@@ -392,8 +398,12 @@
       "spotsLeft": "{{n}} yer qaldı",
       "organizer": "Təşkilatçı",
       "warning": "Qeydiyyatdan sonra təşkilatçı bildiriş alacaq. Xahiş edirik vaxtında gəlin!",
+      "ageRestriction": "Yaş məhdudiyyəti",
+      "ageWarningNoAge": "Təşkilatçı {{label}} yaşlı oyunçular axtarır. Profilinizdə yaşı göstərin və ya uyğun olduğunuzu yoxlayın.",
+      "ageWarningMismatch": "Sizin yaşınız {{age}}, təşkilatçı isə {{label}} yaşlı oyunçular axtarır. Yenə də qeydiyyatdan keçə bilərsiniz.",
       "cancel": "Ləğv et",
-      "confirm": "Qeydiyyatı təsdiq et",
+      "confirm": "Yenə də qeydiyyatdan keç",
+      "confirmOk": "Qeydiyyatdan keç",
       "mustLogin": "Sistemə daxil olmaq lazımdır",
       "success": "Oyuna uğurla qeydiyyatdan keçdiniz!",
       "error": "Oyuna qeydiyyat xətası"
@@ -1095,7 +1105,12 @@
       "reset": "Sıfırla",
       "gamesCount": "Oyunlar:",
       "totalTeams": "Cəmi {{n}} komanda",
-      "noTeams": "Komanda tapılmadı"
+      "noTeams": "Komanda tapılmadı",
+      "found": "Tapıldı {{n}}",
+      "sortByRating": "Reytinqə görə",
+      "sortByGames": "Oyunlara görə",
+      "sortByWins": "Qələbələrə görə",
+      "sortByName": "Ada görə"
     },
     "detail": {
       "back": "Geri",

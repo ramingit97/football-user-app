@@ -81,18 +81,14 @@ const AppContent = () => {
             </ProtectedRoute>
           } />
           <Route path="/teams" element={
-            <ProtectedRoute>
-              <AppLayout>
-                <TeamsDiscoveryPage />
-              </AppLayout>
-            </ProtectedRoute>
+            <AppLayout>
+              <TeamsDiscoveryPage />
+            </AppLayout>
           } />
           <Route path="/teams/:id" element={
-            <ProtectedRoute>
-              <AppLayout>
-                <TeamDetailPage />
-              </AppLayout>
-            </ProtectedRoute>
+            <AppLayout>
+              <TeamDetailPage />
+            </AppLayout>
           } />
           <Route path="/notifications" element={
             <ProtectedRoute>

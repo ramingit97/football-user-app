@@ -55,11 +55,12 @@ const GameListPage = () => {
     const [formatFilter, setFormatFilter] = useState(null);
     const [districtFilter, setDistrictFilter] = useState(null);
     const [metroFilter, setMetroFilter] = useState(null);
+    const [minAgeFilter, setMinAgeFilter] = useState(null);
 
-    useEffect(() => { setCurrentPage(1); }, [statusFilter, formatFilter, districtFilter, metroFilter]);
+    useEffect(() => { setCurrentPage(1); }, [statusFilter, formatFilter, districtFilter, metroFilter, minAgeFilter]);
 
     const { data: allGamesData, isLoading: isLoadingAll, refetch: refetchAll } = useGetGamesQuery(
-        { page: currentPage, limit: PAGE_SIZE, status: statusFilter, format: formatFilter, district: districtFilter, metro: metroFilter },
+        { page: currentPage, limit: PAGE_SIZE, status: statusFilter, format: formatFilter, district: districtFilter, metro: metroFilter, minAge: minAgeFilter },
         { skip: activeTab !== 'all' }
     );
 
@@ -80,7 +81,12 @@ const GameListPage = () => {
     const filteredNearby = nearbyGames.filter(game => {
         const matchesStatus = !statusFilter || game.status === statusFilter;
         const matchesFormat = !formatFilter || game.format === formatFilter;
-        return matchesStatus && matchesFormat;
+        const matchesAge = !minAgeFilter || (
+            minAgeFilter === 'none'
+                ? !game.minAge
+                : game.minAge === parseInt(minAgeFilter)
+        );
+        return matchesStatus && matchesFormat && matchesAge;
     });
 
     useEffect(() => {
@@ -98,14 +104,22 @@ const GameListPage = () => {
         );
     };
 
-    const handleJoinClick = (game) => { setSelectedGame(game); setModalVisible(true); };
+    const handleJoinClick = (game) => {
+        const user = localStorage.getItem('user');
+        if (!user) {
+            navigate(`/login?returnTo=/games/${game.id}`);
+            return;
+        }
+        setSelectedGame(game);
+        setModalVisible(true);
+    };
     const handleModalClose = () => { setModalVisible(false); setSelectedGame(null); };
     const handleJoinSuccess = () => { refetchAll(); if (userLocation) refetchNearby(); };
-    const clearFilters = () => { setStatusFilter(null); setFormatFilter(null); setDistrictFilter(null); setMetroFilter(null); };
+    const clearFilters = () => { setStatusFilter(null); setFormatFilter(null); setDistrictFilter(null); setMetroFilter(null); setMinAgeFilter(null); };
 
     const isLoading = activeTab === 'nearby' ? isLoadingNearby : isLoadingAll;
     const displayedGames = activeTab === 'nearby' ? filteredNearby : allGames;
-    const hasActiveFilters = statusFilter || formatFilter || districtFilter || metroFilter;
+    const hasActiveFilters = statusFilter || formatFilter || districtFilter || metroFilter || minAgeFilter;
 
     return (
         <div style={{ minHeight: '100vh', padding: '32px 24px 64px', maxWidth: 1200, margin: '0 auto' }}>
@@ -204,6 +218,18 @@ const GameListPage = () => {
                             <Option value="7x7">7x7</Option>
                             <Option value="8x8">8x8</Option>
                             <Option value="11x11">11x11</Option>
+                        </Select>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span style={{ color: 'var(--text-tertiary)', fontSize: 12 }}>👴 {t('game.list.filter.age')}</span>
+                        <Select value={minAgeFilter} onChange={setMinAgeFilter} allowClear placeholder={t('game.list.filter.ageAll')} size="small" style={{ width: 110 }} variant="borderless">
+                            <Option value="none">{t('game.list.filter.ageNone')}</Option>
+                            <Option value="30">30+</Option>
+                            <Option value="35">35+</Option>
+                            <Option value="40">40+</Option>
+                            <Option value="45">45+</Option>
+                            <Option value="50">50+</Option>
                         </Select>
                     </div>
 

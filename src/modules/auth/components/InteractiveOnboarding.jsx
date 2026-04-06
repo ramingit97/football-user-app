@@ -241,7 +241,8 @@ const InteractiveOnboarding = () => {
     };
 
     const handleComplete = () => {
-        navigate('/games');
+        const returnTo = new URLSearchParams(window.location.search).get('returnTo');
+        navigate(returnTo || '/games');
     };
 
     const CurrentStepComponent = STEPS[currentStep].component;

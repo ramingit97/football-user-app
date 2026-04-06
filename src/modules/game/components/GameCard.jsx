@@ -70,19 +70,34 @@ const GameCard = ({ game, onJoin }) => {
                     }}>
                         {game.title || `${game.format} — ${game.location}`}
                     </h3>
-                    <span style={{
-                        background: fmt.bg,
-                        color: fmt.color,
-                        padding: '3px 8px',
-                        borderRadius: 6,
-                        fontSize: 11,
-                        fontWeight: 700,
-                        fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif",
-                        letterSpacing: '0.3px',
-                        flexShrink: 0,
-                    }}>
-                        {game.format}
-                    </span>
+                    <div style={{ display: 'flex', gap: 5, flexShrink: 0 }}>
+                        {game.minAge && (
+                            <span style={{
+                                background: 'rgba(245,158,11,0.12)',
+                                color: '#f59e0b',
+                                padding: '3px 7px',
+                                borderRadius: 6,
+                                fontSize: 11,
+                                fontWeight: 700,
+                                fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif",
+                                letterSpacing: '0.3px',
+                            }}>
+                                {game.minAge}+
+                            </span>
+                        )}
+                        <span style={{
+                            background: fmt.bg,
+                            color: fmt.color,
+                            padding: '3px 8px',
+                            borderRadius: 6,
+                            fontSize: 11,
+                            fontWeight: 700,
+                            fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif",
+                            letterSpacing: '0.3px',
+                        }}>
+                            {game.format}
+                        </span>
+                    </div>
                 </div>
 
                 {/* Дата + время + место */}

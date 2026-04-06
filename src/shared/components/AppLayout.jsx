@@ -82,8 +82,9 @@ const AppLayout = ({ children }) => {
     }, [user]);
 
     const handleLogout = async () => {
-        await logout().unwrap();
+        try { await logout().unwrap(); } catch {}
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         navigate('/');
     };
 
@@ -146,7 +147,10 @@ const AppLayout = ({ children }) => {
 
                 {/* Desktop nav */}
                 <nav style={{ display: 'flex', alignItems: 'center', gap: 4 }} className="desktop-nav">
-                    {NAV.map(({ key, icon: Icon, labelKey }) => {
+                    {NAV.filter(({ key }) => {
+                        if (!user && (key === '/notifications' || key === '/profile')) return false;
+                        return true;
+                    }).map(({ key, icon: Icon, labelKey }) => {
                         const isActive = active(key);
                         return (
                             <button
@@ -267,7 +271,10 @@ const AppLayout = ({ children }) => {
                 zIndex: 1000,
                 padding: '0 4px',
             }} className="mobile-bottom-nav">
-                {BOTTOM_NAV.map(({ key, icon: Icon, labelKey }) => {
+                {BOTTOM_NAV.filter(({ key }) => {
+                    if (!user && (key === '/notifications' || key === '/profile')) return false;
+                    return true;
+                }).map(({ key, icon: Icon, labelKey }) => {
                     const isActive = active(key);
                     return (
                         <button

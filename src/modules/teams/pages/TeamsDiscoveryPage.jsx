@@ -17,7 +17,7 @@ const getWinRate = (wins, losses, draws) => {
     return Math.round(((wins || 0) / total) * 100);
 };
 
-const TeamRow = ({ team, rank, navigate }) => {
+const TeamRow = ({ team, rank, navigate, t }) => {
     const winRate = getWinRate(team.wins, team.losses, team.draws);
     const memberCount = team.playerIds?.length || 1;
 
@@ -102,7 +102,7 @@ const TeamRow = ({ team, rank, navigate }) => {
                     <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif" }}>
                         {team.gamesPlayed || 0}
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>игр</div>
+                    <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>{t('teams.detail.statsGames')}</div>
                 </div>
 
                 {winRate !== null ? (
@@ -113,14 +113,14 @@ const TeamRow = ({ team, rank, navigate }) => {
                         }}>
                             {winRate}%
                         </div>
-                        <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>побед</div>
+                        <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>{t('teams.detail.statsWins')}</div>
                     </div>
                 ) : (
                     <div style={{ textAlign: 'center' }}>
                         <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-tertiary)', fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif" }}>
                             —
                         </div>
-                        <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>побед</div>
+                        <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>{t('teams.detail.statsWins')}</div>
                     </div>
                 )}
             </div>
@@ -240,10 +240,10 @@ const TeamsDiscoveryPage = () => {
                         size="large"
                         style={{ minWidth: 160 }}
                     >
-                        <Option value="rating">По рейтингу</Option>
-                        <Option value="gamesPlayed">По играм</Option>
-                        <Option value="wins">По победам</Option>
-                        <Option value="name">По названию</Option>
+                        <Option value="rating">{t('teams.discovery.sortByRating')}</Option>
+                        <Option value="gamesPlayed">{t('teams.discovery.sortByGames')}</Option>
+                        <Option value="wins">{t('teams.discovery.sortByWins')}</Option>
+                        <Option value="name">{t('teams.discovery.sortByName')}</Option>
                     </Select>
                 </div>
 
@@ -279,7 +279,7 @@ const TeamsDiscoveryPage = () => {
                             alignItems: 'center',
                         }}>
                             <span style={{ color: 'var(--text-tertiary)', fontSize: 13 }}>
-                                Найдено <strong style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>{teams.length}</strong>
+                                {t('teams.discovery.found', { n: teams.length })}
                             </span>
                         </div>
 
@@ -290,6 +290,7 @@ const TeamsDiscoveryPage = () => {
                                     team={team}
                                     rank={(page - 1) * pageSize + idx + 1}
                                     navigate={navigate}
+                                    t={t}
                                 />
                             ))}
                         </div>

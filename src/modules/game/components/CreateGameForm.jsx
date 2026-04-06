@@ -170,6 +170,7 @@ const CreateGameForm = ({ onSuccess }) => {
                 description: values.description || '',
                 format: values.format,
                 skillLevel: values.skillLevel || 'any',
+                minAge: values.ageGroup ?? null,
                 duration: values.duration || 60,
                 gameType: gameVisibility,
                 price: pricePerPlayer ?? (selectedStadiumData?.pricePerHour || 0),
@@ -476,6 +477,26 @@ const CreateGameForm = ({ onSuccess }) => {
                     <Option value="beginner"><span style={{ marginRight: 8 }}>🟢</span>{t('game.create.skillLevelBeginner')}</Option>
                     <Option value="intermediate"><span style={{ marginRight: 8 }}>🟡</span>{t('game.create.skillLevelIntermediate')}</Option>
                     <Option value="advanced"><span style={{ marginRight: 8 }}>🔴</span>{t('game.create.skillLevelAdvanced')}</Option>
+                </Select>
+            </Form.Item>
+
+            <Form.Item
+                name="ageGroup"
+                label={
+                    <span style={{ color: 'var(--text-secondary)', fontSize: 13, fontWeight: 500 }}>
+                        👴 {t('game.create.ageGroupLabel')}
+                    </span>
+                }
+                initialValue={null}
+                style={{ marginBottom: 16 }}
+            >
+                <Select size="large" allowClear placeholder={t('game.create.ageGroupAny')}>
+                    <Option value={null}><span style={{ marginRight: 8 }}>🌐</span>{t('game.create.ageGroupAny')}</Option>
+                    <Option value={30}><span style={{ marginRight: 8 }}>🔵</span>30+</Option>
+                    <Option value={35}><span style={{ marginRight: 8 }}>🟣</span>35+</Option>
+                    <Option value={40}><span style={{ marginRight: 8 }}>🟡</span>40+</Option>
+                    <Option value={45}><span style={{ marginRight: 8 }}>🟠</span>45+</Option>
+                    <Option value={50}><span style={{ marginRight: 8 }}>🔴</span>50+</Option>
                 </Select>
             </Form.Item>
 

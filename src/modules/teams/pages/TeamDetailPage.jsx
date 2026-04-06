@@ -48,6 +48,7 @@ const StatPill = ({ label, value, color }) => (
 
 /* ─── Player roster row ─────────────────────────────────────────── */
 const RosterRow = ({ player, isCaptain, isCurrentUser, captainId, onTransfer, isTransferring, navigate }) => {
+    const { t } = useTranslation();
     const pos = getPos(player.position);
     const isCap = player.id === captainId;
 
@@ -138,7 +139,7 @@ const RosterRow = ({ player, isCaptain, isCurrentUser, captainId, onTransfer, is
                     loading={isTransferring}
                     style={{ color: 'var(--text-tertiary)', fontSize: 12, flexShrink: 0 }}
                 >
-                    Назначить
+                    {t('teams.detail.makeCaptain')}
                 </Button>
             )}
         </div>
@@ -146,7 +147,9 @@ const RosterRow = ({ player, isCaptain, isCurrentUser, captainId, onTransfer, is
 };
 
 /* ─── Challenge card ────────────────────────────────────────────── */
-const ChallengeCard = ({ item, isIncoming, isCaptain, onRespond }) => (
+const ChallengeCard = ({ item, isIncoming, isCaptain, onRespond }) => {
+    const { t } = useTranslation();
+    return (
     <div style={{
         padding: '14px 16px',
         background: 'var(--bg-card)',
@@ -164,7 +167,7 @@ const ChallengeCard = ({ item, isIncoming, isCaptain, onRespond }) => (
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontWeight: 600, fontSize: 13, color: 'var(--text-primary)', marginBottom: 4 }}>
-                {isIncoming ? `Вызов от: ${item.challengerName}` : `Вызов команде: ${item.challengedName}`}
+                {isIncoming ? t('teams.detail.challengeFrom', { name: item.challengerName }) : t('teams.detail.challengeTo', { name: item.challengedName })}
             </div>
             <div style={{ fontSize: 12, color: 'var(--text-tertiary)', display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                 <span><CalendarOutlined style={{ marginRight: 4 }} />{dayjs(item.date).format('DD.MM.YYYY')}</span>
@@ -179,10 +182,10 @@ const ChallengeCard = ({ item, isIncoming, isCaptain, onRespond }) => (
                     style={{ background: 'var(--green)', border: 'none', color: '#000', fontWeight: 600, fontSize: 12 }}
                     onClick={() => onRespond(item.id, 'accepted')}
                 >
-                    Принять
+                    {t('teams.detail.accept')}
                 </Button>
                 <Button size="small" danger ghost style={{ fontSize: 12 }} onClick={() => onRespond(item.id, 'rejected')}>
-                    Отклонить
+                    {t('teams.detail.reject')}
                 </Button>
             </div>
         ) : (
@@ -192,11 +195,12 @@ const ChallengeCard = ({ item, isIncoming, isCaptain, onRespond }) => (
                 color: item.status === 'accepted' ? '#52c41a' : item.status === 'rejected' ? '#ff4d4f' : '#faad14',
                 flexShrink: 0,
             }}>
-                {item.status === 'accepted' ? 'Принят' : item.status === 'rejected' ? 'Отклонён' : 'Ожидает'}
+                {item.status === 'accepted' ? t('teams.detail.accepted') : item.status === 'rejected' ? t('teams.detail.rejected') : t('teams.detail.pending')}
             </span>
         )}
     </div>
-);
+    );
+};
 
 /* ═══════════════════════════════════════════════════════════════════
    MAIN COMPONENT
@@ -435,7 +439,7 @@ const TeamDetailPage = () => {
                     fontSize: 12, fontWeight: 600, color: 'var(--text-tertiary)',
                     textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 10,
                 }}>
-                    Состав · {players.length} {players.length === 1 ? 'игрок' : 'игроков'}
+                    {t('teams.detail.roster')} · {players.length} {t('teams.detail.playerCount')}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                     {players.map(player => (
@@ -493,9 +497,9 @@ const TeamDetailPage = () => {
                 display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10,
             }}>
                 {[
-                    { label: 'Победы', value: team.wins || 0, color: '#52c41a', bg: 'rgba(82,196,26,0.08)', border: 'rgba(82,196,26,0.2)' },
-                    { label: 'Ничьи', value: team.draws || 0, color: '#faad14', bg: 'rgba(250,173,20,0.08)', border: 'rgba(250,173,20,0.2)' },
-                    { label: 'Поражения', value: team.losses || 0, color: '#ff4d4f', bg: 'rgba(255,77,79,0.08)', border: 'rgba(255,77,79,0.2)' },
+                    { label: t('teams.detail.statsTotalWins'), value: team.wins || 0, color: '#52c41a', bg: 'rgba(82,196,26,0.08)', border: 'rgba(82,196,26,0.2)' },
+                    { label: t('teams.detail.statsDraws'), value: team.draws || 0, color: '#faad14', bg: 'rgba(250,173,20,0.08)', border: 'rgba(250,173,20,0.2)' },
+                    { label: t('teams.detail.statsTotalLosses'), value: team.losses || 0, color: '#ff4d4f', bg: 'rgba(255,77,79,0.08)', border: 'rgba(255,77,79,0.2)' },
                 ].map(s => (
                     <div key={s.label} style={{
                         padding: '20px 16px',
@@ -571,9 +575,9 @@ const TeamDetailPage = () => {
                 )}
                 <div style={{ display: 'flex', gap: 16, marginTop: 10 }}>
                     {[
-                        { color: '#52c41a', label: 'Победы' },
-                        { color: '#faad14', label: 'Ничьи' },
-                        { color: '#ff4d4f', label: 'Поражения' },
+                        { color: '#52c41a', label: t('teams.detail.statsTotalWins') },
+                        { color: '#faad14', label: t('teams.detail.statsDraws') },
+                        { color: '#ff4d4f', label: t('teams.detail.statsTotalLosses') },
                     ].map(l => (
                         <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: 'var(--text-tertiary)' }}>
                             <div style={{ width: 8, height: 8, borderRadius: 2, background: l.color, flexShrink: 0 }} />
@@ -705,12 +709,12 @@ const TeamDetailPage = () => {
                         <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'center' }}>
                             <StatPill label="MMR" value={team.rating || 1000} color="#faad14" />
                             <div style={{ width: 1, height: 28, background: 'var(--border-color)' }} />
-                            <StatPill label="игроков" value={team.playerIds?.length || 0} />
+                            <StatPill label={t('teams.detail.playerCount')} value={team.playerIds?.length || 0} />
                             <div style={{ width: 1, height: 28, background: 'var(--border-color)' }} />
-                            <StatPill label="игр" value={team.gamesPlayed || 0} />
+                            <StatPill label={t('teams.detail.statsGames')} value={team.gamesPlayed || 0} />
                             <div style={{ width: 1, height: 28, background: 'var(--border-color)' }} />
                             <StatPill
-                                label="побед"
+                                label={t('teams.detail.statsWins')}
                                 value={`${winRate}%`}
                                 color={winRate >= 50 ? '#52c41a' : winRate > 0 ? '#faad14' : 'var(--text-tertiary)'}
                             />

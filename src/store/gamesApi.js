@@ -27,12 +27,13 @@ export const gamesApi = createApi({
             providesTags: ['Game'],
         }),
         getGames: builder.query({
-            query: ({ page = 1, limit = 12, status, format, district, metro } = {}) => {
+            query: ({ page = 1, limit = 12, status, format, district, metro, minAge } = {}) => {
                 const params = new URLSearchParams({ page: String(page), limit: String(limit) });
                 if (status) params.append('status', status);
                 if (format) params.append('format', format);
                 if (district) params.append('district', district);
                 if (metro) params.append('metro', metro);
+                if (minAge) params.append('minAge', minAge);
                 return `games?${params.toString()}`;
             },
             providesTags: ['Game'],

@@ -326,6 +326,14 @@ const GameDetailPage = () => {
     const isFinished = game?.status === 'finished';
     const hasAlreadyRated = game && currentUser && !!localStorage.getItem(`rated_game_${game.id}`);
 
+    const handleStartJoin = () => {
+        if (!currentUser) {
+            navigate(`/login?returnTo=/games/${id}`);
+            return;
+        }
+        setIsSelectionMode(true);
+    };
+
     useEffect(() => {
         const newSocket = io(import.meta.env.VITE_API_BASE || window.location.origin, { transports: ['websocket'] });
         setSocket(newSocket);
@@ -344,8 +352,11 @@ const GameDetailPage = () => {
     };
 
     const handleJoinWithPosition = async () => {
+        if (!currentUser) {
+            navigate(`/login?returnTo=/games/${id}`);
+            return;
+        }
         if (!selectedPosition) { message.warning(t('game.detail.positionNotSelected')); return; }
-        if (!currentUser) { message.error(t('game.detail.mustLogin')); return; }
 
         if (isParticipant) {
             const currentPos = game.players.find(p => p.id === currentUser.id)?.position;
@@ -674,7 +685,7 @@ const GameDetailPage = () => {
         <div style={{ minHeight: '100vh', padding: '28px 20px 80px' }}>
             <div style={{ maxWidth: 780, margin: '0 auto' }}>
 
-                <UrgentBanner game={game} onJoin={canJoin ? () => setIsSelectionMode(true) : null} />
+                <UrgentBanner game={game} onJoin={canJoin ? handleStartJoin : null} />
 
                 {/* Back */}
                 <button
@@ -829,7 +840,7 @@ const GameDetailPage = () => {
                                 {canJoin && !isSelectionMode && (
                                     <button
                                         onClick={() => {
-                                            setIsSelectionMode(true);
+                                            handleStartJoin();
                                             setTacticsExpanded(true);
                                             setTimeout(() => {
                                                 document.getElementById('tactics-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
