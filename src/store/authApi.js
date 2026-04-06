@@ -54,7 +54,10 @@ export const authApi = createApi({
             }),
         }),
         getUserById: builder.query({
-            query: (userId) => `${API_BASE}/api/users/${userId}`,
+            query: (userId) => {
+                const base = API_BASE || (typeof window !== 'undefined' ? window.location.origin : '');
+                return `${base}/api/users/${userId}`;
+            },
         }),
         updateProfile: builder.mutation({
             query: (profileData) => ({
