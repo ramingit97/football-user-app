@@ -478,7 +478,11 @@ const ProfilePage = () => {
                         </div>
                     )}
 
-                    {activeTab === 'history' && <GameHistory games={myGames} />}
+                    {activeTab === 'history' && (
+                        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 16, overflow: 'hidden' }}>
+                            <GameHistory games={myGames} />
+                        </div>
+                    )}
 
                     {activeTab === 'mygames' && (() => {
                         const createdGames = myGames.filter(g => g.organizerId === userProfile?.id);

@@ -128,7 +128,7 @@ const ProfileForm = ({ initialData = {} }) => {
                         </Form.Item>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
                         <div>
                             <FieldLabel>{t('profile.edit.phoneLabel')}</FieldLabel>
                             <Input
