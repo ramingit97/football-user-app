@@ -28,11 +28,11 @@ const DESKTOP_NAV = [
 
 // Mobile bottom nav — 4 items + central FAB
 const MOBILE_NAV = [
-    { key: '/games',       icon: HomeOutlined,   labelKey: 'nav.games' },
-    { key: '/teams',       icon: TeamOutlined,   labelKey: 'nav.teams' },
+    { key: '/games',   icon: HomeOutlined,          labelKey: 'nav.games' },
+    { key: '/teams',   icon: TeamOutlined,           labelKey: 'nav.teams' },
     null, // FAB placeholder
-    { key: '/leaderboard', icon: TrophyOutlined, labelKey: 'nav.leaderboard' },
-    { key: '/profile',     icon: UserOutlined,   labelKey: 'nav.profile', authOnly: true },
+    { key: '/players', icon: UsergroupAddOutlined,   labelKey: 'nav.players' },
+    { key: '/profile', icon: UserOutlined,           labelKey: 'nav.profile', authOnly: true },
 ];
 
 const AppLayout = ({ children }) => {
@@ -93,6 +93,12 @@ const AppLayout = ({ children }) => {
             icon: <BellOutlined />,
             label: t('nav.notifications'),
             onClick: () => { navigate('/notifications'); setHasUnread(false); },
+        },
+        {
+            key: 'leaderboard',
+            icon: <TrophyOutlined />,
+            label: t('nav.leaderboard'),
+            onClick: () => navigate('/leaderboard'),
         },
         { type: 'divider' },
         {

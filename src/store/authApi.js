@@ -1,6 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { API_BASE } from '../config.js';
 
+// When VITE_API_BASE='' in production (same-origin), API_BASE is empty string.
+// fetchBaseQuery does string concat: baseUrl('/api/auth') + path('/api/users/...')
+// = '/api/auth/api/users/...' — wrong. Use origin as fallback.
+const U = () => API_BASE || (typeof window !== 'undefined' ? window.location.origin : '');
+
 export const authApi = createApi({
     reducerPath: 'authApi',
     tagTypes: ['User', 'Friends', 'Referral'],
@@ -49,7 +54,7 @@ export const authApi = createApi({
         }),
         searchUsers: builder.query({
             query: ({ query, page = 1, limit = 10 }) => ({
-                url: `${API_BASE}/api/users/search/query`,
+                url: `${U()}/api/users/search/query`,
                 params: { q: query, page, limit }
             }),
         }),
@@ -83,19 +88,19 @@ export const authApi = createApi({
         }),
         transferBalance: builder.mutation({
             query: ({ senderId, receiverId, amount, note }) => ({
-                url: `${API_BASE}/api/users/transfer`,
+                url: `${U()}/api/users/transfer`,
                 method: 'POST',
                 body: { senderId, receiverId, amount, note },
             }),
             invalidatesTags: ['User'],
         }),
         getTransactions: builder.query({
-            query: (userId) => `${API_BASE}/api/users/${userId}/transactions`,
+            query: (userId) => `${U()}/api/users/${userId}/transactions`,
         }),
         // Friends
         sendFriendRequest: builder.mutation({
             query: ({ requesterId, receiverId }) => ({
-                url: `${API_BASE}/api/users/friends/request`,
+                url: `${U()}/api/users/friends/request`,
                 method: 'POST',
                 body: { requesterId, receiverId },
             }),
@@ -103,38 +108,38 @@ export const authApi = createApi({
         }),
         respondToFriendRequest: builder.mutation({
             query: ({ requestId, status }) => ({
-                url: `${API_BASE}/api/users/friends/respond`,
+                url: `${U()}/api/users/friends/respond`,
                 method: 'POST',
                 body: { requestId, status },
             }),
             invalidatesTags: ['Friends'],
         }),
         getFriends: builder.query({
-            query: (userId) => `${API_BASE}/api/users/${userId}/friends`,
+            query: (userId) => `${U()}/api/users/${userId}/friends`,
             providesTags: ['Friends'],
         }),
         getFriendRequests: builder.query({
-            query: (userId) => `${API_BASE}/api/users/${userId}/friend-requests`,
+            query: (userId) => `${U()}/api/users/${userId}/friend-requests`,
             providesTags: ['Friends'],
         }),
         getFriendshipStatus: builder.query({
-            query: ({ userId, targetId }) => `${API_BASE}/api/users/${userId}/friend-status/${targetId}`,
+            query: ({ userId, targetId }) => `${U()}/api/users/${userId}/friend-status/${targetId}`,
             providesTags: ['Friends'],
         }),
         removeFriend: builder.mutation({
             query: ({ userId, targetId }) => ({
-                url: `${API_BASE}/api/users/${userId}/friends/${targetId}`,
+                url: `${U()}/api/users/${userId}/friends/${targetId}`,
                 method: 'DELETE',
             }),
             invalidatesTags: ['Friends'],
         }),
         getReferralInfo: builder.query({
-            query: (userId) => `${API_BASE}/api/users/${userId}/referral`,
+            query: (userId) => `${U()}/api/users/${userId}/referral`,
             providesTags: ['Referral'],
         }),
         processReferral: builder.mutation({
             query: ({ userId, referralCode }) => ({
-                url: `${API_BASE}/api/users/${userId}/process-referral`,
+                url: `${U()}/api/users/${userId}/process-referral`,
                 method: 'POST',
                 body: { referralCode },
             }),
