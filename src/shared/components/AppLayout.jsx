@@ -2,7 +2,7 @@ import { Layout, Avatar, Dropdown, notification } from 'antd';
 import {
     UserOutlined, LogoutOutlined, TeamOutlined,
     TrophyOutlined, BellOutlined, PlusOutlined,
-    HomeOutlined, SettingOutlined, UsergroupAddOutlined,
+    HomeOutlined, SettingOutlined, UsergroupAddOutlined, FileTextOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -19,9 +19,10 @@ import { useTranslation } from 'react-i18next';
 
 const { Content } = Layout;
 
-// Desktop nav — 4 core items only
+// Desktop nav — 5 core items
 const DESKTOP_NAV = [
     { key: '/games',       icon: HomeOutlined,          labelKey: 'nav.games' },
+    { key: '/elanlar',     icon: FileTextOutlined,      labelKey: 'nav.elanlar' },
     { key: '/teams',       icon: TeamOutlined,          labelKey: 'nav.teams' },
     { key: '/players',     icon: UsergroupAddOutlined,  labelKey: 'nav.players' },
     { key: '/leaderboard', icon: TrophyOutlined,        labelKey: 'nav.leaderboard' },
@@ -29,11 +30,11 @@ const DESKTOP_NAV = [
 
 // Mobile bottom nav — 4 items + central FAB
 const MOBILE_NAV = [
-    { key: '/games',   icon: HomeOutlined,          labelKey: 'nav.games' },
-    { key: '/teams',   icon: TeamOutlined,           labelKey: 'nav.teams' },
+    { key: '/games',    icon: HomeOutlined,         labelKey: 'nav.games' },
+    { key: '/elanlar',  icon: FileTextOutlined,     labelKey: 'nav.elanlar' },
     null, // FAB placeholder
-    { key: '/players', icon: UsergroupAddOutlined,   labelKey: 'nav.players' },
-    { key: '/profile', icon: UserOutlined,           labelKey: 'nav.profile', authOnly: true },
+    { key: '/players',  icon: UsergroupAddOutlined, labelKey: 'nav.players' },
+    { key: '/profile',  icon: UserOutlined,         labelKey: 'nav.profile', authOnly: true },
 ];
 
 const AppLayout = ({ children }) => {

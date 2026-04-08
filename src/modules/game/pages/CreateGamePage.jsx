@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import CreateGameForm from '../components/CreateGameForm';
@@ -6,12 +6,22 @@ import CreateGameForm from '../components/CreateGameForm';
 const CreateGamePage = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
+    const [searchParams] = useSearchParams();
+
+    const elanId = searchParams.get('elanId') || null;
+    const elanPrefill = elanId ? {
+        elanId,
+        date: searchParams.get('date') || null,
+        time: searchParams.get('time') || null,
+        format: searchParams.get('format') || null,
+        district: searchParams.get('district') || null,
+    } : null;
 
     return (
         <div style={{ minHeight: '100vh', padding: '32px 20px 72px' }}>
             <div style={{ maxWidth: 580, margin: '0 auto' }}>
                 <button
-                    onClick={() => navigate('/games')}
+                    onClick={() => navigate(elanId ? `/elanlar/${elanId}` : '/games')}
                     style={{
                         display: 'flex', alignItems: 'center', gap: 6,
                         background: 'none', border: 'none', cursor: 'pointer',
@@ -42,7 +52,16 @@ const CreateGamePage = () => {
                     borderRadius: 16,
                     padding: '28px 28px 24px',
                 }}>
-                    <CreateGameForm onSuccess={() => navigate('/games')} />
+                    <CreateGameForm
+                        elanPrefill={elanPrefill}
+                        onSuccess={(result) => {
+                            if (elanId) {
+                                navigate(`/games/${result?.id || ''}`);
+                            } else {
+                                navigate('/games');
+                            }
+                        }}
+                    />
                 </div>
             </div>
         </div>

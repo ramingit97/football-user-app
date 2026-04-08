@@ -8,6 +8,7 @@ import { paymentsApi } from './paymentsApi';
 import { locationsApi } from './locationsApi';
 import { stadiumsApi } from './stadiumsApi';
 import { supportApi } from './supportApi';
+import { elanlarApi } from './elanlarApi';
 import authReducer from './authSlice';
 
 export const store = configureStore({
@@ -21,6 +22,7 @@ export const store = configureStore({
         [locationsApi.reducerPath]: locationsApi.reducer,
         [stadiumsApi.reducerPath]: stadiumsApi.reducer,
         [supportApi.reducerPath]: supportApi.reducer,
+        [elanlarApi.reducerPath]: elanlarApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(
@@ -32,6 +34,7 @@ export const store = configureStore({
             locationsApi.middleware,
             stadiumsApi.middleware,
             supportApi.middleware,
+            elanlarApi.middleware,
         ),
 });
 

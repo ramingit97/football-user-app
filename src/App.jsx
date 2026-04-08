@@ -38,6 +38,8 @@ import ProtectedRoute from './shared/components/ProtectedRoute';
 // Shared
 import AppLayout from './shared/components/AppLayout';
 import LoginPage from './modules/auth/pages/LoginPage';
+import ElanlarPage from './modules/elanlar/ElanlarPage';
+import ElanDetailPage from './modules/elanlar/ElanDetailPage';
 import ForgotPasswordPage from './modules/auth/pages/ForgotPasswordPage';
 import ResetPasswordPage from './modules/auth/pages/ResetPasswordPage';
 
@@ -106,6 +108,17 @@ const AppContent = () => {
           <Route path="/games/:id" element={
             <AppLayout>
               <GameDetailPage />
+            </AppLayout>
+          } />
+
+          <Route path="/elanlar" element={
+            <AppLayout>
+              <ElanlarPage />
+            </AppLayout>
+          } />
+          <Route path="/elanlar/:id" element={
+            <AppLayout>
+              <ElanDetailPage />
             </AppLayout>
           } />
 

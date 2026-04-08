@@ -13,6 +13,7 @@ import {
 import locale from 'antd/es/date-picker/locale/ru_RU';
 import { useTranslation } from 'react-i18next';
 import { useCreateGameMutation } from '../../../store/gamesApi';
+import { useConvertElanMutation } from '../../../store/elanlarApi';
 import { useGetDistrictsQuery, useGetMetroStationsQuery } from '../../../store/locationsApi';
 import axios from 'axios';
 import { API_BASE } from '../../../config.js';
@@ -108,16 +109,17 @@ const CounterControl = ({ value, onChange, min = 0, max = 30, label, sublabel, c
     </div>
 );
 
-const CreateGameForm = ({ onSuccess }) => {
+const CreateGameForm = ({ onSuccess, elanPrefill = null }) => {
     const [form] = Form.useForm();
     const { t } = useTranslation();
     const currentUser = JSON.parse(localStorage.getItem('user'));
     const [createGame, { isLoading }] = useCreateGameMutation();
+    const [convertElan] = useConvertElanMutation();
     const { data: districts = [] } = useGetDistrictsQuery();
     const { data: metros = [] } = useGetMetroStationsQuery();
 
     // ── Mode: 'marketplace' | 'own' ─────────────────────────
-    const [gameMode, setGameMode] = useState(null);
+    const [gameMode, setGameMode] = useState(elanPrefill ? 'own' : null);
 
     // ── Marketplace state ────────────────────────────────────
     const [stadiums, setStadiums] = useState([]);
@@ -141,7 +143,19 @@ const CreateGameForm = ({ onSuccess }) => {
     const [organizerCoversAmount, setOrganizerCoversAmount] = useState(10);
     const [guestNames, setGuestNames] = useState([]);
     const [showGuestNames, setShowGuestNames] = useState(false);
-    const [ownFormat, setOwnFormat] = useState('6x6');
+    const [ownFormat, setOwnFormat] = useState(elanPrefill?.format || '6x6');
+
+    // ── Prefill from elan ────────────────────────────────────
+    useEffect(() => {
+        if (!elanPrefill) return;
+        const fields = {};
+        if (elanPrefill.date) fields.date = dayjs(elanPrefill.date);
+        if (elanPrefill.time) {
+            const [h, m] = elanPrefill.time.split(':');
+            fields.ownTime = dayjs().hour(Number(h)).minute(Number(m)).second(0);
+        }
+        if (Object.keys(fields).length) form.setFieldsValue(fields);
+    }, [elanPrefill]);
 
     useEffect(() => {
         axios.get(`${API_BASE}/api/stadiums`)
@@ -266,6 +280,18 @@ const CreateGameForm = ({ onSuccess }) => {
 
             const result = await createGame(gameData).unwrap();
 
+            // If created from an elan, mark it as converted and notify interested players
+            if (elanPrefill?.elanId && result?.id) {
+                try {
+                    await convertElan({
+                        id: elanPrefill.elanId,
+                        userId: currentUser?.id,
+                        gameId: result.id,
+                        gameTitle: gameData.title,
+                    }).unwrap();
+                } catch (_) { /* non-critical */ }
+            }
+
             if (gameMode === 'own') {
                 message.success(t('game.create.ownCreatedSuccess'), 5);
             } else {
@@ -331,18 +357,33 @@ const CreateGameForm = ({ onSuccess }) => {
 
         return (
             <Form form={form} name="createOwnGame" onFinish={onFinish} layout="vertical" requiredMark={false}>
-                {/* Back button */}
-                <button
-                    type="button"
-                    onClick={() => { setGameMode(null); form.resetFields(); }}
-                    style={{
-                        background: 'none', border: 'none', cursor: 'pointer',
-                        color: 'var(--text-tertiary)', fontSize: 13, padding: '0 0 20px 0',
-                        display: 'flex', alignItems: 'center', gap: 6,
-                    }}
-                >
-                    {t('game.create.changeType')}
-                </button>
+                {/* Back button — hidden when coming from elan */}
+                {!elanPrefill && (
+                    <button
+                        type="button"
+                        onClick={() => { setGameMode(null); form.resetFields(); }}
+                        style={{
+                            background: 'none', border: 'none', cursor: 'pointer',
+                            color: 'var(--text-tertiary)', fontSize: 13, padding: '0 0 20px 0',
+                            display: 'flex', alignItems: 'center', gap: 6,
+                        }}
+                    >
+                        {t('game.create.changeType')}
+                    </button>
+                )}
+
+                {/* Elan conversion banner */}
+                {elanPrefill && (
+                    <div style={{
+                        background: 'rgba(245,166,35,0.1)',
+                        border: '1px solid rgba(245,166,35,0.35)',
+                        borderRadius: 10, padding: '10px 14px',
+                        marginBottom: 20, fontSize: 13,
+                        color: '#f5a623', display: 'flex', alignItems: 'center', gap: 8,
+                    }}>
+                        📋 Elan əsasında oyun yaradılır. Maraqlananlara bildiriş göndəriləcək.
+                    </div>
+                )}
 
                 <div style={{
                     display: 'inline-flex', alignItems: 'center', gap: 8,

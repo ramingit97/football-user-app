@@ -760,7 +760,7 @@ export default function LandingPage() {
   }, []);
 
   const isLoggedIn = !!localStorage.getItem('token');
-  const goLogin = () => navigate('/games');
+  const goLogin = (page='games') => navigate(`/${page}`);
   const goLoginPage = () => navigate(isLoggedIn ? '/games' : '/login');
 
   return (
@@ -980,6 +980,166 @@ export default function LandingPage() {
                   </div>
                 </FadeSection>
               ))}
+            </div>
+          </div>
+        </FadeSection>
+      </section>
+
+      {/* ══════════════════════════ ELANLAR ══════════════════════════ */}
+      <section style={{ padding:'100px clamp(20px,5vw,80px)', position:'relative', overflow:'hidden' }}>
+        {/* Amber glow bg */}
+        <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', width:800, height:500, borderRadius:'50%', background:'radial-gradient(circle,rgba(245,166,35,0.05) 0%,transparent 65%)', pointerEvents:'none' }}/>
+
+        <FadeSection>
+          <div style={{ maxWidth:1100, margin:'0 auto' }}>
+            <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 48 : 72, alignItems:'center' }}>
+
+              {/* Left: mock elan card */}
+              <FadeSection delay={0.1}>
+                <div style={{ position:'relative' }}>
+                  {/* Floating badge */}
+                  <div style={{
+                    position:'absolute', top:-18, right: isMobile ? 0 : -12, zIndex:2,
+                    background:'rgba(245,166,35,0.15)', border:'1px solid rgba(245,166,35,0.4)',
+                    borderRadius:30, padding:'5px 14px',
+                    fontFamily:'Outfit,sans-serif', fontWeight:700, fontSize:12, color:'#f5a623',
+                    display:'flex', alignItems:'center', gap:6,
+                    animation:'fade-up .5s ease both',
+                  }}>
+                    <span style={{ width:7, height:7, borderRadius:'50%', background:'#f5a623', display:'inline-block', animation:'blink-dot 1.4s ease-in-out infinite' }}/>
+                    Canlı elan
+                  </div>
+
+                  {/* Card */}
+                  <div style={{
+                    background:'var(--bg-card)', border:'1px solid rgba(245,166,35,0.25)',
+                    borderRadius:20, padding:28, boxShadow:'0 8px 48px rgba(0,0,0,0.28)',
+                  }}>
+                    {/* Header */}
+                    <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:20 }}>
+                      <div style={{
+                        width:42, height:42, borderRadius:'50%',
+                        background:'linear-gradient(135deg,#f5a623,#e8480d)',
+                        display:'flex', alignItems:'center', justifyContent:'center',
+                        fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif",
+                        fontWeight:800, fontSize:17, color:'#fff', flexShrink:0,
+                      }}>R</div>
+                      <div>
+                        <div style={{ fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:700, fontSize:15, color:'var(--text-primary)' }}>Rauf M.</div>
+                        <div style={{ fontSize:12, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>Sabunçu r. · 5x5</div>
+                      </div>
+                      <div style={{ marginLeft:'auto', background:'rgba(245,166,35,0.12)', border:'1px solid rgba(245,166,35,0.3)', borderRadius:20, padding:'3px 10px', fontSize:11, fontWeight:700, color:'#f5a623', fontFamily:'Outfit,sans-serif', letterSpacing:'0.5px' }}>ELAN</div>
+                    </div>
+
+                    <div style={{ fontSize:13.5, color:'var(--text-secondary)', fontFamily:'Outfit,sans-serif', lineHeight:1.6, marginBottom:18 }}>
+                      Şənbə axşamı oynamaq istəyirəm, yeri hələ dəqiqləşdirməmişik. Kim var?
+                    </div>
+
+                    {/* Vote bars */}
+                    <div style={{ marginBottom:18 }}>
+                      <div style={{ fontSize:11, fontWeight:700, letterSpacing:'1.5px', color:'var(--text-tertiary)', textTransform:'uppercase', fontFamily:'Outfit,sans-serif', marginBottom:10 }}>Vaxt seçimi</div>
+                      {[
+                        { time:'18:00', pct:75, votes:3, winner:true },
+                        { time:'20:00', pct:25, votes:1, winner:false },
+                      ].map(v => (
+                        <div key={v.time} style={{ marginBottom:8 }}>
+                          <div style={{ display:'flex', justifyContent:'space-between', fontSize:12, fontFamily:'Outfit,sans-serif', marginBottom:4 }}>
+                            <span style={{ color: v.winner ? '#f5a623' : 'var(--text-secondary)', fontWeight: v.winner ? 700 : 400 }}>
+                              {v.winner ? '★ ' : ''}{v.time}
+                            </span>
+                            <span style={{ color:'var(--text-tertiary)' }}>{v.votes} nəfər</span>
+                          </div>
+                          <div style={{ height:6, borderRadius:99, background:'var(--bg-raised)', overflow:'hidden' }}>
+                            <div style={{
+                              height:'100%', borderRadius:99,
+                              background: v.winner ? 'linear-gradient(90deg,#f5a623,#e8480d)' : 'var(--border-color)',
+                              width:`${v.pct}%`, transition:'width .8s ease',
+                            }}/>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Interested avatars */}
+                    <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                      <div style={{ display:'flex' }}>
+                        {['#00e87a','#4f86f7','#f5a623','#e8480d'].map((c,i) => (
+                          <div key={i} style={{
+                            width:28, height:28, borderRadius:'50%',
+                            background:`linear-gradient(135deg,${c},${c}aa)`,
+                            border:'2px solid var(--bg-card)',
+                            marginLeft: i ? -8 : 0,
+                            display:'flex', alignItems:'center', justifyContent:'center',
+                            fontSize:11, fontWeight:800, color:'#fff',
+                            fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif",
+                          }}>
+                            {['R','L','E','T'][i]}
+                          </div>
+                        ))}
+                      </div>
+                      <span style={{ fontSize:12, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>4 nəfər maraqlanır</span>
+                      <div style={{ marginLeft:'auto', width:28, height:28, borderRadius:'50%', background:'var(--green-dim)', border:'1px solid rgba(0,232,122,0.25)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14 }}>💬</div>
+                    </div>
+                  </div>
+
+                  {/* "Oyun yarat" floating button */}
+                  <div style={{
+                    position:'absolute', bottom:-18, left: isMobile ? 0 : -12, zIndex:2,
+                    background:'var(--green)', color:'#060c18',
+                    borderRadius:12, padding:'8px 18px',
+                    fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif",
+                    fontWeight:800, fontSize:13,
+                    boxShadow:'0 4px 20px rgba(0,232,122,0.4)',
+                    animation:'fade-up .5s .3s ease both',
+                  }}>
+                    ⚽ Oyun yarat →
+                  </div>
+                </div>
+              </FadeSection>
+
+              {/* Right: text */}
+              <div style={{ order: isMobile ? -1 : 0 }}>
+                <p style={{ fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, letterSpacing:'2.5px', color:'#f5a623', textTransform:'uppercase', marginBottom:14 }}>
+                  Yeni · Новое
+                </p>
+                <h2 style={{
+                  fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif",
+                  fontWeight:800, fontSize:'clamp(26px,4vw,44px)',
+                  color:'var(--text-primary)', letterSpacing:'-1px', lineHeight:1.15, marginBottom:16,
+                }}>
+                  Oyun olacaq, amma<br/>
+                  <span style={{ color:'#f5a623' }}>vaxt hələ bəlli deyil?</span>
+                </h2>
+                <p style={{ fontFamily:'Outfit,sans-serif', fontSize:15, color:'var(--text-secondary)', lineHeight:1.75, marginBottom:12 }}>
+                  <strong style={{ color:'var(--text-primary)' }}>Elan yaz</strong> — qoşulmaq istəyənlər "Maraqlanıram" desin, vaxt seçiminə səs versin, söhbət etsin. Ən çox səs toplayan vaxta oyun yaradılır, hamıya bildiriş gedir.
+                </p>
+                <p style={{ fontFamily:'Outfit,sans-serif', fontSize:14, color:'var(--text-tertiary)', lineHeight:1.7, marginBottom:32, borderLeft:'3px solid rgba(245,166,35,0.4)', paddingLeft:14 }}>
+                  Напишите объявление — заинтересованные игроки проголосуют за удобное время, обсудят детали в чате. Как только всё решено — одним кликом создаётся игра и все получают уведомление.
+                </p>
+
+                {[
+                  { icon:'📋', text: isMobile ? 'Elan yaz, oyunçuları topla' : 'Elan yaz — rayon, format və tarix göstər' },
+                  { icon:'🗳️', text:'Oyunçular vaxt seçiminə səs versin' },
+                  { icon:'💬', text:'Söhbətdə detalları razılaşdırın' },
+                  { icon:'⚡', text:'Bir klikdə oyuna çevir, hamıya bildiriş get' },
+                ].map((f,i) => (
+                  <div key={i} style={{ display:'flex', alignItems:'center', gap:12, marginBottom:12 }}>
+                    <div style={{ width:32, height:32, borderRadius:8, background:'rgba(245,166,35,0.1)', border:'1px solid rgba(245,166,35,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:15, flexShrink:0 }}>{f.icon}</div>
+                    <span style={{ fontFamily:'Outfit,sans-serif', fontSize:13.5, color:'var(--text-secondary)', lineHeight:1.4 }}>{f.text}</span>
+                  </div>
+                ))}
+
+                <button className="lp-btn-primary" onClick={()=>goLogin('elanlar')} style={{
+                  marginTop:28, background:'#f5a623', color:'#060c18', border:'none',
+                  borderRadius:12, padding:'13px 28px',
+                  fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif",
+                  fontWeight:800, fontSize:15, cursor:'pointer',
+                  boxShadow:'0 4px 24px rgba(245,166,35,0.35)',
+                }}>
+                  📋 Elan yaz
+                </button>
+              </div>
+
             </div>
           </div>
         </FadeSection>
