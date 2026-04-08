@@ -7,7 +7,7 @@ import {
     UserOutlined, TrophyOutlined, HistoryOutlined, TeamOutlined,
     WalletOutlined, PlusCircleOutlined, CameraOutlined, UserAddOutlined,
     StarFilled, ThunderboltFilled, GiftOutlined, RightOutlined, BankOutlined,
-    CustomerServiceOutlined, CalendarOutlined
+    CustomerServiceOutlined, CalendarOutlined, DeleteOutlined, EyeOutlined
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import ProfileForm from '../components/ProfileForm';
@@ -93,6 +93,8 @@ const ProfilePage = () => {
     const [avatarPreview, setAvatarPreview] = useState(null);
     const [avatarFile, setAvatarFile] = useState(null);
     const [avatarUploading, setAvatarUploading] = useState(false);
+    const [avatarViewVisible, setAvatarViewVisible] = useState(false);
+    const [avatarDeleting, setAvatarDeleting] = useState(false);
     const [showFifaCard, setShowFifaCard] = useState(false);
 
     const handleAvatarSelect = (info) => {
@@ -113,6 +115,18 @@ const ProfilePage = () => {
             window.location.reload();
         } catch { message.error(t('profile.avatar.error')); }
         finally { setAvatarUploading(false); }
+    };
+
+    const handleAvatarDelete = async () => {
+        if (!userProfile?.id) return;
+        setAvatarDeleting(true);
+        try {
+            await axios.delete(`${API_BASE}/api/files/avatar/${userProfile.id}`);
+            await updateProfile({ ...userProfile, avatar: null }).unwrap();
+            message.success('Şəkil silindi');
+            window.location.reload();
+        } catch { message.error('Xəta baş verdi'); }
+        finally { setAvatarDeleting(false); }
     };
 
     const handleTopUp = async () => {
@@ -199,8 +213,12 @@ const ProfilePage = () => {
                     <div className="profile-hero-inner" style={{ display: 'flex', alignItems: 'flex-end', gap: 28 }}>
 
                         {/* Avatar */}
-                        <Upload name="avatar" showUploadList={false} beforeUpload={() => false} onChange={handleAvatarSelect} accept="image/*">
-                            <div style={{ position: 'relative', cursor: 'pointer', flexShrink: 0 }}>
+                        <div style={{ position: 'relative', flexShrink: 0 }}>
+                            {/* Avatar image — click to view */}
+                            <div
+                                onClick={() => userProfile?.avatar && setAvatarViewVisible(true)}
+                                style={{ cursor: userProfile?.avatar ? 'zoom-in' : 'default' }}
+                            >
                                 <Avatar
                                     size={110}
                                     src={userProfile?.avatar}
@@ -211,19 +229,45 @@ const ProfilePage = () => {
                                         background: 'var(--bg-raised)',
                                         color: pos.color,
                                         fontSize: 44,
+                                        display: 'block',
                                     }}
                                 />
+                            </div>
+                            {/* Camera button — upload new */}
+                            <Upload name="avatar" showUploadList={false} beforeUpload={() => false} onChange={handleAvatarSelect} accept="image/*">
                                 <div style={{
                                     position: 'absolute', bottom: 2, right: 2,
                                     width: 28, height: 28, borderRadius: '50%',
                                     background: 'var(--bg-card)',
                                     border: `2px solid ${pos.color}`,
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    cursor: 'pointer',
                                 }}>
                                     <CameraOutlined style={{ color: pos.color, fontSize: 12 }} />
                                 </div>
-                            </div>
-                        </Upload>
+                            </Upload>
+                            {/* Delete button — only if avatar exists */}
+                            {userProfile?.avatar && (
+                                <div
+                                    onClick={() => Modal.confirm({
+                                        title: 'Şəkli sil?',
+                                        content: 'Profil şəkliniz silinəcək.',
+                                        okText: 'Sil', okButtonProps: { danger: true },
+                                        cancelText: 'Ləğv et',
+                                        onOk: handleAvatarDelete,
+                                    })}
+                                    style={{
+                                        position: 'absolute', top: 2, right: 2,
+                                        width: 24, height: 24, borderRadius: '50%',
+                                        background: 'rgba(239,68,68,0.85)',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    <DeleteOutlined style={{ color: '#fff', fontSize: 11 }} />
+                                </div>
+                            )}
+                        </div>
 
                         {/* Info */}
                         <div style={{ flex: 1, paddingBottom: 20 }}>
@@ -580,6 +624,23 @@ const ProfilePage = () => {
                     {avatarPreview && <img src={avatarPreview} alt="Preview" style={{ width: 160, height: 160, borderRadius: '50%', objectFit: 'cover', border: `4px solid ${pos.color}` }} />}
                     <p style={{ marginTop: 12, color: 'var(--text-secondary)' }}>{t('profile.avatar.hint')}</p>
                 </div>
+            </Modal>
+
+            {/* Avatar lightbox */}
+            <Modal
+                open={avatarViewVisible}
+                onCancel={() => setAvatarViewVisible(false)}
+                footer={null}
+                centered
+                width="auto"
+                styles={{ body: { padding: 0, background: 'transparent' }, content: { background: 'transparent', boxShadow: 'none', padding: 0 }, mask: { background: 'rgba(0,0,0,0.85)' } }}
+                closeIcon={<span style={{ color: '#fff', fontSize: 20 }}>✕</span>}
+            >
+                <img
+                    src={userProfile?.avatar}
+                    alt={userProfile?.name}
+                    style={{ maxWidth: '90vw', maxHeight: '85vh', borderRadius: 16, objectFit: 'contain', display: 'block' }}
+                />
             </Modal>
 
             <Modal title={t('profile.teams.createTitle')} open={createTeamModalVisible}

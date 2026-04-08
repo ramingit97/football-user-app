@@ -70,7 +70,7 @@ const PlayerRow = ({ player, rank, navigate, t }) => {
                 }}>
                     {player.name || t('players.playerFallback')}
                 </div>
-                {player.position && (
+                {player.position && player.position !== 'any' && (
                     <span style={{
                         fontSize: 10, fontWeight: 700, letterSpacing: '0.5px',
                         color: pos.color, fontFamily: 'Outfit, sans-serif',

@@ -36,6 +36,7 @@ const PublicProfilePage = () => {
     const [removeFriend, { isLoading: isRemoving }] = useRemoveFriendMutation();
 
     // Report modal
+    const [avatarViewVisible, setAvatarViewVisible] = useState(false);
     const [reportModal, setReportModal] = useState(false);
     const [reportType, setReportType] = useState(null);
     const [reportDescription, setReportDescription] = useState('');
@@ -177,15 +178,20 @@ const PublicProfilePage = () => {
                     {/* Left Column: Profile Card */}
                     <Col xs={24} md={8}>
                         <Card className="glass-card" style={{ textAlign: 'center' }}>
-                            <Avatar
-                                size={120}
-                                src={player.avatar}
-                                icon={<UserOutlined />}
-                                style={{
-                                    border: '4px solid rgba(255,255,255,0.1)',
-                                    boxShadow: '0 8px 24px rgba(0,0,0,0.2)'
-                                }}
-                            />
+                            <div
+                                onClick={() => player.avatar && setAvatarViewVisible(true)}
+                                style={{ cursor: player.avatar ? 'zoom-in' : 'default', display: 'inline-block' }}
+                            >
+                                <Avatar
+                                    size={120}
+                                    src={player.avatar}
+                                    icon={<UserOutlined />}
+                                    style={{
+                                        border: '4px solid rgba(255,255,255,0.1)',
+                                        boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+                                    }}
+                                />
+                            </div>
                             <div style={{ marginTop: 16 }}>
                                 <Title level={3} style={{ color: 'var(--text-primary)', marginBottom: 4 }}>
                                     {player.name || t('common.player')}
@@ -313,6 +319,23 @@ const PublicProfilePage = () => {
                 </Row>
             </div>
         </div>
+
+        {/* Avatar lightbox */}
+        <Modal
+            open={avatarViewVisible}
+            onCancel={() => setAvatarViewVisible(false)}
+            footer={null}
+            centered
+            width="auto"
+            styles={{ body: { padding: 0, background: 'transparent' }, content: { background: 'transparent', boxShadow: 'none', padding: 0 }, mask: { background: 'rgba(0,0,0,0.85)' } }}
+            closeIcon={<span style={{ color: '#fff', fontSize: 20 }}>✕</span>}
+        >
+            <img
+                src={player?.avatar}
+                alt={player?.name}
+                style={{ maxWidth: '90vw', maxHeight: '85vh', borderRadius: 16, objectFit: 'contain', display: 'block' }}
+            />
+        </Modal>
 
         {/* Report Modal */}
         <Modal
