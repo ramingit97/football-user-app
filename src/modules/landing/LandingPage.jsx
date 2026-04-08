@@ -761,6 +761,7 @@ export default function LandingPage() {
 
   const isLoggedIn = !!localStorage.getItem('token');
   const goLogin = () => navigate('/games');
+  const goLoginPage = () => navigate(isLoggedIn ? '/games' : '/login');
 
   return (
     <>
@@ -791,7 +792,7 @@ export default function LandingPage() {
               cursor:'pointer',
             }}>🏆 Liderboard</button>
           )}
-          <button className="lp-btn-primary" onClick={goLogin} style={{
+          <button className="lp-btn-primary" onClick={goLoginPage} style={{
             background:'var(--green)', color:'#060c18', border:'none',
             borderRadius:10, padding:'9px 22px',
             fontFamily:'Outfit,sans-serif', fontWeight:700, fontSize:14,

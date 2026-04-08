@@ -687,6 +687,18 @@ h1, h2, h3, h4, h5 {
   }
 }
 
+/* ── Prevent iOS auto-zoom on select/input focus ── */
+@media (max-width: 767px) {
+  .ant-select-selector,
+  .ant-select-selection-search-input,
+  .ant-input,
+  .ant-input-password input,
+  .ant-input-number-input,
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
 /* ── CreateGameForm ── */
 .form-grid-2col {
   display: grid;
