@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Spin, Empty, Select, Pagination } from 'antd';
-import { PlusOutlined, ReloadOutlined, EnvironmentOutlined, CompassOutlined, FireOutlined } from '@ant-design/icons';
+import { PlusOutlined, ReloadOutlined, EnvironmentOutlined, CompassOutlined, FireOutlined, FilterOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import GameCard from '../components/GameCard';
 import JoinGameModal from '../components/JoinGameModal';
@@ -56,6 +56,8 @@ const GameListPage = () => {
     const [districtFilter, setDistrictFilter] = useState(null);
     const [metroFilter, setMetroFilter] = useState(null);
     const [minAgeFilter, setMinAgeFilter] = useState(null);
+    const [filtersOpen, setFiltersOpen] = useState(false);
+    const isMobile = window.innerWidth < 768;
 
     useEffect(() => { setCurrentPage(1); }, [statusFilter, formatFilter, districtFilter, metroFilter, minAgeFilter]);
 
@@ -182,13 +184,38 @@ const GameListPage = () => {
 
             {/* ── Фильтры ── */}
             {activeTab !== 'hot' && (
-                <div style={{
+                <div style={{ marginBottom: 20 }}>
+                {/* Кнопка toggle на мобиле */}
+                {isMobile && (
+                    <button
+                        onClick={() => setFiltersOpen(v => !v)}
+                        style={{
+                            width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                            background: 'var(--bg-card)', border: '1px solid var(--border-color)',
+                            borderRadius: filtersOpen ? '12px 12px 0 0' : 12,
+                            padding: '10px 16px', cursor: 'pointer',
+                            color: 'var(--text-primary)', fontFamily: 'Outfit, sans-serif', fontSize: 14,
+                        }}
+                    >
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <FilterOutlined style={{ color: hasActiveFilters ? 'var(--green)' : 'var(--text-tertiary)' }} />
+                            {t('game.list.filter.status')}
+                            {hasActiveFilters && (
+                                <span style={{ background: 'var(--green)', color: '#000', borderRadius: 99, fontSize: 11, padding: '1px 7px', fontWeight: 700 }}>
+                                    {[statusFilter, formatFilter, districtFilter, metroFilter, minAgeFilter].filter(Boolean).length}
+                                </span>
+                            )}
+                        </span>
+                        <span style={{ color: 'var(--text-tertiary)', fontSize: 12 }}>{filtersOpen ? '▲' : '▼'}</span>
+                    </button>
+                )}
+                {(!isMobile || filtersOpen) && <div style={{
                     display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center',
-                    marginBottom: 20,
                     padding: '12px 16px',
                     background: 'var(--bg-card)',
                     border: '1px solid var(--border-color)',
-                    borderRadius: 12,
+                    borderRadius: isMobile ? '0 0 12px 12px' : 12,
+                    borderTop: isMobile ? 'none' : undefined,
                 }}>
                     {activeTab === 'nearby' && (
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -274,6 +301,7 @@ const GameListPage = () => {
                             <ReloadOutlined style={{ fontSize: 11 }} /> {t('game.list.filter.refresh')}
                         </button>
                     </div>
+                </div>}
                 </div>
             )}
 

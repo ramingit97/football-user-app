@@ -73,9 +73,24 @@ const StatItem = ({ value, label, color = 'var(--text-primary)' }) => (
 );
 
 // ── Change Password Section ──────────────────────────
-const ChangePasswordSection = () => {
+const ChangePasswordSection = ({ hasPassword }) => {
+    const { t, i18n } = useTranslation();
+    const isAz = i18n.language === 'az';
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
+
+    if (!hasPassword) {
+        return (
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 16, padding: 32, maxWidth: 480, textAlign: 'center' }}>
+                <LockOutlined style={{ fontSize: 40, color: 'var(--text-tertiary)', marginBottom: 16 }} />
+                <p style={{ color: 'var(--text-secondary)', margin: 0 }}>
+                    {isAz
+                        ? 'Google hesabı ilə daxil olduğunuz üçün şifrə dəyişdirilməsi mümkün deyil.'
+                        : 'Вы вошли через Google, поэтому смена пароля недоступна.'}
+                </p>
+            </div>
+        );
+    }
 
     const handleSubmit = async ({ oldPassword, newPassword }) => {
         setLoading(true);
@@ -86,11 +101,15 @@ const ChangePasswordSection = () => {
                 { oldPassword, newPassword },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-            message.success('Пароль успешно изменён');
+            message.success(isAz ? 'Şifrə uğurla dəyişdirildi' : 'Пароль успешно изменён');
             form.resetFields();
         } catch (err) {
-            const msg = err?.response?.data?.message || 'Ошибка. Проверьте текущий пароль.';
-            message.error(msg);
+            const msg = err?.response?.data?.message;
+            message.error(
+                msg === 'Неверный текущий пароль'
+                    ? (isAz ? 'Cari şifrə yanlışdır' : msg)
+                    : (isAz ? 'Xəta baş verdi' : 'Ошибка. Проверьте текущий пароль.')
+            );
         } finally {
             setLoading(false);
         }
@@ -99,33 +118,37 @@ const ChangePasswordSection = () => {
     return (
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 16, padding: 24, maxWidth: 480 }}>
             <h3 style={{ margin: '0 0 20px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <LockOutlined style={{ color: 'var(--green)' }} /> Смена пароля
+                <LockOutlined style={{ color: 'var(--green)' }} />
+                {isAz ? 'Şifrəni dəyiş' : 'Смена пароля'}
             </h3>
             <Form form={form} layout="vertical" onFinish={handleSubmit}>
                 <Form.Item
-                    label={<span style={{ color: 'var(--text-secondary)' }}>Текущий пароль</span>}
+                    label={<span style={{ color: 'var(--text-secondary)' }}>{isAz ? 'Cari şifrə' : 'Текущий пароль'}</span>}
                     name="oldPassword"
-                    rules={[{ required: true, message: 'Введите текущий пароль' }]}
+                    rules={[{ required: true, message: isAz ? 'Cari şifrəni daxil edin' : 'Введите текущий пароль' }]}
                 >
                     <Input.Password size="large" style={{ borderRadius: 10 }} />
                 </Form.Item>
                 <Form.Item
-                    label={<span style={{ color: 'var(--text-secondary)' }}>Новый пароль</span>}
+                    label={<span style={{ color: 'var(--text-secondary)' }}>{isAz ? 'Yeni şifrə' : 'Новый пароль'}</span>}
                     name="newPassword"
-                    rules={[{ required: true, message: 'Введите новый пароль' }, { min: 6, message: 'Минимум 6 символов' }]}
+                    rules={[
+                        { required: true, message: isAz ? 'Yeni şifrəni daxil edin' : 'Введите новый пароль' },
+                        { min: 6, message: isAz ? 'Minimum 6 simvol' : 'Минимум 6 символов' },
+                    ]}
                 >
                     <Input.Password size="large" style={{ borderRadius: 10 }} />
                 </Form.Item>
                 <Form.Item
-                    label={<span style={{ color: 'var(--text-secondary)' }}>Подтвердите новый пароль</span>}
+                    label={<span style={{ color: 'var(--text-secondary)' }}>{isAz ? 'Yeni şifrəni təsdiqləyin' : 'Подтвердите новый пароль'}</span>}
                     name="confirmPassword"
                     dependencies={['newPassword']}
                     rules={[
-                        { required: true, message: 'Подтвердите пароль' },
+                        { required: true, message: isAz ? 'Şifrəni təsdiqləyin' : 'Подтвердите пароль' },
                         ({ getFieldValue }) => ({
                             validator(_, value) {
                                 if (!value || getFieldValue('newPassword') === value) return Promise.resolve();
-                                return Promise.reject('Пароли не совпадают');
+                                return Promise.reject(isAz ? 'Şifrələr uyğun gəlmir' : 'Пароли не совпадают');
                             },
                         }),
                     ]}
@@ -133,7 +156,7 @@ const ChangePasswordSection = () => {
                     <Input.Password size="large" style={{ borderRadius: 10 }} />
                 </Form.Item>
                 <Button type="primary" htmlType="submit" loading={loading} size="large" style={{ borderRadius: 10 }}>
-                    Сохранить
+                    {isAz ? 'Yadda saxla' : 'Сохранить'}
                 </Button>
             </Form>
         </div>
@@ -258,7 +281,7 @@ const ProfilePage = () => {
         { key: 'support',       icon: <CustomerServiceOutlined />,  label: t('profile.tabs.support') },
         { key: 'invitations',   icon: <TeamOutlined />,             label: t('profile.tabs.invitations') },
         { key: 'referral',      icon: <GiftOutlined />,    label: 'Referral' },
-        { key: 'security',      icon: <LockOutlined />,    label: 'Безопасность' },
+        { key: 'security',      icon: <LockOutlined />,    label: t('profile.tabs.security') },
     ];
 
     return (
@@ -674,7 +697,7 @@ const ProfilePage = () => {
                     )}
 
                     {activeTab === 'security' && (
-                        <ChangePasswordSection />
+                        <ChangePasswordSection hasPassword={userProfile?.hasPassword} />
                     )}
                 </div>
             </div>
