@@ -711,8 +711,27 @@ const ProfilePage = () => {
                 width={320}
                 styles={{ content: { background: 'transparent', boxShadow: 'none', padding: 0 }, mask: { backdropFilter: 'blur(8px)' } }}
             >
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
                     <FifaPlayerCard user={userProfile} size="large" />
+                    <button
+                        onClick={() => {
+                            const url = `${window.location.origin}/player/${userProfile?.id}`;
+                            if (navigator.share) {
+                                navigator.share({ title: `${userProfile?.name} — Topin`, url });
+                            } else {
+                                navigator.clipboard.writeText(url);
+                                message.success(i18n.language === 'az' ? 'Link kopyalandı!' : 'Ссылка скопирована!');
+                            }
+                        }}
+                        style={{
+                            background: 'var(--green)', color: '#060c18', border: 'none',
+                            borderRadius: 10, padding: '10px 28px',
+                            fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: 14,
+                            cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8,
+                        }}
+                    >
+                        🔗 {i18n.language === 'az' ? 'Profili paylaş' : 'Поделиться профилем'}
+                    </button>
                 </div>
             </Modal>
 
