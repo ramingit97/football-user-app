@@ -76,7 +76,7 @@ const StatItem = ({ value, label, color = 'var(--text-primary)' }) => (
 const ProfilePage = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { data: userProfile, isLoading } = useGetProfileQuery();
+    const { data: userProfile, isLoading, isFetching, refetch: refetchProfile } = useGetProfileQuery();
     const { data: myGamesData } = useGetGamesByUserQuery(userProfile?.id, { skip: !userProfile?.id });
     const { data: myTeams, refetch: refetchTeams } = useGetMyTeamsQuery(userProfile?.id, { skip: !userProfile?.id });
     const [createTeam, { isLoading: isCreatingTeam }] = useCreateTeamMutation();
@@ -108,11 +108,18 @@ const ProfilePage = () => {
         try {
             const formData = new FormData();
             formData.append('file', avatarFile);
-            const response = await axios.post(`${API_BASE}/api/files/avatar/${userProfile.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-            await updateProfile({ ...userProfile, avatar: response.data.url }).unwrap();
+            const token = localStorage.getItem('token');
+            const response = await axios.post(
+                `${API_BASE}/api/files/avatar/${userProfile.id}`,
+                formData,
+                { headers: { 'Content-Type': 'multipart/form-data', ...(token ? { Authorization: `Bearer ${token}` } : {}) } }
+            );
+            await updateProfile({ avatar: response.data.url }).unwrap();
             message.success(t('profile.avatar.success'));
-            setAvatarModalVisible(false); setAvatarPreview(null); setAvatarFile(null);
-            window.location.reload();
+            setAvatarModalVisible(false);
+            setAvatarPreview(null);
+            setAvatarFile(null);
+            refetchProfile();
         } catch { message.error(t('profile.avatar.error')); }
         finally { setAvatarUploading(false); }
     };
@@ -121,10 +128,14 @@ const ProfilePage = () => {
         if (!userProfile?.id) return;
         setAvatarDeleting(true);
         try {
-            await axios.delete(`${API_BASE}/api/files/avatar/${userProfile.id}`);
-            await updateProfile({ ...userProfile, avatar: null }).unwrap();
+            const token = localStorage.getItem('token');
+            await axios.delete(
+                `${API_BASE}/api/files/avatar/${userProfile.id}`,
+                { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+            );
+            await updateProfile({ avatar: null }).unwrap();
             message.success('Şəkil silindi');
-            window.location.reload();
+            refetchProfile();
         } catch { message.error('Xəta baş verdi'); }
         finally { setAvatarDeleting(false); }
     };
@@ -158,7 +169,7 @@ const ProfilePage = () => {
         } catch { message.error(t('profile.bonus.error')); }
     };
 
-    if (isLoading) return (
+    if (isLoading && !userProfile) return (
         <div style={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Spin size="large" />
         </div>
@@ -214,54 +225,59 @@ const ProfilePage = () => {
 
                         {/* Avatar */}
                         <div style={{ position: 'relative', flexShrink: 0 }}>
-                            {/* Avatar image — click to view */}
-                            <div
-                                onClick={() => userProfile?.avatar && setAvatarViewVisible(true)}
-                                style={{ cursor: userProfile?.avatar ? 'zoom-in' : 'default' }}
-                            >
-                                <Avatar
-                                    size={110}
-                                    src={userProfile?.avatar}
-                                    icon={<UserOutlined />}
-                                    style={{
-                                        border: `3px solid ${pos.color}`,
-                                        boxShadow: `0 0 24px ${pos.glow}`,
-                                        background: 'var(--bg-raised)',
-                                        color: pos.color,
-                                        fontSize: 44,
-                                        display: 'block',
-                                    }}
-                                />
-                            </div>
-                            {/* Camera button — upload new */}
+                            {/* Upload wraps avatar + camera — original design preserved */}
                             <Upload name="avatar" showUploadList={false} beforeUpload={() => false} onChange={handleAvatarSelect} accept="image/*">
-                                <div style={{
-                                    position: 'absolute', bottom: 2, right: 2,
-                                    width: 28, height: 28, borderRadius: '50%',
-                                    background: 'var(--bg-card)',
-                                    border: `2px solid ${pos.color}`,
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    cursor: 'pointer',
-                                }}>
-                                    <CameraOutlined style={{ color: pos.color, fontSize: 12 }} />
+                                <div style={{ position: 'relative', cursor: 'pointer' }}>
+                                    <Avatar
+                                        size={110}
+                                        src={userProfile?.avatar}
+                                        icon={<UserOutlined />}
+                                        style={{
+                                            border: `3px solid ${pos.color}`,
+                                            boxShadow: `0 0 24px ${pos.glow}`,
+                                            background: 'var(--bg-raised)',
+                                            color: pos.color,
+                                            fontSize: 44,
+                                        }}
+                                    />
+                                    <div style={{
+                                        position: 'absolute', bottom: 2, right: 2,
+                                        width: 28, height: 28, borderRadius: '50%',
+                                        background: 'var(--bg-card)',
+                                        border: `2px solid ${pos.color}`,
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    }}>
+                                        <CameraOutlined style={{ color: pos.color, fontSize: 12 }} />
+                                    </div>
                                 </div>
                             </Upload>
-                            {/* Delete button — only if avatar exists */}
+                            {/* Transparent overlay for lightbox — only if photo exists */}
                             {userProfile?.avatar && (
                                 <div
-                                    onClick={() => Modal.confirm({
+                                    onClick={(e) => { e.stopPropagation(); setAvatarViewVisible(true); }}
+                                    style={{
+                                        position: 'absolute', inset: 0,
+                                        borderRadius: '50%', cursor: 'zoom-in',
+                                        width: 110, height: 110,
+                                    }}
+                                />
+                            )}
+                            {/* Delete button — top-right, only if photo exists */}
+                            {userProfile?.avatar && (
+                                <div
+                                    onClick={(e) => { e.stopPropagation(); Modal.confirm({
                                         title: 'Şəkli sil?',
                                         content: 'Profil şəkliniz silinəcək.',
                                         okText: 'Sil', okButtonProps: { danger: true },
                                         cancelText: 'Ləğv et',
                                         onOk: handleAvatarDelete,
-                                    })}
+                                    }); }}
                                     style={{
-                                        position: 'absolute', top: 2, right: 2,
+                                        position: 'absolute', top: 0, right: 0,
                                         width: 24, height: 24, borderRadius: '50%',
-                                        background: 'rgba(239,68,68,0.85)',
+                                        background: 'rgba(239,68,68,0.9)',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        cursor: 'pointer',
+                                        cursor: 'pointer', zIndex: 2,
                                     }}
                                 >
                                     <DeleteOutlined style={{ color: '#fff', fontSize: 11 }} />
@@ -632,14 +648,34 @@ const ProfilePage = () => {
                 onCancel={() => setAvatarViewVisible(false)}
                 footer={null}
                 centered
-                width="auto"
-                styles={{ body: { padding: 0, background: 'transparent' }, content: { background: 'transparent', boxShadow: 'none', padding: 0 }, mask: { background: 'rgba(0,0,0,0.85)' } }}
-                closeIcon={<span style={{ color: '#fff', fontSize: 20 }}>✕</span>}
+                width="min(88vw, 88vh)"
+                styles={{
+                    body: { padding: 0, background: 'transparent' },
+                    content: { background: 'transparent', boxShadow: 'none', padding: 0 },
+                    mask: { background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(8px)' },
+                }}
+                closeIcon={
+                    <span style={{
+                        position: 'fixed', top: 20, right: 20,
+                        width: 36, height: 36, borderRadius: '50%',
+                        background: 'rgba(255,255,255,0.15)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: '#fff', fontSize: 16, cursor: 'pointer',
+                    }}>✕</span>
+                }
             >
                 <img
                     src={userProfile?.avatar}
                     alt={userProfile?.name}
-                    style={{ maxWidth: '90vw', maxHeight: '85vh', borderRadius: 16, objectFit: 'contain', display: 'block' }}
+                    style={{
+                        width: '100%',
+                        height: 'min(88vw, 88vh)',
+                        borderRadius: '50%',
+                        objectFit: 'cover',
+                        display: 'block',
+                        border: `4px solid ${pos.color}`,
+                        boxShadow: `0 0 60px ${pos.glow}, 0 0 120px rgba(0,0,0,0.8)`,
+                    }}
                 />
             </Modal>
 

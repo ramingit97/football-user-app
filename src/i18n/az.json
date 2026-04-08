@@ -609,7 +609,17 @@
     "hot": {
       "title": "İsti oyunlar",
       "subtitle": "1-2 yer qaldı, oyun tezliklə başlayır!",
-      "noGames": ""
+      "noGames": "İsti oyun yoxdur",
+      "noGamesHint": "1-2 yer qalanda isti oyunlar görünəcək",
+      "needOne": "1 oyunçu lazımdır!",
+      "needMany": "{{n}} oyunçu lazımdır",
+      "through": "{{time}} sonra",
+      "soon": "Tezliklə",
+      "players": "{{current}} / {{max}} oyunçu",
+      "price": "Qiymət:",
+      "free": "Pulsuz",
+      "join": "Qeydiyyat",
+      "stadium": "Stadion"
     }
   },
   "profile": {

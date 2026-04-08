@@ -65,7 +65,7 @@ function useCountdown(gameDate, gameTime) {
     return timeLeft;
 }
 
-function HotGameCard({ game, onJoin, index }) {
+function HotGameCard({ game, onJoin, index, t }) {
     const spotsLeft = (game.maxPlayers || 10) - (game.players?.length || 0);
     const timeLeft = useCountdown(game.date, game.time);
     const isOnlyOne = spotsLeft === 1;
@@ -115,7 +115,7 @@ function HotGameCard({ game, onJoin, index }) {
                 }}
             >
                 <span className="hot-dot" style={{ width: 6, height: 6, borderRadius: '50%', background: '#fff', display: 'inline-block' }} />
-                {isOnlyOne ? 'Нужен 1 игрок!' : `Нужно ${spotsLeft} игрока`}
+                {isOnlyOne ? t('game.hot.needOne') : t('game.hot.needMany', { n: spotsLeft })}
             </div>
 
             <div style={{ padding: '14px 16px 16px' }}>
@@ -129,7 +129,7 @@ function HotGameCard({ game, onJoin, index }) {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <ClockCircleOutlined style={{ color: '#ef4444', fontSize: 14 }} />
                         <span style={{ color: '#ef4444', fontWeight: 700, fontSize: 14 }}>
-                            Через {timeLeft}
+                            {t('game.hot.through', { time: timeLeft })}
                         </span>
                         <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12 }}>• {game.time}</span>
                     </div>
@@ -137,14 +137,14 @@ function HotGameCard({ game, onJoin, index }) {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <EnvironmentOutlined style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13 }} />
                         <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13 }}>
-                            {game.location || game.stadiumName || 'Стадион'}
+                            {game.location || game.stadiumName || t('game.hot.stadium')}
                         </span>
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <TeamOutlined style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13 }} />
                         <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13 }}>
-                            {game.players?.length || 0} / {game.maxPlayers} игроков
+                            {t('game.hot.players', { current: game.players?.length || 0, max: game.maxPlayers })}
                         </span>
                         {/* Player slots visual */}
                         <div style={{ display: 'flex', gap: 3, marginLeft: 4 }}>
@@ -166,9 +166,9 @@ function HotGameCard({ game, onJoin, index }) {
                 {/* Price + CTA */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <div style={{ flex: 1 }}>
-                        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12 }}>Цена: </span>
+                        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12 }}>{t('game.hot.price')} </span>
                         <span style={{ color: '#fff', fontWeight: 700, fontSize: 15 }}>
-                            {game.pricePerSlot > 0 ? `${game.pricePerSlot} ₼` : 'Бесплатно'}
+                            {game.pricePerSlot > 0 ? `${game.pricePerSlot} ₼` : t('game.hot.free')}
                         </span>
                     </div>
                     <Button
@@ -185,7 +185,7 @@ function HotGameCard({ game, onJoin, index }) {
                         }}
                         onClick={() => onJoin && onJoin(game)}
                     >
-                        <span className="hot-fire"><FireOutlined /></span> Записаться
+                        <span className="hot-fire"><FireOutlined /></span> {t('game.hot.join')}
                     </Button>
                 </div>
             </div>
@@ -217,10 +217,10 @@ const HotGamesSection = ({ onJoin, fullPage = false }) => {
                     <div style={{ textAlign: 'center', padding: '80px 20px' }}>
                         <div style={{ fontSize: 64, marginBottom: 16 }}>🔥</div>
                         <div style={{ fontSize: 20, fontWeight: 700, color: 'rgba(255,255,255,0.5)', marginBottom: 8 }}>
-                            Нет горящих игр
+                            {t('game.hot.noGames')}
                         </div>
                         <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>
-                            Горящие игры появятся когда останется 1-2 места
+                            {t('game.hot.noGamesHint')}
                         </div>
                     </div>
                 ) : (
@@ -230,7 +230,7 @@ const HotGamesSection = ({ onJoin, fullPage = false }) => {
                         gap: 16,
                     }}>
                         {urgentGames.map((game, i) => (
-                            <HotGameCard key={game.id} game={game} onJoin={onJoin} index={i} />
+                            <HotGameCard key={game.id} game={game} onJoin={onJoin} index={i} t={t} />
                         ))}
                     </div>
                 )}
@@ -279,7 +279,7 @@ const HotGamesSection = ({ onJoin, fullPage = false }) => {
                     WebkitOverflowScrolling: 'touch',
                 }}>
                     {urgentGames.map((game, i) => (
-                        <HotGameCard key={game.id} game={game} onJoin={onJoin} index={i} />
+                        <HotGameCard key={game.id} game={game} onJoin={onJoin} index={i} t={t} />
                     ))}
                 </div>
                 <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', marginTop: 24 }} />

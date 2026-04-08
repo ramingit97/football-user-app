@@ -326,14 +326,34 @@ const PublicProfilePage = () => {
             onCancel={() => setAvatarViewVisible(false)}
             footer={null}
             centered
-            width="auto"
-            styles={{ body: { padding: 0, background: 'transparent' }, content: { background: 'transparent', boxShadow: 'none', padding: 0 }, mask: { background: 'rgba(0,0,0,0.85)' } }}
-            closeIcon={<span style={{ color: '#fff', fontSize: 20 }}>✕</span>}
+            width="min(88vw, 88vh)"
+            styles={{
+                body: { padding: 0, background: 'transparent' },
+                content: { background: 'transparent', boxShadow: 'none', padding: 0 },
+                mask: { background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(8px)' },
+            }}
+            closeIcon={
+                <span style={{
+                    position: 'fixed', top: 20, right: 20,
+                    width: 36, height: 36, borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.15)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: '#fff', fontSize: 16, cursor: 'pointer',
+                }}>✕</span>
+            }
         >
             <img
                 src={player?.avatar}
                 alt={player?.name}
-                style={{ maxWidth: '90vw', maxHeight: '85vh', borderRadius: 16, objectFit: 'contain', display: 'block' }}
+                style={{
+                    width: '100%',
+                    height: 'min(88vw, 88vh)',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    display: 'block',
+                    border: '4px solid rgba(255,255,255,0.2)',
+                    boxShadow: '0 0 60px rgba(255,255,255,0.1), 0 0 120px rgba(0,0,0,0.8)',
+                }}
             />
         </Modal>
 
