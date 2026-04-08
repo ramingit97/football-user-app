@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Form, Input, Select, Slider, InputNumber, message } from 'antd';
-import { SaveOutlined } from '@ant-design/icons';
+import { Form, Input, Select, Slider, InputNumber, message, Tooltip, Modal } from 'antd';
+import { SaveOutlined, CopyOutlined, PhoneOutlined, MailOutlined, EditOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useUpdateProfileMutation } from '../../../store/authApi';
 
@@ -37,11 +37,79 @@ const FieldLabel = ({ children }) => (
     </span>
 );
 
+const ContactField = ({ value, href, icon, copyLabel }) => {
+    const [copied, setCopied] = useState(false);
+    const copy = (e) => {
+        e.preventDefault();
+        if (!value) return;
+        navigator.clipboard.writeText(value).then(() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1800);
+        });
+    };
+    return (
+        <div style={{
+            display: 'flex', alignItems: 'center',
+            background: 'var(--bg-raised)',
+            border: '1px solid var(--border-color)',
+            borderRadius: 8, padding: '10px 14px',
+            gap: 10, minHeight: 46,
+        }}>
+            <span style={{ color: 'var(--text-tertiary)', fontSize: 14, flexShrink: 0 }}>{icon}</span>
+            {href ? (
+                <a href={href} style={{ flex: 1, color: 'var(--text-secondary)', fontSize: 14, fontFamily: 'Outfit, sans-serif', textDecoration: 'none' }}>
+                    {value}
+                </a>
+            ) : (
+                <span style={{ flex: 1, color: 'var(--text-tertiary)', fontSize: 14, fontFamily: 'Outfit, sans-serif' }}>—</span>
+            )}
+            {value && (
+                <Tooltip title={copied ? copyLabel : 'Copy'}>
+                    <CopyOutlined
+                        onClick={copy}
+                        style={{ color: copied ? 'var(--green)' : 'var(--text-tertiary)', fontSize: 14, cursor: 'pointer', flexShrink: 0, transition: 'color 0.2s' }}
+                    />
+                </Tooltip>
+            )}
+        </div>
+    );
+};
+
+const COUNTRY_CODES = [
+    { code: '+994', flag: '🇦🇿', name: 'AZ' },
+    { code: '+90',  flag: '🇹🇷', name: 'TR' },
+    { code: '+7',   flag: '🇷🇺', name: 'RU' },
+    { code: '+1',   flag: '🇺🇸', name: 'US' },
+    { code: '+44',  flag: '🇬🇧', name: 'GB' },
+    { code: '+49',  flag: '🇩🇪', name: 'DE' },
+    { code: '+33',  flag: '🇫🇷', name: 'FR' },
+    { code: '+380', flag: '🇺🇦', name: 'UA' },
+];
+
+function parsePhone(fullPhone) {
+    if (!fullPhone) return { code: '+994', number: '' };
+    for (const c of COUNTRY_CODES) {
+        if (fullPhone.startsWith(c.code)) {
+            return { code: c.code, number: fullPhone.slice(c.code.length) };
+        }
+    }
+    return { code: '+994', number: fullPhone.replace(/^\+/, '') };
+}
+
 const ProfileForm = ({ initialData = {} }) => {
     const { t } = useTranslation();
     const [form] = Form.useForm();
     const [updateProfile, { isLoading }] = useUpdateProfileMutation();
     const [isDirty, setIsDirty] = useState(false);
+
+    // Phone state
+    const parsed = parsePhone(initialData.phone);
+    const [countryCode, setCountryCode] = useState(parsed.code);
+    const [phoneNumber, setPhoneNumber] = useState(parsed.number);
+
+    // Email state
+    const isPhoneEmail = initialData.email?.includes('@phone.auth');
+    const [localEmail, setLocalEmail] = useState(isPhoneEmail ? '' : (initialData.email || ''));
 
     const positions = [
         { value: 'goalkeeper', label: t('positions.goalkeeper'), emoji: '🧤' },
@@ -60,12 +128,38 @@ const ProfileForm = ({ initialData = {} }) => {
     ];
 
     useEffect(() => {
-        if (initialData) form.setFieldsValue(initialData);
+        if (initialData) {
+            form.setFieldsValue(initialData);
+            const p = parsePhone(initialData.phone);
+            setCountryCode(p.code);
+            setPhoneNumber(p.number);
+            setLocalEmail(initialData.email?.includes('@phone.auth') ? '' : (initialData.email || ''));
+        }
     }, [initialData, form]);
 
     const onFinish = async (values) => {
+        const fullPhone = phoneNumber.trim() ? `${countryCode}${phoneNumber.trim().replace(/^0/, '')}` : undefined;
+        const emailVal = localEmail.trim() || undefined;
+
+        // Warn if phone changed
+        const oldPhone = initialData.phone;
+        if (fullPhone && fullPhone !== oldPhone) {
+            const confirmed = await new Promise(res =>
+                Modal.confirm({
+                    title: 'Nömrəni dəyişmək istəyirsiniz?',
+                    content: `${oldPhone || '—'} → ${fullPhone}`,
+                    okText: 'Bəli', cancelText: 'Xeyr',
+                    onOk: () => res(true), onCancel: () => res(false),
+                })
+            );
+            if (!confirmed) return;
+        }
+
         try {
-            await updateProfile({ ...initialData, ...values }).unwrap();
+            const payload = { ...values };
+            if (fullPhone) payload.phone = fullPhone;
+            if (emailVal && !isPhoneEmail) payload.email = emailVal;
+            await updateProfile(payload).unwrap();
             message.success(t('profile.edit.saveSuccess'));
             setIsDirty(false);
         } catch (error) {
@@ -129,23 +223,58 @@ const ProfileForm = ({ initialData = {} }) => {
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
+                        {/* Phone with country code */}
                         <div>
                             <FieldLabel>{t('profile.edit.phoneLabel')}</FieldLabel>
-                            <Input
-                                value={initialData.phone || '—'}
-                                readOnly
-                                size="large"
-                                style={{ background: 'var(--bg-raised)', color: 'var(--text-secondary)', cursor: 'default' }}
-                            />
+                            <div style={{ display: 'flex', gap: 0 }}>
+                                <Select
+                                    value={countryCode}
+                                    onChange={(v) => { setCountryCode(v); setIsDirty(true); }}
+                                    size="large"
+                                    style={{ width: 110, flexShrink: 0 }}
+                                    popupMatchSelectWidth={false}
+                                >
+                                    {COUNTRY_CODES.map(c => (
+                                        <Option key={c.code} value={c.code}>
+                                            {c.flag} {c.code}
+                                        </Option>
+                                    ))}
+                                </Select>
+                                <Input
+                                    prefix={<PhoneOutlined style={{ color: 'var(--text-tertiary)' }} />}
+                                    value={phoneNumber}
+                                    onChange={e => { setPhoneNumber(e.target.value); setIsDirty(true); }}
+                                    size="large"
+                                    placeholder="501234567"
+                                    style={{ flex: 1, borderLeft: 'none', borderRadius: '0 8px 8px 0' }}
+                                />
+                            </div>
+                            <span style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 4, display: 'block' }}>
+                                Dəyişdikdə yenidən yoxlanılacaq
+                            </span>
                         </div>
+
+                        {/* Email */}
                         <div>
                             <FieldLabel>{t('profile.edit.emailLabel')}</FieldLabel>
-                            <Input
-                                value={initialData.email || '—'}
-                                readOnly
-                                size="large"
-                                style={{ background: 'var(--bg-raised)', color: 'var(--text-secondary)', cursor: 'default' }}
-                            />
+                            {isPhoneEmail ? (
+                                <Input
+                                    prefix={<MailOutlined style={{ color: 'var(--text-tertiary)' }} />}
+                                    value={localEmail}
+                                    onChange={e => { setLocalEmail(e.target.value); setIsDirty(true); }}
+                                    size="large"
+                                    placeholder="email@example.com"
+                                    type="email"
+                                />
+                            ) : (
+                                <Input
+                                    prefix={<MailOutlined style={{ color: 'var(--text-tertiary)' }} />}
+                                    value={localEmail}
+                                    onChange={e => { setLocalEmail(e.target.value); setIsDirty(true); }}
+                                    size="large"
+                                    type="email"
+                                />
+                            )}
                         </div>
                     </div>
 

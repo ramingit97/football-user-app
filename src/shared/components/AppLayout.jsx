@@ -14,6 +14,7 @@ import { API_BASE } from '../../config.js';
 import OnboardingModal from '../../components/OnboardingModal';
 import PushNotificationBanner from '../../components/PushNotificationBanner';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
+import FeedbackModal from '../../components/FeedbackModal';
 import { useTranslation } from 'react-i18next';
 
 const { Content } = Layout;
@@ -43,6 +44,7 @@ const AppLayout = ({ children }) => {
     const [api, contextHolder] = notification.useNotification();
     const { t, i18n } = useTranslation();
     const [hasUnread, setHasUnread] = useState(false);
+    const [feedbackVisible, setFeedbackVisible] = useState(false);
 
     useEffect(() => {
         const localLang = localStorage.getItem('lang');
@@ -409,6 +411,36 @@ const AppLayout = ({ children }) => {
 
             {user && <OnboardingModal user={user} />}
             {user && <PushNotificationBanner user={user} />}
+            <FeedbackModal open={feedbackVisible} onClose={() => setFeedbackVisible(false)} />
+
+            {/* Feedback floating button */}
+            <button
+                onClick={() => setFeedbackVisible(true)}
+                title="Rəy bildir"
+                style={{
+                    position: 'fixed',
+                    right: 16,
+                    bottom: user ? 80 : 20,
+                    width: 44,
+                    height: 44,
+                    borderRadius: '50%',
+                    background: 'var(--bg-raised)',
+                    border: '1px solid var(--border-color)',
+                    color: 'var(--text-secondary)',
+                    fontSize: 18,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 900,
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+                    transition: 'border-color 0.2s, color 0.2s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--green)'; e.currentTarget.style.color = 'var(--green)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+            >
+                💬
+            </button>
 
             <style>{`
                 @media (min-width: 768px) {
