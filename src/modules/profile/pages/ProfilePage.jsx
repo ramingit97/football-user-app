@@ -165,7 +165,7 @@ const ChangePasswordSection = ({ hasPassword }) => {
 
 // ────────────────────────────────────────────────────
 const ProfilePage = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const { data: userProfile, isLoading, isFetching, refetch: refetchProfile } = useGetProfileQuery();
     const { data: myGamesData } = useGetGamesByUserQuery(userProfile?.id, { skip: !userProfile?.id });
