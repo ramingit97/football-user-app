@@ -15,6 +15,7 @@ import { message } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { API_BASE } from '../../../config.js';
 import GameHistory from '../components/GameHistory';
+import FifaPlayerCard from '../../../components/FifaPlayerCard';
 import { useGetProfileQuery, useGetFriendshipStatusQuery, useSendFriendRequestMutation, useRemoveFriendMutation } from '../../../store/authApi';
 
 const { Title, Text } = Typography;
@@ -34,6 +35,8 @@ const PublicProfilePage = () => {
     );
     const [sendFriendRequest, { isLoading: isSendingRequest }] = useSendFriendRequestMutation();
     const [removeFriend, { isLoading: isRemoving }] = useRemoveFriendMutation();
+
+    const [showFifaCard, setShowFifaCard] = useState(false);
 
     // Report modal
     const [avatarViewVisible, setAvatarViewVisible] = useState(false);
@@ -289,6 +292,23 @@ const PublicProfilePage = () => {
                                     </div>
                                 </div>
 
+                                {/* FIFA Card Button */}
+                                <button
+                                    onClick={() => setShowFifaCard(true)}
+                                    style={{
+                                        width: '100%', marginTop: 16,
+                                        background: 'linear-gradient(135deg, rgba(34,197,94,0.12), rgba(34,197,94,0.04))',
+                                        border: '1px solid rgba(34,197,94,0.3)',
+                                        borderRadius: 10, padding: '10px 0',
+                                        color: 'var(--green)', fontFamily: 'Outfit, sans-serif',
+                                        fontWeight: 600, fontSize: 14, cursor: 'pointer',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                                        transition: 'all 0.2s',
+                                    }}
+                                >
+                                    ⚽ FIFA card
+                                </button>
+
                                 {/* Bio */}
                                 {player.bio && (
                                     <>
@@ -355,6 +375,42 @@ const PublicProfilePage = () => {
                     boxShadow: '0 0 60px rgba(255,255,255,0.1), 0 0 120px rgba(0,0,0,0.8)',
                 }}
             />
+        </Modal>
+
+        {/* FIFA Card Modal */}
+        <Modal
+            open={showFifaCard}
+            onCancel={() => setShowFifaCard(false)}
+            footer={null}
+            centered
+            width={320}
+            styles={{
+                content: { background: 'transparent', boxShadow: 'none', padding: 0 },
+                mask: { backdropFilter: 'blur(12px)', background: 'rgba(0,0,0,0.85)' },
+            }}
+        >
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+                <FifaPlayerCard user={player} size="large" />
+                <button
+                    onClick={() => {
+                        const url = window.location.href;
+                        if (navigator.share) {
+                            navigator.share({ title: `${player?.name} — Topin`, url });
+                        } else {
+                            navigator.clipboard.writeText(url);
+                            message.success('Link kopyalandı!');
+                        }
+                    }}
+                    style={{
+                        background: 'var(--green)', color: '#060c18', border: 'none',
+                        borderRadius: 10, padding: '10px 28px',
+                        fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: 14,
+                        cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8,
+                    }}
+                >
+                    🔗 Profili paylaş
+                </button>
+            </div>
         </Modal>
 
         {/* Report Modal */}
