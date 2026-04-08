@@ -7,7 +7,7 @@ import {
     UserOutlined, TrophyOutlined, HistoryOutlined, TeamOutlined,
     WalletOutlined, PlusCircleOutlined, CameraOutlined, UserAddOutlined,
     StarFilled, ThunderboltFilled, GiftOutlined, RightOutlined, BankOutlined,
-    CustomerServiceOutlined, CalendarOutlined, DeleteOutlined, EyeOutlined
+    CustomerServiceOutlined, CalendarOutlined, DeleteOutlined, EyeOutlined, LockOutlined
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import ProfileForm from '../components/ProfileForm';
@@ -43,7 +43,7 @@ const calculateProfileCompletion = (user) => {
 
 // ── Tab button ───────────────────────────────────────
 const TabBtn = ({ active, onClick, icon, label }) => (
-    <button onClick={onClick} style={{
+    <button onClick={onClick} className="profile-tab-btn" style={{
         background: 'none', border: 'none', cursor: 'pointer',
         display: 'flex', alignItems: 'center', gap: 6,
         padding: '10px 16px',
@@ -56,7 +56,7 @@ const TabBtn = ({ active, onClick, icon, label }) => (
         whiteSpace: 'nowrap',
     }}>
         {icon}
-        <span className="tab-label">{label}</span>
+        <span>{label}</span>
     </button>
 );
 
@@ -71,6 +71,74 @@ const StatItem = ({ value, label, color = 'var(--text-primary)' }) => (
         </div>
     </div>
 );
+
+// ── Change Password Section ──────────────────────────
+const ChangePasswordSection = () => {
+    const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async ({ oldPassword, newPassword }) => {
+        setLoading(true);
+        try {
+            const token = localStorage.getItem('token');
+            await axios.patch(
+                `${API_BASE}/api/auth/change-password`,
+                { oldPassword, newPassword },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            message.success('Пароль успешно изменён');
+            form.resetFields();
+        } catch (err) {
+            const msg = err?.response?.data?.message || 'Ошибка. Проверьте текущий пароль.';
+            message.error(msg);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 16, padding: 24, maxWidth: 480 }}>
+            <h3 style={{ margin: '0 0 20px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <LockOutlined style={{ color: 'var(--green)' }} /> Смена пароля
+            </h3>
+            <Form form={form} layout="vertical" onFinish={handleSubmit}>
+                <Form.Item
+                    label={<span style={{ color: 'var(--text-secondary)' }}>Текущий пароль</span>}
+                    name="oldPassword"
+                    rules={[{ required: true, message: 'Введите текущий пароль' }]}
+                >
+                    <Input.Password size="large" style={{ borderRadius: 10 }} />
+                </Form.Item>
+                <Form.Item
+                    label={<span style={{ color: 'var(--text-secondary)' }}>Новый пароль</span>}
+                    name="newPassword"
+                    rules={[{ required: true, message: 'Введите новый пароль' }, { min: 6, message: 'Минимум 6 символов' }]}
+                >
+                    <Input.Password size="large" style={{ borderRadius: 10 }} />
+                </Form.Item>
+                <Form.Item
+                    label={<span style={{ color: 'var(--text-secondary)' }}>Подтвердите новый пароль</span>}
+                    name="confirmPassword"
+                    dependencies={['newPassword']}
+                    rules={[
+                        { required: true, message: 'Подтвердите пароль' },
+                        ({ getFieldValue }) => ({
+                            validator(_, value) {
+                                if (!value || getFieldValue('newPassword') === value) return Promise.resolve();
+                                return Promise.reject('Пароли не совпадают');
+                            },
+                        }),
+                    ]}
+                >
+                    <Input.Password size="large" style={{ borderRadius: 10 }} />
+                </Form.Item>
+                <Button type="primary" htmlType="submit" loading={loading} size="large" style={{ borderRadius: 10 }}>
+                    Сохранить
+                </Button>
+            </Form>
+        </div>
+    );
+};
 
 // ────────────────────────────────────────────────────
 const ProfilePage = () => {
@@ -190,6 +258,7 @@ const ProfilePage = () => {
         { key: 'support',       icon: <CustomerServiceOutlined />,  label: t('profile.tabs.support') },
         { key: 'invitations',   icon: <TeamOutlined />,             label: t('profile.tabs.invitations') },
         { key: 'referral',      icon: <GiftOutlined />,    label: 'Referral' },
+        { key: 'security',      icon: <LockOutlined />,    label: 'Безопасность' },
     ];
 
     return (
@@ -199,7 +268,8 @@ const ProfilePage = () => {
                     .profile-hero-inner { flex-direction: column !important; align-items: center !important; text-align: center !important; }
                     .profile-hero-right { display: none !important; }
                     .profile-stats-strip { gap: 12px !important; }
-                    .tab-label { display: none; }
+                    .profile-tab-btn { padding: 8px 10px !important; font-size: 11px !important; gap: 4px !important; }
+                    .profile-tab-btn svg { font-size: 13px !important; }
                 }
                 .profile-tab-scroll::-webkit-scrollbar { display: none; }
             `}</style>
@@ -601,6 +671,10 @@ const ProfilePage = () => {
                         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 16, padding: 24 }}>
                             <ReferralSection currentUser={userProfile} />
                         </div>
+                    )}
+
+                    {activeTab === 'security' && (
+                        <ChangePasswordSection />
                     )}
                 </div>
             </div>

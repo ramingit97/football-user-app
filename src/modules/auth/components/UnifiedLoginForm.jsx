@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Tabs, Form, Input, message, Select, Space } from 'antd';
 import { signInWithGoogle } from '../../../firebase';
 import { useDispatch } from 'react-redux';
@@ -20,6 +21,7 @@ const countryCodes = [
 
 const UnifiedLoginForm = ({ onSuccess }) => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('phone');
     const [countryCode, setCountryCode] = useState('+994');
 
@@ -128,6 +130,15 @@ const UnifiedLoginForm = ({ onSuccess }) => {
                         <button type="submit" className="submit-btn" disabled={isLoading}>
                             {isLoading ? `⏳ ${t('auth.unifiedLogin.signingIn')}` : `🚀 ${t('auth.unifiedLogin.signIn')}`}
                         </button>
+                        <div style={{ textAlign: 'center', marginTop: 12 }}>
+                            <a
+                                href="#"
+                                onClick={(e) => { e.preventDefault(); navigate('/forgot-password'); }}
+                                style={{ color: 'var(--text-tertiary)', fontSize: 13 }}
+                            >
+                                Забыл пароль?
+                            </a>
+                        </div>
                     </Form>
                 </div>
             ),
@@ -179,6 +190,15 @@ const UnifiedLoginForm = ({ onSuccess }) => {
                         <button type="submit" className="submit-btn" disabled={isLoading}>
                             {isLoading ? `⏳ ${t('auth.unifiedLogin.signingIn')}` : `🚀 ${t('auth.unifiedLogin.signIn')}`}
                         </button>
+                        <div style={{ textAlign: 'center', marginTop: 12 }}>
+                            <a
+                                href="#"
+                                onClick={(e) => { e.preventDefault(); navigate('/forgot-password'); }}
+                                style={{ color: 'var(--text-tertiary)', fontSize: 13 }}
+                            >
+                                Забыл пароль?
+                            </a>
+                        </div>
                     </Form>
                 </div>
             ),

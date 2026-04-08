@@ -38,6 +38,8 @@ import ProtectedRoute from './shared/components/ProtectedRoute';
 // Shared
 import AppLayout from './shared/components/AppLayout';
 import LoginPage from './modules/auth/pages/LoginPage';
+import ForgotPasswordPage from './modules/auth/pages/ForgotPasswordPage';
+import ResetPasswordPage from './modules/auth/pages/ResetPasswordPage';
 
 const ThemeSwitcherConditional = () => {
   const { pathname } = useLocation();
@@ -59,6 +61,8 @@ const AppContent = () => {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegistrationPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           {/* Game routes - with layout */}
           <Route path="/games" element={

@@ -760,7 +760,7 @@ export default function LandingPage() {
   }, []);
 
   const isLoggedIn = !!localStorage.getItem('token');
-  const goLogin = () => navigate(isLoggedIn ? '/games' : '/login');
+  const goLogin = () => navigate('/games');
 
   return (
     <>
