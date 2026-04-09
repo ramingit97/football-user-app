@@ -435,14 +435,7 @@ const ProfilePage = () => {
                                         {(userProfile?.balance || 0).toFixed(2)} AZN
                                     </span>
                                 </div>
-                                <button onClick={() => setTopUpModalVisible(true)} style={{
-                                    background: 'var(--green)', border: 'none', borderRadius: 8,
-                                    padding: '7px 16px', color: '#060c18', fontWeight: 700,
-                                    fontSize: 13, fontFamily: 'Outfit, sans-serif', cursor: 'pointer',
-                                    display: 'flex', alignItems: 'center', gap: 6,
-                                }}>
-                                    <PlusCircleOutlined /> {t('profile.wallet.topUp')}
-                                </button>
+                                
                                 <button onClick={() => setTransferModalVisible(true)} style={{
                                     background: 'transparent',
                                     border: '1px solid var(--border-color)',
