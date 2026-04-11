@@ -430,7 +430,8 @@ const CreateGameForm = ({ onSuccess, elanPrefill = null }) => {
                         rules={[{ required: true, message: t('game.create.ownValidation.date') }]}
                         style={{ marginBottom: 0 }}
                     >
-                        <DatePicker locale={locale} size="large" style={{ width: '100%' }} format="DD.MM.YYYY" />
+                        <DatePicker locale={locale} size="large" style={{ width: '100%' }} format="DD.MM.YYYY"
+                            disabledDate={current => current && current < dayjs().startOf('day')} />
                     </Form.Item>
                     <Form.Item
                         name="ownTime"
@@ -839,6 +840,7 @@ const CreateGameForm = ({ onSuccess, elanPrefill = null }) => {
             <Form.Item name="date" label={<span style={{ color: 'var(--text-secondary)', fontSize: 13, fontWeight: 500 }}>{t('game.create.dateLabel')}</span>}
                 rules={[{ required: true, message: t('game.create.validation.selectDate') }]} style={{ marginBottom: 16 }}>
                 <DatePicker locale={locale} placeholder={t('game.create.datePlaceholder')} size="large" style={{ width: '100%' }} format="DD.MM.YYYY"
+                    disabledDate={current => current && current < dayjs().startOf('day')}
                     onChange={date => { setSelectedDate(date); form.setFieldValue('time', undefined); }} />
             </Form.Item>
 

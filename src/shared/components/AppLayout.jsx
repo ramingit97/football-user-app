@@ -1,8 +1,9 @@
-import { Layout, Avatar, Dropdown, notification } from 'antd';
+import { Layout, Avatar, Dropdown, notification, Drawer } from 'antd';
 import {
     UserOutlined, LogoutOutlined, TeamOutlined,
     TrophyOutlined, BellOutlined, PlusOutlined,
     HomeOutlined, SettingOutlined, UsergroupAddOutlined, FileTextOutlined,
+    MenuOutlined, CloseOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -34,7 +35,7 @@ const MOBILE_NAV = [
     { key: '/elanlar',  icon: FileTextOutlined,     labelKey: 'nav.elanlar' },
     null, // FAB placeholder
     { key: '/players',  icon: UsergroupAddOutlined, labelKey: 'nav.players' },
-    { key: '/profile',  icon: UserOutlined,         labelKey: 'nav.profile', authOnly: true },
+    { key: '/teams',    icon: TeamOutlined,         labelKey: 'nav.teams' },
 ];
 
 const AppLayout = ({ children }) => {
@@ -46,6 +47,7 @@ const AppLayout = ({ children }) => {
     const { t, i18n } = useTranslation();
     const [hasUnread, setHasUnread] = useState(false);
     const [feedbackVisible, setFeedbackVisible] = useState(false);
+    const [drawerOpen, setDrawerOpen] = useState(false);
 
     useEffect(() => {
         const localLang = localStorage.getItem('lang');
@@ -97,12 +99,6 @@ const AppLayout = ({ children }) => {
             label: t('nav.notifications'),
             onClick: () => { navigate('/notifications'); setHasUnread(false); },
         },
-        {
-            key: 'leaderboard',
-            icon: <TrophyOutlined />,
-            label: t('nav.leaderboard'),
-            onClick: () => navigate('/leaderboard'),
-        },
         { type: 'divider' },
         {
             key: 'logout',
@@ -138,6 +134,27 @@ const AppLayout = ({ children }) => {
                 backdropFilter: 'blur(24px)',
                 borderBottom: '1px solid var(--border-color)',
             }}>
+                {/* Burger button — mobile only */}
+                <button
+                    className="burger-btn"
+                    onClick={() => setDrawerOpen(true)}
+                    style={{
+                        display: 'none', // shown via CSS on mobile
+                        alignItems: 'center', justifyContent: 'center',
+                        width: 36, height: 36,
+                        background: 'transparent',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: 10,
+                        color: 'var(--text-secondary)',
+                        fontSize: 16,
+                        cursor: 'pointer',
+                        flexShrink: 0,
+                        marginRight: 8,
+                    }}
+                >
+                    <MenuOutlined />
+                </button>
+
                 {/* Logo */}
                 <div
                     onClick={() => navigate('/')}
@@ -410,6 +427,155 @@ const AppLayout = ({ children }) => {
                 })}
             </nav>
 
+            {/* ── Mobile side drawer ── */}
+            <Drawer
+                open={drawerOpen}
+                onClose={() => setDrawerOpen(false)}
+                placement="left"
+                width={280}
+                closable={false}
+                styles={{
+                    body: { padding: 0, background: 'var(--bg-base)', display: 'flex', flexDirection: 'column' },
+                    header: { display: 'none' },
+                    mask: { backdropFilter: 'blur(4px)' },
+                }}
+                style={{ background: 'var(--bg-base)' }}
+            >
+                {/* Close button */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '16px 16px 0' }}>
+                    <button
+                        onClick={() => setDrawerOpen(false)}
+                        style={{
+                            background: 'transparent', border: '1px solid var(--border-color)',
+                            borderRadius: 8, width: 32, height: 32,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            color: 'var(--text-tertiary)', cursor: 'pointer',
+                        }}
+                    >
+                        <CloseOutlined style={{ fontSize: 13 }} />
+                    </button>
+                </div>
+
+                {/* Profile card */}
+                {user ? (
+                    <div
+                        onClick={() => { navigate('/profile'); setDrawerOpen(false); }}
+                        style={{
+                            margin: '12px 16px',
+                            padding: '16px',
+                            background: 'var(--bg-card)',
+                            border: '1px solid var(--border-color)',
+                            borderRadius: 14,
+                            display: 'flex', alignItems: 'center', gap: 12,
+                            cursor: 'pointer',
+                            transition: 'border-color 0.15s',
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--green-border)'}
+                        onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
+                    >
+                        <Avatar
+                            size={48}
+                            src={user.avatar}
+                            icon={<UserOutlined />}
+                            style={{ backgroundColor: 'var(--green)', color: '#060c18', flexShrink: 0 }}
+                        />
+                        <div style={{ overflow: 'hidden' }}>
+                            <div style={{
+                                fontFamily: 'Outfit, sans-serif', fontWeight: 700,
+                                color: 'var(--text-primary)', fontSize: 15,
+                                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                            }}>
+                                {user.name || user.email}
+                            </div>
+                            <div style={{ color: 'var(--text-tertiary)', fontSize: 12, marginTop: 2 }}>
+                                {t('nav.viewProfile')}
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <div style={{ margin: '12px 16px' }}>
+                        <button
+                            onClick={() => { navigate('/'); setDrawerOpen(false); }}
+                            style={{
+                                width: '100%', background: 'var(--green)', border: 'none',
+                                borderRadius: 10, padding: '12px', color: '#060c18',
+                                fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: 14,
+                                cursor: 'pointer',
+                            }}
+                        >
+                            {t('nav.login')}
+                        </button>
+                    </div>
+                )}
+
+                {/* Divider */}
+                <div style={{ height: 1, background: 'var(--border-color)', margin: '4px 16px' }} />
+
+                {/* Nav items */}
+                {[
+                    { key: '/elanlar',     icon: <FileTextOutlined />,    labelKey: 'nav.elanlar' },
+                    { key: '/leaderboard', icon: <TrophyOutlined />,      labelKey: 'nav.leaderboard' },
+                    ...(user ? [
+                        { key: '/notifications', icon: <BellOutlined />, labelKey: 'nav.notifications', badge: hasUnread },
+                    ] : []),
+                ].map(item => (
+                    <button
+                        key={item.key}
+                        onClick={() => {
+                            navigate(item.key);
+                            setDrawerOpen(false);
+                            if (item.key === '/notifications') setHasUnread(false);
+                        }}
+                        style={{
+                            display: 'flex', alignItems: 'center', gap: 12,
+                            background: location.pathname.startsWith(item.key) ? 'rgba(0,232,122,0.06)' : 'transparent',
+                            border: 'none', borderRadius: 10,
+                            margin: '2px 12px',
+                            padding: '12px 14px',
+                            color: location.pathname.startsWith(item.key) ? 'var(--green)' : 'var(--text-secondary)',
+                            fontFamily: 'Outfit, sans-serif', fontWeight: 500, fontSize: 14,
+                            cursor: 'pointer', textAlign: 'left',
+                            position: 'relative',
+                        }}
+                    >
+                        <span style={{ fontSize: 16, opacity: 0.8 }}>{item.icon}</span>
+                        {t(item.labelKey)}
+                        {item.badge && (
+                            <span style={{
+                                width: 7, height: 7, borderRadius: '50%',
+                                background: '#f04438', marginLeft: 'auto',
+                                boxShadow: '0 0 6px rgba(240,68,56,0.8)',
+                            }} />
+                        )}
+                    </button>
+                ))}
+
+                {/* Spacer */}
+                <div style={{ flex: 1 }} />
+
+                {/* Logout at bottom */}
+                {user && (
+                    <>
+                        <div style={{ height: 1, background: 'var(--border-color)', margin: '4px 16px' }} />
+                        <button
+                            onClick={() => { handleLogout(); setDrawerOpen(false); }}
+                            style={{
+                                display: 'flex', alignItems: 'center', gap: 12,
+                                background: 'transparent', border: 'none', borderRadius: 10,
+                                margin: '8px 12px 16px',
+                                padding: '12px 14px',
+                                color: '#f04438',
+                                fontFamily: 'Outfit, sans-serif', fontWeight: 500, fontSize: 14,
+                                cursor: 'pointer',
+                            }}
+                        >
+                            <LogoutOutlined style={{ fontSize: 16 }} />
+                            {t('nav.logout')}
+                        </button>
+                    </>
+                )}
+            </Drawer>
+
             {user && <OnboardingModal user={user} />}
             {user && <PushNotificationBanner user={user} />}
             <FeedbackModal open={feedbackVisible} onClose={() => setFeedbackVisible(false)} />
@@ -448,10 +614,12 @@ const AppLayout = ({ children }) => {
                     .user-name { display: inline !important; }
                     .mobile-bottom-nav { display: none !important; }
                     .main-content-wrap { padding-bottom: 0 !important; }
+                    .burger-btn { display: none !important; }
                 }
                 @media (max-width: 767px) {
                     .desktop-nav { display: none !important; }
                     .user-name { display: none; }
+                    .burger-btn { display: flex !important; }
                 }
             `}</style>
         </Layout>
