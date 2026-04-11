@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Dropdown } from 'antd';
-import { TranslationOutlined, CheckOutlined } from '@ant-design/icons';
+import { GlobalOutlined, CheckOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { API_BASE } from '../config.js';
 
@@ -71,7 +71,7 @@ const LanguageSwitcher = ({ userId }) => {
                     e.currentTarget.style.color = 'var(--text-secondary)';
                 }}
             >
-                <TranslationOutlined style={{ fontSize: 13 }} />
+                <GlobalOutlined style={{ fontSize: 13 }} />
                 {current.code.toUpperCase()}
             </button>
         </Dropdown>

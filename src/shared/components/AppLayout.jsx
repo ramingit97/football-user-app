@@ -125,7 +125,7 @@ const AppLayout = ({ children }) => {
             {contextHolder}
 
             {/* ── Desktop header ── */}
-            <header style={{
+            <header className="app-header" style={{
                 position: 'sticky', top: 0, zIndex: 1000,
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 padding: '0 28px',
@@ -620,6 +620,7 @@ const AppLayout = ({ children }) => {
                     .desktop-nav { display: none !important; }
                     .user-name { display: none; }
                     .burger-btn { display: flex !important; }
+                    .app-header { padding: 0 12px !important; }
                 }
             `}</style>
         </Layout>
