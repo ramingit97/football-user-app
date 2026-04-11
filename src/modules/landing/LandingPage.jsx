@@ -761,7 +761,7 @@ export default function LandingPage() {
 
   const isLoggedIn = !!localStorage.getItem('token');
   const goLogin = (page='games') => navigate(`/${page}`);
-  const goLoginPage = () => navigate(isLoggedIn ? '/games' : '/login');
+  const goLoginPage = () => navigate('/games');
 
   return (
     <>
