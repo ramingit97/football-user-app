@@ -21,7 +21,11 @@ export const supportApi = createApi({
             query: (body) => ({ url: '/', method: 'POST', body }),
             invalidatesTags: ['Tickets'],
         }),
+        markTicketsSeen: builder.mutation({
+            query: (userId) => ({ url: `/my/seen?userId=${userId}`, method: 'PATCH' }),
+            invalidatesTags: ['Tickets'],
+        }),
     }),
 });
 
-export const { useGetMyTicketsQuery, useCreateTicketMutation } = supportApi;
+export const { useGetMyTicketsQuery, useCreateTicketMutation, useMarkTicketsSeenMutation } = supportApi;

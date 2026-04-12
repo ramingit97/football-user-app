@@ -110,6 +110,27 @@ const buildNotifText = (item, t) => {
         case 'STATS_CLAIMED':
             message = t('notifications.messages.STATS_CLAIMED', { playerName: m.playerName, goals: m.goals, assists: m.assists });
             break;
+        case 'SLOT_PROPOSED':
+            message = t('notifications.messages.SLOT_PROPOSED', { date: m.date || '', time: m.time || '', stadium: m.stadium || '' });
+            break;
+        case 'SLOT_CONFIRMED':
+            message = t('notifications.messages.SLOT_CONFIRMED', { date: m.date || '', time: m.time || '' });
+            break;
+        case 'SLOT_DECLINED':
+            message = t('notifications.messages.SLOT_DECLINED');
+            break;
+        case 'DRAW_STARTING':
+            message = t('notifications.messages.DRAW_STARTING');
+            break;
+        case 'TEAM_ADVANCED':
+            message = t('notifications.messages.TEAM_ADVANCED');
+            break;
+        case 'ROSTER_CLAIM':
+            message = t('notifications.messages.ROSTER_CLAIM');
+            break;
+        case 'ROSTER_APPROVED':
+            message = t('notifications.messages.ROSTER_APPROVED');
+            break;
         default:
             message = item.message || '';
     }

@@ -277,6 +277,8 @@ const HotGamesSection = ({ onJoin, fullPage = false }) => {
                     scrollbarWidth: 'none',
                     msOverflowStyle: 'none',
                     WebkitOverflowScrolling: 'touch',
+                    width: '100%',
+                    minWidth: 0,
                 }}>
                     {urgentGames.map((game, i) => (
                         <HotGameCard key={game.id} game={game} onJoin={onJoin} index={i} t={t} />

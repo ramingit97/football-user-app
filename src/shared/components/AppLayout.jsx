@@ -2,8 +2,8 @@ import { Layout, Avatar, Dropdown, notification, Drawer } from 'antd';
 import {
     UserOutlined, LogoutOutlined, TeamOutlined,
     TrophyOutlined, BellOutlined, PlusOutlined,
-    HomeOutlined, SettingOutlined, UsergroupAddOutlined, FileTextOutlined,
-    MenuOutlined, CloseOutlined,
+    HomeOutlined, UsergroupAddOutlined, FileTextOutlined,
+    MenuOutlined, CloseOutlined, ApartmentOutlined, MessageOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -20,12 +20,13 @@ import { useTranslation } from 'react-i18next';
 
 const { Content } = Layout;
 
-// Desktop nav — 5 core items
+// Desktop nav — 6 core items
 const DESKTOP_NAV = [
     { key: '/games',       icon: HomeOutlined,          labelKey: 'nav.games' },
     { key: '/elanlar',     icon: FileTextOutlined,      labelKey: 'nav.elanlar' },
     { key: '/teams',       icon: TeamOutlined,          labelKey: 'nav.teams' },
     { key: '/players',     icon: UsergroupAddOutlined,  labelKey: 'nav.players' },
+    { key: '/tournaments', icon: ApartmentOutlined,     labelKey: 'nav.tournaments' },
     { key: '/leaderboard', icon: TrophyOutlined,        labelKey: 'nav.leaderboard' },
 ];
 
@@ -513,8 +514,9 @@ const AppLayout = ({ children }) => {
 
                 {/* Nav items */}
                 {[
-                    { key: '/elanlar',     icon: <FileTextOutlined />,    labelKey: 'nav.elanlar' },
-                    { key: '/leaderboard', icon: <TrophyOutlined />,      labelKey: 'nav.leaderboard' },
+                    { key: '/elanlar',     icon: <FileTextOutlined />,   labelKey: 'nav.elanlar' },
+                    { key: '/tournaments', icon: <ApartmentOutlined />,  labelKey: 'nav.tournaments' },
+                    { key: '/leaderboard', icon: <TrophyOutlined />,     labelKey: 'nav.leaderboard' },
                     ...(user ? [
                         { key: '/notifications', icon: <BellOutlined />, labelKey: 'nav.notifications', badge: hasUnread },
                     ] : []),
@@ -558,11 +560,26 @@ const AppLayout = ({ children }) => {
                     <>
                         <div style={{ height: 1, background: 'var(--border-color)', margin: '4px 16px' }} />
                         <button
+                            onClick={() => { setFeedbackVisible(true); setDrawerOpen(false); }}
+                            style={{
+                                display: 'flex', alignItems: 'center', gap: 12,
+                                background: 'transparent', border: 'none', borderRadius: 10,
+                                margin: '8px 12px 0',
+                                padding: '12px 14px',
+                                color: 'var(--text-secondary)',
+                                fontFamily: 'Outfit, sans-serif', fontWeight: 500, fontSize: 14,
+                                cursor: 'pointer',
+                            }}
+                        >
+                            <MessageOutlined style={{ fontSize: 16 }} />
+                            {t('nav.feedback')}
+                        </button>
+                        <button
                             onClick={() => { handleLogout(); setDrawerOpen(false); }}
                             style={{
                                 display: 'flex', alignItems: 'center', gap: 12,
                                 background: 'transparent', border: 'none', borderRadius: 10,
-                                margin: '8px 12px 16px',
+                                margin: '4px 12px 16px',
                                 padding: '12px 14px',
                                 color: '#f04438',
                                 fontFamily: 'Outfit, sans-serif', fontWeight: 500, fontSize: 14,
@@ -579,35 +596,6 @@ const AppLayout = ({ children }) => {
             {user && <OnboardingModal user={user} />}
             {user && <PushNotificationBanner user={user} />}
             <FeedbackModal open={feedbackVisible} onClose={() => setFeedbackVisible(false)} />
-
-            {/* Feedback floating button */}
-            <button
-                onClick={() => setFeedbackVisible(true)}
-                title="Rəy bildir"
-                style={{
-                    position: 'fixed',
-                    right: 16,
-                    bottom: user ? 80 : 20,
-                    width: 44,
-                    height: 44,
-                    borderRadius: '50%',
-                    background: 'var(--bg-raised)',
-                    border: '1px solid var(--border-color)',
-                    color: 'var(--text-secondary)',
-                    fontSize: 18,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 900,
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
-                    transition: 'border-color 0.2s, color 0.2s',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--green)'; e.currentTarget.style.color = 'var(--green)'; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
-            >
-                💬
-            </button>
 
             <style>{`
                 @media (min-width: 768px) {

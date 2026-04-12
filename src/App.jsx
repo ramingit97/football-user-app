@@ -42,6 +42,11 @@ import ElanlarPage from './modules/elanlar/ElanlarPage';
 import ElanDetailPage from './modules/elanlar/ElanDetailPage';
 import ForgotPasswordPage from './modules/auth/pages/ForgotPasswordPage';
 import ResetPasswordPage from './modules/auth/pages/ResetPasswordPage';
+import TournamentsListPage from './modules/tournaments/pages/TournamentsListPage';
+import TournamentDetailPage from './modules/tournaments/pages/TournamentDetailPage';
+import TournamentMatchPage from './modules/tournaments/pages/TournamentMatchPage';
+import CreateTournamentPage from './modules/tournaments/pages/CreateTournamentPage';
+import SupportWidget from './shared/components/SupportWidget';
 
 const ThemeSwitcherConditional = () => {
   const { pathname } = useLocation();
@@ -58,6 +63,7 @@ const AppContent = () => {
     <ConfigProvider theme={themeConfig} locale={antdLocale}>
       <BrowserRouter>
         <ThemeSwitcherConditional />
+        <SupportWidget />
         <Routes>
           {/* Landing + Auth routes - without layout */}
           <Route path="/" element={<LandingPage />} />
@@ -147,6 +153,30 @@ const AppContent = () => {
           <Route path="/stadiums" element={
             <AppLayout>
               <StadiumsPage />
+            </AppLayout>
+          } />
+
+          {/* Tournaments */}
+          <Route path="/tournaments/create" element={
+            <ProtectedRoute>
+              <AppLayout>
+                <CreateTournamentPage />
+              </AppLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/tournaments" element={
+            <AppLayout>
+              <TournamentsListPage />
+            </AppLayout>
+          } />
+          <Route path="/tournaments/:id" element={
+            <AppLayout>
+              <TournamentDetailPage />
+            </AppLayout>
+          } />
+          <Route path="/tournaments/:id/matches/:matchId" element={
+            <AppLayout>
+              <TournamentMatchPage />
             </AppLayout>
           } />
 

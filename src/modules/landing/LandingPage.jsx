@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useGetGamesQuery } from '../../store/gamesApi';
+import { useGetTournamentsQuery } from '../../store/tournamentsApi';
 
 /* ─────────────────────────────────────────────────────────
    GLOBAL STYLES  (injected once)
@@ -74,6 +76,9 @@ const STYLES = `
   transform:translateY(-2px);
   border-color:var(--green)!important;
   color:var(--green)!important;
+}
+@keyframes dotBlink {
+  0%,100% { opacity:1; } 50% { opacity:.25; }
 }
 .lp-nav { transition:background .3s,border-color .3s,backdrop-filter .3s; }
 .lp-stat-card {
@@ -763,6 +768,12 @@ export default function LandingPage() {
   const goLogin = (page='games') => navigate(`/${page}`);
   const goLoginPage = () => navigate('/login');
 
+  const { data: openGamesData } = useGetGamesQuery({ page: 1, limit: 6, status: 'open' });
+  const openGames = openGamesData?.data || [];
+
+  const { data: tournamentsData } = useGetTournamentsQuery({ page: 1, limit: 3 });
+  const liveTournaments = (tournamentsData?.tournaments || tournamentsData?.data || []).slice(0, 3);
+
   return (
     <>
       <style>{STYLES}</style>
@@ -904,6 +915,98 @@ export default function LandingPage() {
           </div>
         </FadeSection>
       </section>
+
+      {/* ══════════════════════════ LIVE GAMES ══════════════════════════ */}
+      {openGames.length > 0 && (
+        <section style={{ padding:'0 clamp(20px,5vw,80px) 80px' }}>
+          <FadeSection>
+            <div style={{ maxWidth:1100, margin:'0 auto' }}>
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18, flexWrap:'wrap', gap:8 }}>
+                <div>
+                  <h2 style={{ fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:800, fontSize:22, color:'var(--text-primary)', margin:0, letterSpacing:'-0.3px' }}>
+                    ⚽ Oyunlar indi açıqdır
+                  </h2>
+                  <p style={{ color:'var(--text-tertiary)', fontSize:13, margin:'4px 0 0' }}>
+                    Qeydiyyat olmadan baxın — qoşulmaq üçün hesab açın
+                  </p>
+                </div>
+                <button
+                  onClick={() => navigate('/games')}
+                  style={{
+                    background:'transparent', border:'1px solid var(--border-color)',
+                    borderRadius:10, padding:'8px 18px',
+                    color:'var(--text-secondary)', fontFamily:'Outfit,sans-serif',
+                    fontWeight:600, fontSize:13, cursor:'pointer',
+                    transition:'border-color 0.15s, color 0.15s',
+                    whiteSpace:'nowrap',
+                  }}
+                  onMouseEnter={e=>{ e.currentTarget.style.borderColor='var(--green)'; e.currentTarget.style.color='var(--green)'; }}
+                  onMouseLeave={e=>{ e.currentTarget.style.borderColor='var(--border-color)'; e.currentTarget.style.color='var(--text-secondary)'; }}
+                >
+                  Hamısına bax →
+                </button>
+              </div>
+
+              <div style={{
+                display:'flex', gap:14, overflowX:'auto', paddingBottom:10,
+                scrollbarWidth:'none', msOverflowStyle:'none',
+                WebkitOverflowScrolling:'touch', width:'100%', minWidth:0,
+              }}>
+                {openGames.map(game => {
+                  const spots = (game.maxPlayers || 10) - (game.players?.length || 0);
+                  return (
+                    <div
+                      key={game.id}
+                      onClick={() => navigate('/register')}
+                      style={{
+                        minWidth:220, maxWidth:260, flexShrink:0,
+                        background:'var(--bg-card)',
+                        border:'1px solid var(--border-color)',
+                        borderRadius:14, padding:'14px 16px',
+                        cursor:'pointer', transition:'border-color 0.15s, transform 0.15s',
+                      }}
+                      onMouseEnter={e=>{ e.currentTarget.style.borderColor='var(--green-border)'; e.currentTarget.style.transform='translateY(-2px)'; }}
+                      onMouseLeave={e=>{ e.currentTarget.style.borderColor='var(--border-color)'; e.currentTarget.style.transform='translateY(0)'; }}
+                    >
+                      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:10 }}>
+                        <span style={{
+                          fontSize:11, fontWeight:700, padding:'3px 8px', borderRadius:6,
+                          background:'var(--green-dim)', color:'var(--green)',
+                        }}>
+                          {game.format}
+                        </span>
+                        <span style={{
+                          fontSize:11, fontWeight:600,
+                          color: spots <= 2 ? '#f04438' : spots <= 4 ? '#f59e0b' : '#48bb78',
+                        }}>
+                          {spots} yer
+                        </span>
+                      </div>
+                      <div style={{ fontSize:13, fontWeight:600, color:'var(--text-primary)', marginBottom:6, lineHeight:1.3 }}>
+                        {game.location || game.stadiumName || 'Bakı'}
+                      </div>
+                      <div style={{ fontSize:12, color:'var(--text-tertiary)' }}>
+                        {game.date} · {game.time}
+                      </div>
+                      <div style={{
+                        marginTop:12, paddingTop:10, borderTop:'1px solid var(--border-color)',
+                        display:'flex', alignItems:'center', justifyContent:'space-between',
+                      }}>
+                        <span style={{ fontSize:13, fontWeight:700, color:'var(--text-primary)' }}>
+                          {game.pricePerSlot > 0 ? `${game.pricePerSlot} ₼` : 'Pulsuz'}
+                        </span>
+                        <span style={{ fontSize:11, color:'var(--green)', fontWeight:600 }}>
+                          Qoşul →
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </FadeSection>
+        </section>
+      )}
 
       {/* ══════════════════════════ FREE PROMO BANNER ══════════════════════════ */}
       <section style={{ padding:'0 clamp(20px,5vw,80px) 80px' }}>
@@ -1435,6 +1538,180 @@ export default function LandingPage() {
                 ))}
               </div>
             </FadeSection>
+
+          </div>
+        </FadeSection>
+      </section>
+
+      {/* ══════════════════════════ TOURNAMENTS ══════════════════════════ */}
+      <section style={{ padding:'100px clamp(20px,5vw,80px)', position:'relative', overflow:'hidden' }}>
+        {/* Background glows */}
+        <div style={{ position:'absolute', left:'10%', top:'20%', width:500, height:500, borderRadius:'50%', background:'radial-gradient(circle,rgba(240,192,64,0.06) 0%,transparent 65%)', pointerEvents:'none' }}/>
+        <div style={{ position:'absolute', right:'5%', bottom:'10%', width:400, height:400, borderRadius:'50%', background:'radial-gradient(circle,rgba(0,232,122,0.05) 0%,transparent 65%)', pointerEvents:'none' }}/>
+
+        <FadeSection>
+          <div style={{ maxWidth:1100, margin:'0 auto' }}>
+
+            {/* Header */}
+            <div style={{ textAlign:'center', marginBottom:64 }}>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:8, background:'rgba(240,192,64,0.1)', border:'1px solid rgba(240,192,64,0.25)', borderRadius:100, padding:'6px 18px', marginBottom:20 }}>
+                <span style={{ fontSize:14 }}>🏆</span>
+                <span style={{ fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, color:'#f0c040', letterSpacing:'2px', textTransform:'uppercase' }}>Turnir rejimi</span>
+              </div>
+              <h2 style={{ fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:800, fontSize:'clamp(28px,5vw,50px)', color:'var(--text-primary)', letterSpacing:'-1px', lineHeight:1.1, marginBottom:18 }}>
+                Turnirə qoşul.<br/>
+                <span style={{ background:'linear-gradient(135deg,#f0c040,#e07b20)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>Çempionu sən ol.</span>
+              </h2>
+              <p style={{ fontFamily:'Outfit,sans-serif', fontSize:16, color:'var(--text-secondary)', lineHeight:1.7, maxWidth:560, margin:'0 auto' }}>
+                Qrup mərhələsi, pley-off sətki, canlı püşk atma — hamısı bir platformada. Komanданı qeydiyyatdan keçir və kuboka gedən yolu başla.
+              </p>
+            </div>
+
+            {/* How it works — 4 steps */}
+            <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4,1fr)', gap:16, marginBottom:64 }}>
+              {[
+                { icon:'📋', step:'01', title:'Qeydiyyat', desc:'Kapitan olaraq komandanı turnirə qeyd et' },
+                { icon:'🎲', step:'02', title:'Püşk atma', desc:'Canlı animasiyalı qrup püşkü' },
+                { icon:'⚽', step:'03', title:'Qrup mərhələsi', desc:'4 komanda, ən yaxşı 2-si irəliyə keçir' },
+                { icon:'🔥', step:'04', title:'Pley-off', desc:'1/4, 1/2 final və böyük final' },
+              ].map((s, i) => (
+                <div key={i} style={{
+                  background:'var(--bg-card)', border:'1px solid var(--border-color)',
+                  borderRadius:16, padding:'22px 18px', position:'relative', overflow:'hidden',
+                  transition:'border-color 0.2s, transform 0.2s',
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(240,192,64,0.3)'; e.currentTarget.style.transform='translateY(-3px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor='var(--border-color)'; e.currentTarget.style.transform='translateY(0)'; }}
+                >
+                  <div style={{ position:'absolute', top:12, right:14, fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:800, color:'rgba(240,192,64,0.2)', letterSpacing:'1px' }}>{s.step}</div>
+                  <div style={{ fontSize:28, marginBottom:12 }}>{s.icon}</div>
+                  <div style={{ fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:700, fontSize:15, color:'var(--text-primary)', marginBottom:6 }}>{s.title}</div>
+                  <div style={{ fontFamily:'Outfit,sans-serif', fontSize:13, color:'var(--text-tertiary)', lineHeight:1.5 }}>{s.desc}</div>
+                  {i < 3 && !isMobile && (
+                    <div style={{ position:'absolute', right:-12, top:'50%', transform:'translateY(-50%)', fontSize:16, color:'rgba(240,192,64,0.25)', zIndex:2 }}>→</div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Live tournaments OR visual placeholder */}
+            {liveTournaments.length > 0 ? (
+              <div>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20, flexWrap:'wrap', gap:8 }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                    <div style={{ width:8, height:8, borderRadius:'50%', background:'#f0c040', boxShadow:'0 0 8px rgba(240,192,64,0.8)', animation:'dotBlink 1s ease-in-out infinite' }}/>
+                    <span style={{ fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:700, fontSize:18, color:'var(--text-primary)' }}>Aktiv turnirler</span>
+                  </div>
+                  <button onClick={() => navigate('/tournaments')} style={{ background:'transparent', border:'1px solid var(--border-color)', borderRadius:10, padding:'8px 18px', color:'var(--text-secondary)', fontFamily:'Outfit,sans-serif', fontWeight:600, fontSize:13, cursor:'pointer', transition:'border-color 0.15s,color 0.15s' }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor='#f0c040'; e.currentTarget.style.color='#f0c040'; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor='var(--border-color)'; e.currentTarget.style.color='var(--text-secondary)'; }}
+                  >Hamısına bax →</button>
+                </div>
+                <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap:16 }}>
+                  {liveTournaments.map(tour => {
+                    const statusColors = { registration:'#63b3ed', group_stage:'#68d391', playoff:'#fc8181', completed:'#a0aec0' };
+                    const statusIcons  = { registration:'📋', group_stage:'⚽', playoff:'🔥', completed:'🏆' };
+                    const col = statusColors[tour.status] || '#63b3ed';
+                    const filled = tour.teams?.length || 0;
+                    const pct = tour.maxTeams ? Math.round(filled / tour.maxTeams * 100) : 0;
+                    return (
+                      <div key={tour.id} onClick={() => navigate('/register')} style={{
+                        background:'linear-gradient(145deg,#0d1528,#0a1020)',
+                        border:'1px solid rgba(240,192,64,0.15)',
+                        borderRadius:18, overflow:'hidden', cursor:'pointer',
+                        transition:'border-color 0.2s,transform 0.2s',
+                        boxShadow:'0 4px 24px rgba(0,0,0,0.4)',
+                      }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(240,192,64,0.4)'; e.currentTarget.style.transform='translateY(-4px)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor='rgba(240,192,64,0.15)'; e.currentTarget.style.transform='translateY(0)'; }}
+                      >
+                        {/* Gold top bar */}
+                        <div style={{ height:3, background:'linear-gradient(90deg,#f0c040,#e07b20,#f0c040)', backgroundSize:'200% 100%' }}/>
+                        <div style={{ padding:'18px 20px' }}>
+                          {/* Status + format */}
+                          <div style={{ display:'flex', gap:8, marginBottom:14, flexWrap:'wrap' }}>
+                            <span style={{ fontSize:11, fontWeight:700, padding:'3px 10px', borderRadius:20, background:`${col}18`, color:col, border:`1px solid ${col}40` }}>
+                              {statusIcons[tour.status]} {tour.status === 'registration' ? 'Qeydiyyat açıqdır' : tour.status === 'group_stage' ? 'Qrup mərhələsi' : tour.status === 'playoff' ? 'Pley-off' : 'Tamamlandı'}
+                            </span>
+                            <span style={{ fontSize:11, fontWeight:600, padding:'3px 10px', borderRadius:20, background:'rgba(255,255,255,0.06)', color:'var(--text-tertiary)' }}>{tour.format}</span>
+                          </div>
+                          {/* Name */}
+                          <div style={{ fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:800, fontSize:17, color:'#e0e6f0', marginBottom:6, lineHeight:1.2 }}>
+                            {tour.name}
+                          </div>
+                          {/* Location */}
+                          {tour.location && (
+                            <div style={{ fontSize:12, color:'var(--text-tertiary)', marginBottom:14 }}>📍 {tour.location}</div>
+                          )}
+                          {/* Teams progress bar */}
+                          <div style={{ marginBottom:14 }}>
+                            <div style={{ display:'flex', justifyContent:'space-between', marginBottom:5 }}>
+                              <span style={{ fontSize:11, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>Komandalar</span>
+                              <span style={{ fontSize:11, fontWeight:700, color:'#f0c040', fontFamily:'Outfit,sans-serif' }}>{filled} / {tour.maxTeams}</span>
+                            </div>
+                            <div style={{ height:4, borderRadius:2, background:'rgba(255,255,255,0.06)', overflow:'hidden' }}>
+                              <div style={{ height:'100%', width:`${pct}%`, background:'linear-gradient(90deg,#f0c040,#e07b20)', borderRadius:2, transition:'width 0.8s ease' }}/>
+                            </div>
+                          </div>
+                          {/* Prize + entry */}
+                          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', paddingTop:12, borderTop:'1px solid rgba(255,255,255,0.06)' }}>
+                            <div>
+                              <div style={{ fontSize:10, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>Mükafat fondu</div>
+                              <div style={{ fontSize:16, fontWeight:800, color:'#f0c040', fontFamily:'Outfit,sans-serif' }}>
+                                {tour.prizePool > 0 ? `${tour.prizePool} ₼` : '—'}
+                              </div>
+                            </div>
+                            <div style={{ textAlign:'right' }}>
+                              <div style={{ fontSize:10, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>Üzvlük haqqı</div>
+                              <div style={{ fontSize:14, fontWeight:700, color:'var(--text-primary)', fontFamily:'Outfit,sans-serif' }}>
+                                {tour.entryFee > 0 ? `${tour.entryFee} ₼` : 'Pulsuz'}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              /* Visual placeholder when no tournaments */
+              <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap:16, opacity:0.45, pointerEvents:'none' }}>
+                {['Kəşf Kuboku', 'Bakı Çempionatı', 'Yay Liqası'].map((name, i) => (
+                  <div key={i} style={{ background:'linear-gradient(145deg,#0d1528,#0a1020)', border:'1px solid rgba(240,192,64,0.12)', borderRadius:18, overflow:'hidden' }}>
+                    <div style={{ height:3, background:'linear-gradient(90deg,#f0c040,#e07b20)' }}/>
+                    <div style={{ padding:'18px 20px' }}>
+                      <div style={{ display:'flex', gap:8, marginBottom:14 }}>
+                        <span style={{ fontSize:11, fontWeight:700, padding:'3px 10px', borderRadius:20, background:'rgba(99,179,237,0.15)', color:'#63b3ed' }}>📋 Qeydiyyat</span>
+                        <span style={{ fontSize:11, padding:'3px 10px', borderRadius:20, background:'rgba(255,255,255,0.06)', color:'var(--text-tertiary)' }}>5x5</span>
+                      </div>
+                      <div style={{ fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:800, fontSize:17, color:'#e0e6f0', marginBottom:14 }}>{name}</div>
+                      <div style={{ height:4, borderRadius:2, background:'rgba(255,255,255,0.06)', overflow:'hidden', marginBottom:14 }}>
+                        <div style={{ height:'100%', width:`${[62,40,15][i]}%`, background:'linear-gradient(90deg,#f0c040,#e07b20)', borderRadius:2 }}/>
+                      </div>
+                      <div style={{ display:'flex', justifyContent:'space-between', paddingTop:12, borderTop:'1px solid rgba(255,255,255,0.06)' }}>
+                        <div><div style={{ fontSize:10, color:'var(--text-tertiary)' }}>Mükafat fondu</div><div style={{ fontSize:16, fontWeight:800, color:'#f0c040' }}>{[480,320,200][i]} ₼</div></div>
+                        <div style={{ textAlign:'right' }}><div style={{ fontSize:10, color:'var(--text-tertiary)' }}>Üzvlük haqqı</div><div style={{ fontSize:14, fontWeight:700, color:'var(--text-primary)' }}>{[30,20,15][i]} ₼</div></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* CTA */}
+            <div style={{ textAlign:'center', marginTop:48 }}>
+              <button
+                onClick={() => navigate('/register')}
+                className="lp-btn-primary"
+                style={{ display:'inline-flex', alignItems:'center', gap:10, background:'linear-gradient(135deg,#f0c040,#e07b20)', border:'none', borderRadius:14, padding:'16px 40px', color:'#07101e', fontFamily:'Outfit,sans-serif', fontWeight:800, fontSize:16, cursor:'pointer', boxShadow:'0 4px 28px rgba(240,192,64,0.35)' }}
+              >
+                🏆 Turnirə qoşul
+              </button>
+              <p style={{ fontFamily:'Outfit,sans-serif', fontSize:13, color:'var(--text-tertiary)', marginTop:12 }}>
+                Qeydiyyat tələb olunur · Pulsuz hesab aç
+              </p>
+            </div>
 
           </div>
         </FadeSection>
