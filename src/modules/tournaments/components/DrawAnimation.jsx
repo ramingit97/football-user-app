@@ -179,7 +179,7 @@ function DrawPot({ ballCount, shaking }) {
 /* ─────────────────────────────────────────────
    TEAM CARD — fixed to viewport centre
 ───────────────────────────────────────────── */
-function TeamCardOverlay({ team, phase, flyDir }) {
+function TeamCardOverlay({ team, phase, flyDir, isMobile }) {
     const { t } = useTranslation();
     if (!team) return null;
 
@@ -188,6 +188,8 @@ function TeamCardOverlay({ team, phase, flyDir }) {
         : flyDir === 'left'
             ? 'cardFlyLeft  0.55s ease-in both'
             : 'cardFlyRight 0.55s ease-in both';
+
+    const logoSize = isMobile ? 52 : 76;
 
     return (
         <div style={{
@@ -199,39 +201,41 @@ function TeamCardOverlay({ team, phase, flyDir }) {
             <div style={{
                 background:'linear-gradient(135deg, #1a2540 0%, #0d1528 100%)',
                 border:'2px solid rgba(240,192,64,.75)',
-                borderRadius:22, padding:'26px 40px',
-                textAlign:'center', minWidth:240,
+                borderRadius: isMobile ? 16 : 22,
+                padding: isMobile ? '16px 28px' : '26px 40px',
+                textAlign:'center', minWidth: isMobile ? 200 : 240,
+                maxWidth: isMobile ? 260 : 320,
             }}>
                 {team.teamLogo ? (
                     <img src={team.teamLogo} alt="" style={{
-                        width:76, height:76, borderRadius:'50%', objectFit:'cover',
-                        display:'block', margin:'0 auto 14px',
+                        width:logoSize, height:logoSize, borderRadius:'50%', objectFit:'cover',
+                        display:'block', margin:`0 auto ${isMobile ? 10 : 14}px`,
                         border:'3px solid rgba(240,192,64,.5)',
                     }}/>
                 ) : (
                     <div style={{
-                        width:76, height:76, borderRadius:'50%',
-                        margin:'0 auto 14px',
+                        width:logoSize, height:logoSize, borderRadius:'50%',
+                        margin:`0 auto ${isMobile ? 10 : 14}px`,
                         background:'linear-gradient(135deg, #2a3a5c, #1a2540)',
                         display:'flex', alignItems:'center', justifyContent:'center',
-                        fontSize:24, fontWeight:900, color:'#f0c040',
+                        fontSize: isMobile ? 16 : 24, fontWeight:900, color:'#f0c040',
                         border:'3px solid rgba(240,192,64,.4)',
                     }}>
                         {team.teamName?.substring(0,2).toUpperCase()}
                     </div>
                 )}
                 <div style={{
-                    fontSize:22, fontWeight:900, color:'#fff',
-                    lineHeight:1.2, marginBottom:12,
+                    fontSize: isMobile ? 16 : 22, fontWeight:900, color:'#fff',
+                    lineHeight:1.2, marginBottom: isMobile ? 8 : 12,
                     textShadow:'0 2px 12px rgba(0,0,0,.8)',
                 }}>
                     {team.teamName}
                 </div>
                 <div style={{
-                    display:'inline-block', padding:'5px 18px', borderRadius:20,
+                    display:'inline-block', padding: isMobile ? '4px 12px' : '5px 18px', borderRadius:20,
                     background:'rgba(240,192,64,.18)',
                     border:'1px solid rgba(240,192,64,.45)',
-                    fontSize:13, fontWeight:900, color:'#f0c040', letterSpacing:'0.12em',
+                    fontSize: isMobile ? 11 : 13, fontWeight:900, color:'#f0c040', letterSpacing:'0.12em',
                 }}>
                     {t('tournaments.draw.group')} {team.groupId}
                 </div>
@@ -243,31 +247,32 @@ function TeamCardOverlay({ team, phase, flyDir }) {
 /* ─────────────────────────────────────────────
    GROUP COLUMN
 ───────────────────────────────────────────── */
-function GroupColumn({ groupId, teams, maxSlots }) {
+function GroupColumn({ groupId, teams, maxSlots, compact }) {
     const { t } = useTranslation();
     return (
         <div style={{ minWidth:0 }}>
             <div style={{
-                textAlign:'center', paddingBottom:8, marginBottom:8,
+                textAlign:'center', paddingBottom: compact ? 5 : 8, marginBottom: compact ? 5 : 8,
                 borderBottom:'2px solid rgba(240,192,64,.3)',
             }}>
                 <span style={{
-                    fontSize:11, fontWeight:900, color:'#f0c040',
-                    letterSpacing:'0.18em', textTransform:'uppercase',
+                    fontSize: compact ? 9 : 11, fontWeight:900, color:'#f0c040',
+                    letterSpacing:'0.15em', textTransform:'uppercase',
                 }}>
                     {t('tournaments.detail.groupLabel')} {groupId}
                 </span>
             </div>
             {Array.from({ length: maxSlots }).map((_, i) => {
                 const team = teams[i];
+                const logoSize = compact ? 20 : 26;
                 return (
                     <div key={i} style={{
-                        padding:'8px 10px', borderRadius:10, marginBottom:7,
+                        padding: compact ? '5px 7px' : '8px 10px', borderRadius: compact ? 7 : 10, marginBottom: compact ? 4 : 7,
                         background: team ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.025)',
                         border: team
                             ? '1px solid rgba(240,192,64,.22)'
                             : '1px dashed rgba(255,255,255,0.09)',
-                        minHeight:46, display:'flex', alignItems:'center', gap:8,
+                        minHeight: compact ? 34 : 46, display:'flex', alignItems:'center', gap: compact ? 6 : 8,
                         animation: team
                             ? 'slotIn 0.55s cubic-bezier(0.34,1.56,0.64,1) both, slotGlow 0.9s ease'
                             : 'none',
@@ -276,21 +281,21 @@ function GroupColumn({ groupId, teams, maxSlots }) {
                             <>
                                 {team.teamLogo ? (
                                     <img src={team.teamLogo} alt="" style={{
-                                        width:26, height:26, borderRadius:'50%',
+                                        width:logoSize, height:logoSize, borderRadius:'50%',
                                         objectFit:'cover', flexShrink:0,
                                     }}/>
                                 ) : (
                                     <div style={{
-                                        width:26, height:26, borderRadius:'50%', flexShrink:0,
+                                        width:logoSize, height:logoSize, borderRadius:'50%', flexShrink:0,
                                         background:'linear-gradient(135deg,#2a3a5c,#1a2540)',
                                         display:'flex', alignItems:'center', justifyContent:'center',
-                                        fontSize:9, fontWeight:800, color:'#f0c040',
+                                        fontSize: compact ? 7 : 9, fontWeight:800, color:'#f0c040',
                                     }}>
                                         {team.teamName?.substring(0,2).toUpperCase()}
                                     </div>
                                 )}
                                 <span style={{
-                                    fontSize:12, fontWeight:700, color:'#e0e6f0',
+                                    fontSize: compact ? 10 : 12, fontWeight:700, color:'#e0e6f0',
                                     overflow:'hidden', textOverflow:'ellipsis',
                                     whiteSpace:'nowrap', lineHeight:1.3,
                                 }}>
@@ -298,7 +303,7 @@ function GroupColumn({ groupId, teams, maxSlots }) {
                                 </span>
                             </>
                         ) : (
-                            <span style={{ fontSize:11, color:'#2a3b4a' }}>{t('tournaments.draw.waiting')}</span>
+                            <span style={{ fontSize: compact ? 9 : 11, color:'#2a3b4a' }}>{t('tournaments.draw.waiting')}</span>
                         )}
                     </div>
                 );
@@ -312,6 +317,13 @@ function GroupColumn({ groupId, teams, maxSlots }) {
 ══════════════════════════════════════════════════ */
 export function GroupDrawAnimation({ drawSequence: rawSequence, onComplete }) {
     const { t } = useTranslation();
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    useEffect(() => {
+        const fn = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', fn, { passive: true });
+        return () => window.removeEventListener('resize', fn);
+    }, []);
+
     // Normalise backend format → { teamName, teamLogo, groupId }
     const drawSequence = (rawSequence || []).map(normalize);
 
@@ -374,14 +386,15 @@ export function GroupDrawAnimation({ drawSequence: rawSequence, onComplete }) {
             position:'fixed', inset:0, zIndex:9999,
             background:'radial-gradient(ellipse at 50% 38%, #0d1528 0%, #060a14 62%, #020408 100%)',
             display:'flex', flexDirection:'column', alignItems:'center',
-            animation:'drawOverlayIn 0.6s ease', overflow:'hidden',
+            animation:'drawOverlayIn 0.6s ease',
+            overflow: isMobile ? 'auto' : 'hidden',
         }}>
             <style>{css}</style>
 
-            {/* Stars */}
-            {STARS.map(s => (
+            {/* Stars — fewer on mobile */}
+            {STARS.filter((_, i) => !isMobile || i % 2 === 0).map(s => (
                 <div key={s.id} style={{
-                    position:'absolute',
+                    position:'fixed',
                     top:`${s.top}%`, left:`${s.left}%`,
                     width:s.size, height:s.size, borderRadius:'50%',
                     background:'#fff', pointerEvents:'none',
@@ -389,113 +402,159 @@ export function GroupDrawAnimation({ drawSequence: rawSequence, onComplete }) {
                 }}/>
             ))}
 
-            {/* Team card reveal — FIXED to viewport, not inside pot div */}
+            {/* Team card reveal */}
             {(ballPhase === 'revealed' || ballPhase === 'flying') && currentTeam && (
                 <TeamCardOverlay
                     team={currentTeam}
                     phase={ballPhase}
                     flyDir={flyDir(currentTeam)}
+                    isMobile={isMobile}
                 />
             )}
 
-            {/* Title */}
+            {/* ── Title ── */}
             <div style={{
-                marginTop:32, textAlign:'center',
+                marginTop: isMobile ? 16 : 32,
+                textAlign:'center',
                 animation:'drawTitleIn 0.9s ease 0.2s both',
                 position:'relative', zIndex:2,
+                flexShrink: 0,
+                padding: isMobile ? '0 16px' : 0,
             }}>
                 <div style={{
-                    fontSize:10, fontWeight:800, color:'#f0c040',
+                    fontSize: isMobile ? 9 : 10, fontWeight:800, color:'#f0c040',
                     letterSpacing:'0.4em', textTransform:'uppercase',
-                    marginBottom:6, opacity:0.75,
+                    marginBottom:4, opacity:0.75,
                 }}>
                     ★ &nbsp; Live Draw &nbsp; ★
                 </div>
                 <div style={{
-                    fontSize:30, fontWeight:900, color:'#fff',
+                    fontSize: isMobile ? 20 : 30, fontWeight:900, color:'#fff',
                     textShadow:'0 0 36px rgba(240,192,64,.65), 0 2px 18px rgba(0,0,0,.9)',
-                    letterSpacing:'0.04em',
+                    letterSpacing:'0.04em', lineHeight: 1.2,
                 }}>
                     {t('tournaments.draw.groupTitle')}
                 </div>
-                <div style={{ fontSize:13, color:'#5a7080', marginTop:5 }}>
+                <div style={{ fontSize: isMobile ? 11 : 13, color:'#5a7080', marginTop:3 }}>
                     {t('tournaments.draw.distributed', { placed: placed.length, total: drawSequence.length })}
                 </div>
             </div>
 
-            {/* ── Main layout ── */}
-            <div style={{
-                flex:1, width:'100%', maxWidth:1040,
-                display:'flex', alignItems:'stretch',
-                gap:12, padding:'12px 24px 16px',
-            }}>
-                {/* LEFT groups */}
-                <div style={{
-                    flex:1, display:'grid',
-                    gridTemplateColumns: leftGroups.length > 1 ? '1fr 1fr' : '1fr',
-                    gap:12, alignContent:'start',
-                }}>
-                    {leftGroups.map(g => (
-                        <GroupColumn key={g} groupId={g}
-                            teams={placed.filter(t => t.groupId === g)}
-                            maxSlots={slotsPerGroup}/>
-                    ))}
-                </div>
+            {isMobile ? (
+                /* ══════════════ MOBILE LAYOUT ══════════════ */
+                <div style={{ width:'100%', display:'flex', flexDirection:'column', alignItems:'center', padding:'10px 12px 24px', gap:12, flex:1 }}>
 
-                {/* CENTER: pot */}
-                <div style={{
-                    width:190, flexShrink:0,
-                    display:'flex', flexDirection:'column',
-                    alignItems:'center', justifyContent:'center',
-                    position:'relative',
-                }}>
-                    {/* Rising / spinning ball — ABOVE the pot */}
-                    {(ballPhase === 'rising' || ballPhase === 'spinning') && (
-                        <div style={{
-                            position:'absolute',
-                            bottom:'calc(50% + 20px)',
-                            left:'50%',
-                            width:48, height:48, borderRadius:'50%',
-                            background:'radial-gradient(circle at 36% 34%, #ffe066, #c8940a 60%, #7a5000)',
-                            boxShadow:'0 0 28px rgba(240,192,64,.9), 0 0 55px rgba(240,192,64,.4)',
-                            pointerEvents:'none',
-                            animation: ballPhase === 'rising'
-                                ? 'ballRiseUp  0.52s cubic-bezier(0.34,1.56,0.64,1) both'
-                                : 'ballSpinAir 0.65s ease-in-out both',
-                        }}/>
-                    )}
-
-                    <DrawPot ballCount={remaining} shaking={ballPhase === 'shaking'}/>
-
-                    {/* Waiting dots */}
-                    {phase === 'drawing' && ballPhase !== 'revealed' && ballPhase !== 'flying' && (
-                        <div style={{
-                            marginTop:10,
-                            display:'flex', gap:6, justifyContent:'center',
-                        }}>
-                            {[0,1,2].map(i => (
-                                <div key={i} style={{
-                                    width:6, height:6, borderRadius:'50%', background:'#f0c040',
-                                    animation:`dotBlink 0.9s ease-in-out ${i * 0.2}s infinite`,
-                                }}/>
-                            ))}
+                    {/* Pot — compact, centered */}
+                    <div style={{ position:'relative', display:'flex', flexDirection:'column', alignItems:'center', flexShrink:0 }}>
+                        {(ballPhase === 'rising' || ballPhase === 'spinning') && (
+                            <div style={{
+                                position:'absolute', bottom:'calc(50% + 10px)', left:'50%',
+                                width:32, height:32, borderRadius:'50%',
+                                background:'radial-gradient(circle at 36% 34%, #ffe066, #c8940a 60%, #7a5000)',
+                                boxShadow:'0 0 20px rgba(240,192,64,.9)',
+                                pointerEvents:'none',
+                                animation: ballPhase === 'rising'
+                                    ? 'ballRiseUp 0.52s cubic-bezier(0.34,1.56,0.64,1) both'
+                                    : 'ballSpinAir 0.65s ease-in-out both',
+                            }}/>
+                        )}
+                        {/* Scaled-down pot */}
+                        <div style={{ transform:'scale(0.65)', transformOrigin:'top center', height:104 }}>
+                            <DrawPot ballCount={remaining} shaking={ballPhase === 'shaking'}/>
                         </div>
-                    )}
-                </div>
+                        {phase === 'drawing' && ballPhase !== 'revealed' && ballPhase !== 'flying' && (
+                            <div style={{ display:'flex', gap:5, justifyContent:'center', marginTop:4 }}>
+                                {[0,1,2].map(i => (
+                                    <div key={i} style={{
+                                        width:5, height:5, borderRadius:'50%', background:'#f0c040',
+                                        animation:`dotBlink 0.9s ease-in-out ${i * 0.2}s infinite`,
+                                    }}/>
+                                ))}
+                            </div>
+                        )}
+                    </div>
 
-                {/* RIGHT groups */}
-                <div style={{
-                    flex:1, display:'grid',
-                    gridTemplateColumns: rightGroups.length > 1 ? '1fr 1fr' : '1fr',
-                    gap:12, alignContent:'start',
-                }}>
-                    {rightGroups.map(g => (
-                        <GroupColumn key={g} groupId={g}
-                            teams={placed.filter(t => t.groupId === g)}
-                            maxSlots={slotsPerGroup}/>
-                    ))}
+                    {/* Groups — 2-column grid */}
+                    <div style={{
+                        display:'grid',
+                        gridTemplateColumns: activeGroups.length <= 2 ? '1fr' : '1fr 1fr',
+                        gap:8, width:'100%',
+                    }}>
+                        {activeGroups.map(g => (
+                            <GroupColumn key={g} groupId={g}
+                                teams={placed.filter(tm => tm.groupId === g)}
+                                maxSlots={slotsPerGroup}
+                                compact={true}
+                            />
+                        ))}
+                    </div>
                 </div>
-            </div>
+            ) : (
+                /* ══════════════ DESKTOP LAYOUT ══════════════ */
+                <div style={{
+                    flex:1, width:'100%', maxWidth:1040,
+                    display:'flex', alignItems:'stretch',
+                    gap:12, padding:'12px 24px 16px',
+                }}>
+                    {/* LEFT groups */}
+                    <div style={{
+                        flex:1, display:'grid',
+                        gridTemplateColumns: leftGroups.length > 1 ? '1fr 1fr' : '1fr',
+                        gap:12, alignContent:'start',
+                    }}>
+                        {leftGroups.map(g => (
+                            <GroupColumn key={g} groupId={g}
+                                teams={placed.filter(tm => tm.groupId === g)}
+                                maxSlots={slotsPerGroup}/>
+                        ))}
+                    </div>
+
+                    {/* CENTER: pot */}
+                    <div style={{
+                        width:190, flexShrink:0,
+                        display:'flex', flexDirection:'column',
+                        alignItems:'center', justifyContent:'center',
+                        position:'relative',
+                    }}>
+                        {(ballPhase === 'rising' || ballPhase === 'spinning') && (
+                            <div style={{
+                                position:'absolute', bottom:'calc(50% + 20px)', left:'50%',
+                                width:48, height:48, borderRadius:'50%',
+                                background:'radial-gradient(circle at 36% 34%, #ffe066, #c8940a 60%, #7a5000)',
+                                boxShadow:'0 0 28px rgba(240,192,64,.9), 0 0 55px rgba(240,192,64,.4)',
+                                pointerEvents:'none',
+                                animation: ballPhase === 'rising'
+                                    ? 'ballRiseUp  0.52s cubic-bezier(0.34,1.56,0.64,1) both'
+                                    : 'ballSpinAir 0.65s ease-in-out both',
+                            }}/>
+                        )}
+                        <DrawPot ballCount={remaining} shaking={ballPhase === 'shaking'}/>
+                        {phase === 'drawing' && ballPhase !== 'revealed' && ballPhase !== 'flying' && (
+                            <div style={{ marginTop:10, display:'flex', gap:6, justifyContent:'center' }}>
+                                {[0,1,2].map(i => (
+                                    <div key={i} style={{
+                                        width:6, height:6, borderRadius:'50%', background:'#f0c040',
+                                        animation:`dotBlink 0.9s ease-in-out ${i * 0.2}s infinite`,
+                                    }}/>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* RIGHT groups */}
+                    <div style={{
+                        flex:1, display:'grid',
+                        gridTemplateColumns: rightGroups.length > 1 ? '1fr 1fr' : '1fr',
+                        gap:12, alignContent:'start',
+                    }}>
+                        {rightGroups.map(g => (
+                            <GroupColumn key={g} groupId={g}
+                                teams={placed.filter(tm => tm.groupId === g)}
+                                maxSlots={slotsPerGroup}/>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Complete overlay */}
             {phase === 'complete' && (
