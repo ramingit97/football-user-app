@@ -2,7 +2,7 @@ import { Layout, Avatar, Dropdown, notification, Drawer } from 'antd';
 import {
     UserOutlined, LogoutOutlined, TeamOutlined,
     TrophyOutlined, BellOutlined, PlusOutlined,
-    HomeOutlined, UsergroupAddOutlined, BankOutlined,
+    HomeOutlined, UsergroupAddOutlined, BankOutlined, FileTextOutlined,
     MenuOutlined, CloseOutlined, ApartmentOutlined, MessageOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -20,9 +20,10 @@ import { useTranslation } from 'react-i18next';
 
 const { Content } = Layout;
 
-// Desktop nav — 6 core items
+// Desktop nav — 7 core items
 const DESKTOP_NAV = [
     { key: '/games',       icon: HomeOutlined,          labelKey: 'nav.games' },
+    { key: '/elanlar',     icon: FileTextOutlined,      labelKey: 'nav.elanlar' },
     { key: '/stadiums',    icon: BankOutlined,          labelKey: 'nav.stadiums' },
     { key: '/teams',       icon: TeamOutlined,          labelKey: 'nav.teams' },
     { key: '/players',     icon: UsergroupAddOutlined,  labelKey: 'nav.players' },
@@ -514,6 +515,7 @@ const AppLayout = ({ children }) => {
 
                 {/* Nav items */}
                 {[
+                    { key: '/elanlar',     icon: <FileTextOutlined />,   labelKey: 'nav.elanlar' },
                     { key: '/stadiums',    icon: <BankOutlined />,       labelKey: 'nav.stadiums' },
                     { key: '/tournaments', icon: <ApartmentOutlined />,  labelKey: 'nav.tournaments' },
                     { key: '/leaderboard', icon: <TrophyOutlined />,     labelKey: 'nav.leaderboard' },
