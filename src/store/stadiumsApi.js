@@ -23,6 +23,9 @@ export const stadiumsApi = createApi({
                 return '/';
             },
         }),
+        getStadiumById: builder.query({
+            query: (id) => `/${id}`,
+        }),
         getStadiumSlots: builder.query({
             query: ({ stadiumId, date }) => `/${stadiumId}/available-slots?date=${date}`,
         }),
@@ -34,14 +37,23 @@ export const stadiumsApi = createApi({
             query: (body) => ({ url: '/', method: 'POST', body }),
             invalidatesTags: ['MyStadiums'],
         }),
+        createBooking: builder.mutation({
+            query: (body) => ({
+                url: `${API_BASE}/api/bookings`,
+                method: 'POST',
+                body,
+            }),
+        }),
     }),
 });
 
 export const {
     useGetStadiumsQuery,
+    useGetStadiumByIdQuery,
     useGetStadiumSlotsQuery,
     useLazyGetStadiumsQuery,
     useLazyGetStadiumSlotsQuery,
     useGetMyStadiumsQuery,
     useSuggestStadiumMutation,
+    useCreateBookingMutation,
 } = stadiumsApi;

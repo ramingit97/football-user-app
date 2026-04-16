@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Spin, Select, Empty, Image } from 'antd';
+import { Spin, Select, Empty, Image, Tag } from 'antd';
 import {
     ArrowLeftOutlined,
     EnvironmentOutlined,
@@ -12,25 +12,35 @@ import { useGetDistrictsQuery } from '../../store/locationsApi';
 
 const { Option } = Select;
 
+const AMENITY_LABELS = {
+    shower: 'Duş', parking: 'Parkinq', changing_room: 'Soyunucu otaqları',
+    lighting: 'İşıqlandırma', cafe: 'Kafe', wifi: 'Wi-Fi',
+    artificial_turf: 'Süni çim', tribunes: 'Tribuna',
+};
+const normalizeAmenity = (a) => AMENITY_LABELS[a?.toLowerCase()] || a;
+
 // Placeholder when no real image exists
 const IMG_PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjI0MCIgdmlld0JveD0iMCAwIDQwMCAyNDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyNDAiIGZpbGw9IiMxMTFiMmIiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI1NiIgZmlsbD0iIzAwZTg3YTIwIj7wn4+fPC90ZXh0Pjwvc3ZnPg==';
 
-const StadiumCard = ({ stadium }) => {
+const StadiumCard = ({ stadium, onClick }) => {
     const images = (stadium.images || []).filter(Boolean);
     const hasPhotos = images.length > 0;
     const cover = hasPhotos ? images[0] : null;
 
     return (
-        <div style={{
-            background: 'var(--bg-card)',
-            border: '1px solid var(--border-color)',
-            borderRadius: 16,
-            marginBottom: 14,
-            overflow: 'hidden',
-            transition: 'border-color 0.2s',
-        }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(0,232,122,0.3)'}
-            onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
+        <div
+            onClick={onClick}
+            style={{
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border-color)',
+                borderRadius: 16,
+                marginBottom: 14,
+                overflow: 'hidden',
+                transition: 'border-color 0.2s, transform 0.15s',
+                cursor: 'pointer',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(0,232,122,0.4)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.transform = 'translateY(0)'; }}
         >
             {/* ── Cover image strip ── */}
             {hasPhotos ? (
@@ -133,7 +143,7 @@ const StadiumCard = ({ stadium }) => {
                                 borderRadius: 6, padding: '2px 8px', fontSize: 11,
                                 color: 'var(--text-tertiary)', fontFamily: 'Outfit,sans-serif',
                             }}>
-                                {a}
+                                {normalizeAmenity(a)}
                             </span>
                         ))}
                     </div>
@@ -228,7 +238,7 @@ const StadiumsPage = () => {
                         }
                     />
                 ) : (
-                    approvedStadiums.map(s => <StadiumCard key={s.id} stadium={s} />)
+                    approvedStadiums.map(s => <StadiumCard key={s.id} stadium={s} onClick={() => navigate(`/stadiums/${s.id}`)} />)
                 )}
             </div>
         </div>

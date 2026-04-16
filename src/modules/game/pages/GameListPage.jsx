@@ -41,7 +41,7 @@ const GameListPage = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const [searchParams, setSearchParams] = useSearchParams();
-    const activeTab = searchParams.get('tab') || 'hot';
+    const activeTab = searchParams.get('tab') || 'all';
     const [currentPage, setCurrentPage] = useState(1);
 
     const setActiveTab = (tab) => { setSearchParams({ tab }); setCurrentPage(1); };
@@ -161,12 +161,6 @@ const GameListPage = () => {
             {/* ── Табы ── */}
             <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
                 <TabPill
-                    active={activeTab === 'hot'}
-                    onClick={() => setActiveTab('hot')}
-                    icon={<FireOutlined />}
-                    label={t('game.hot.title')}
-                />
-                <TabPill
                     active={activeTab === 'all'}
                     onClick={() => setActiveTab('all')}
                     label={t('game.list.tabAll')}
@@ -178,9 +172,6 @@ const GameListPage = () => {
                     label={t('game.list.tabNearby')}
                 />
             </div>
-
-            {/* ── Горящие игры ── */}
-            {activeTab === 'hot' && <HotGamesSection onJoin={handleJoinClick} fullPage />}
 
             {/* ── Фильтры ── */}
             {activeTab !== 'hot' && (

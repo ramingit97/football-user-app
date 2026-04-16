@@ -14,6 +14,7 @@ import LeaderboardPage from './modules/leaderboard/LeaderboardPage';
 
 // Stadiums
 import StadiumsPage from './modules/stadiums/StadiumsPage';
+import StadiumDetailPage from './modules/stadiums/StadiumDetailPage';
 
 // Auth Module
 import RegistrationPage from './modules/auth/pages/RegistrationPage';
@@ -153,6 +154,11 @@ const AppContent = () => {
           <Route path="/stadiums" element={
             <AppLayout>
               <StadiumsPage />
+            </AppLayout>
+          } />
+          <Route path="/stadiums/:id" element={
+            <AppLayout>
+              <StadiumDetailPage />
             </AppLayout>
           } />
 

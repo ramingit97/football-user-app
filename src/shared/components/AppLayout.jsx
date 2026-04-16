@@ -2,7 +2,7 @@ import { Layout, Avatar, Dropdown, notification, Drawer } from 'antd';
 import {
     UserOutlined, LogoutOutlined, TeamOutlined,
     TrophyOutlined, BellOutlined, PlusOutlined,
-    HomeOutlined, UsergroupAddOutlined, FileTextOutlined,
+    HomeOutlined, UsergroupAddOutlined, BankOutlined,
     MenuOutlined, CloseOutlined, ApartmentOutlined, MessageOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -23,7 +23,7 @@ const { Content } = Layout;
 // Desktop nav — 6 core items
 const DESKTOP_NAV = [
     { key: '/games',       icon: HomeOutlined,          labelKey: 'nav.games' },
-    { key: '/elanlar',     icon: FileTextOutlined,      labelKey: 'nav.elanlar' },
+    { key: '/stadiums',    icon: BankOutlined,          labelKey: 'nav.stadiums' },
     { key: '/teams',       icon: TeamOutlined,          labelKey: 'nav.teams' },
     { key: '/players',     icon: UsergroupAddOutlined,  labelKey: 'nav.players' },
     { key: '/tournaments', icon: ApartmentOutlined,     labelKey: 'nav.tournaments' },
@@ -32,11 +32,11 @@ const DESKTOP_NAV = [
 
 // Mobile bottom nav — 4 items + central FAB
 const MOBILE_NAV = [
-    { key: '/games',    icon: HomeOutlined,         labelKey: 'nav.games' },
-    { key: '/elanlar',  icon: FileTextOutlined,     labelKey: 'nav.elanlar' },
+    { key: '/games',     icon: HomeOutlined,         labelKey: 'nav.games' },
+    { key: '/stadiums',  icon: BankOutlined,         labelKey: 'nav.stadiums' },
     null, // FAB placeholder
-    { key: '/players',  icon: UsergroupAddOutlined, labelKey: 'nav.players' },
-    { key: '/teams',    icon: TeamOutlined,         labelKey: 'nav.teams' },
+    { key: '/players',   icon: UsergroupAddOutlined, labelKey: 'nav.players' },
+    { key: '/teams',     icon: TeamOutlined,         labelKey: 'nav.teams' },
 ];
 
 const AppLayout = ({ children }) => {
@@ -514,7 +514,7 @@ const AppLayout = ({ children }) => {
 
                 {/* Nav items */}
                 {[
-                    { key: '/elanlar',     icon: <FileTextOutlined />,   labelKey: 'nav.elanlar' },
+                    { key: '/stadiums',    icon: <BankOutlined />,       labelKey: 'nav.stadiums' },
                     { key: '/tournaments', icon: <ApartmentOutlined />,  labelKey: 'nav.tournaments' },
                     { key: '/leaderboard', icon: <TrophyOutlined />,     labelKey: 'nav.leaderboard' },
                     ...(user ? [
