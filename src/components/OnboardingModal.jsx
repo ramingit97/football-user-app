@@ -150,7 +150,14 @@ const OnboardingModal = ({ user, onComplete }) => {
                 {/* Buttons */}
                 <Space style={{ width: '100%', justifyContent: 'space-between' }}>
                     {currentSlide > 0 ? (
-                        <Button onClick={handlePrev}>
+                        <Button
+                            onClick={handlePrev}
+                            style={{
+                                background: '#fff',
+                                color: '#333',
+                                borderColor: '#d9d9d9',
+                            }}
+                        >
                             {t('auth.onboarding.modal.back')}
                         </Button>
                     ) : (

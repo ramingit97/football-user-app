@@ -16,18 +16,31 @@ const ThemeSwitcher = () => {
         <>
             <button
                 onClick={() => setVisible(true)}
+                title="Görünüş"
                 style={{
-                    position: 'fixed', right: 16, bottom: 80, zIndex: 1000,
-                    width: 44, height: 44, borderRadius: '50%',
-                    background: 'var(--green)', border: 'none', cursor: 'pointer',
+                    position: 'fixed', right: 20, bottom: 80, zIndex: 1000,
+                    width: 44, height: 44, borderRadius: 12,
+                    background: 'var(--header-bg)',
+                    backdropFilter: 'blur(16px)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    cursor: 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    boxShadow: '0 4px 16px var(--green-glow)',
-                    transition: 'transform 0.2s',
+                    boxShadow: '0 4px 24px rgba(0,0,0,0.4)',
+                    transition: 'all 0.2s',
+                    color: 'var(--green)',
                 }}
-                onMouseEnter={e => e.currentTarget.style.transform = 'rotate(30deg) scale(1.08)'}
-                onMouseLeave={e => e.currentTarget.style.transform = 'none'}
+                onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = 'rgba(0,232,122,0.3)';
+                    e.currentTarget.style.background = 'rgba(0,232,122,0.06)';
+                    e.currentTarget.style.transform = 'rotate(30deg) scale(1.06)';
+                }}
+                onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                    e.currentTarget.style.background = 'var(--header-bg)';
+                    e.currentTarget.style.transform = 'none';
+                }}
             >
-                <SettingOutlined style={{ fontSize: 18, color: '#060c18' }} />
+                <SettingOutlined style={{ fontSize: 17 }} />
             </button>
 
             <Drawer

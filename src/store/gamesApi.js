@@ -1,18 +1,10 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
 import { API_BASE } from '../config.js';
+import { buildBaseQueryWithReauth } from './baseQueryWithReauth';
 
 export const gamesApi = createApi({
     reducerPath: 'gamesApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: `${API_BASE}/api`,
-        prepareHeaders: (headers) => {
-            const token = localStorage.getItem('token');
-            if (token) {
-                headers.set('authorization', `Bearer ${token}`);
-            }
-            return headers;
-        },
-    }),
+    baseQuery: buildBaseQueryWithReauth(`${API_BASE}/api`),
     tagTypes: ['Game', 'TeamRequest'],
     endpoints: (builder) => ({
         getHotGames: builder.query({

@@ -6,7 +6,9 @@ import {
     PhoneOutlined,
     LockOutlined
 } from '@ant-design/icons';
+import { useDispatch } from 'react-redux';
 import { useRegisterMutation } from '../../../store/authApi';
+import { setCredentials } from '../../../store/store';
 import { useTranslation } from 'react-i18next';
 
 const { Option } = Select;
@@ -23,6 +25,7 @@ const countryCodes = [
 
 const RegistrationForm = ({ onSuccess }) => {
     const { t } = useTranslation();
+    const dispatch = useDispatch();
     const [register, { isLoading }] = useRegisterMutation();
     const [form] = Form.useForm();
     const [countryCode, setCountryCode] = useState('+994');
@@ -41,8 +44,11 @@ const RegistrationForm = ({ onSuccess }) => {
                 password: values.password
             }).unwrap();
 
-            localStorage.setItem('token', result.access_token);
-            localStorage.setItem('user', JSON.stringify(result.user));
+            dispatch(setCredentials({
+                user: result.user,
+                token: result.access_token,
+                refreshToken: result.refresh_token,
+            }));
 
             message.success(t('auth.registration.success'));
 

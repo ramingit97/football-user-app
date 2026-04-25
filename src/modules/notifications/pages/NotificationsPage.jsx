@@ -4,7 +4,7 @@ import {
     BellOutlined, CheckCircleOutlined, CloseCircleOutlined,
     TrophyOutlined, TeamOutlined, WalletOutlined,
     BarChartOutlined, UserAddOutlined, CheckOutlined,
-    StarOutlined, ExclamationCircleOutlined,
+    StarOutlined, ExclamationCircleOutlined, MessageOutlined,
 } from '@ant-design/icons';
 import { useGetMyNotificationsQuery, useMarkAsReadMutation, useMarkAllAsReadMutation } from '../../../store/notificationsApi';
 import { useGetProfileQuery } from '../../../store/authApi';
@@ -20,20 +20,27 @@ dayjs.extend(relativeTime);
 const getTarget = (notification) => {
     const meta = notification.metadata || {};
     switch (notification.type) {
-        case 'GAME_INVITE':       return meta.gameId ? `/games/${meta.gameId}` : '/profile';
-        case 'INVITE_ACCEPTED':   return meta.gameId ? `/games/${meta.gameId}` : null;
-        case 'PAYMENT_SUCCESS':   return meta.gameId ? `/games/${meta.gameId}` : null;
-        case 'GAME_CANCELED':     return '/games';
-        case 'GAME_CANCELLED':    return '/games';
-        case 'PENALTY':           return meta.gameId ? `/games/${meta.gameId}` : '/games';
-        case 'CLAIM_STATS':       return meta.gameId ? `/games/${meta.gameId}` : null;
-        case 'STATS_CLAIMED':     return meta.gameId ? `/games/${meta.gameId}` : null;
-        case 'GAME_COMPLETED':    return meta.gameId ? `/games/${meta.gameId}` : null;
-        case 'RATE_PLAYERS':      return meta.gameId ? `/games/${meta.gameId}` : null;
-        case 'TEAM_INVITE':       return meta.teamId ? `/teams/${meta.teamId}` : '/profile';
-        case 'TEAM_JOIN_REQUEST': return meta.teamId ? `/teams/${meta.teamId}` : null;
-        case 'BOOKING_CONFIRMED': return meta.gameId ? `/games/${meta.gameId}` : null;
-        default:                  return null;
+        case 'GAME_INVITE':        return meta.gameId ? `/games/${meta.gameId}` : '/profile';
+        case 'INVITE_ACCEPTED':    return meta.gameId ? `/games/${meta.gameId}` : null;
+        case 'PAYMENT_SUCCESS':    return meta.gameId ? `/games/${meta.gameId}` : null;
+        case 'GAME_CANCELED':      return '/games';
+        case 'GAME_CANCELLED':     return '/games';
+        case 'PENALTY':            return meta.gameId ? `/games/${meta.gameId}` : '/games';
+        case 'CLAIM_STATS':        return meta.gameId ? `/games/${meta.gameId}` : null;
+        case 'STATS_CLAIMED':      return meta.gameId ? `/games/${meta.gameId}` : null;
+        case 'GAME_COMPLETED':     return meta.gameId ? `/games/${meta.gameId}` : null;
+        case 'RATE_PLAYERS':       return meta.gameId ? `/games/${meta.gameId}` : null;
+        case 'TEAM_INVITE':        return meta.teamId ? `/teams/${meta.teamId}` : '/profile';
+        case 'TEAM_JOIN_REQUEST':  return meta.teamId ? `/teams/${meta.teamId}` : null;
+        case 'BOOKING_CONFIRMED':  return meta.gameId ? `/games/${meta.gameId}` : null;
+        case 'FRIEND_REQUEST':     return '/profile';
+        case 'FRIEND_ACCEPTED':    return '/profile';
+        case 'TRANSFER_RECEIVED':  return '/profile';
+        case 'ELAN_MESSAGE':       return meta.elanId ? `/elanlar/${meta.elanId}` : '/elanlar';
+        case 'ELAN_INVITE':        return meta.elanId ? `/elanlar/${meta.elanId}` : '/elanlar';
+        case 'GAME_CREATED':       return meta.gameId ? `/games/${meta.gameId}` : '/games';
+        case 'GAME_REMINDER':      return meta.gameId ? `/games/${meta.gameId}` : null;
+        default:                   return null;
     }
 };
 
@@ -51,7 +58,15 @@ const TYPE_CONFIG = {
     RATE_PLAYERS:      { icon: <StarOutlined />,               color: '#a855f7', bg: 'rgba(168,85,247,0.1)',   label: 'Оценка' },
     TEAM_INVITE:       { icon: <TeamOutlined />,               color: '#1890ff', bg: 'rgba(24,144,255,0.1)',   label: 'Команда' },
     TEAM_JOIN_REQUEST: { icon: <UserAddOutlined />,            color: '#1890ff', bg: 'rgba(24,144,255,0.1)',   label: 'Запрос' },
-    BOOKING_CONFIRMED: { icon: <CheckCircleOutlined />,        color: '#00e87a', bg: 'rgba(0,232,122,0.1)',    label: 'Бронь' },
+    BOOKING_CONFIRMED:  { icon: <CheckCircleOutlined />,       color: '#00e87a', bg: 'rgba(0,232,122,0.1)',    label: 'Бронь' },
+    FRIEND_REQUEST:     { icon: <UserAddOutlined />,           color: '#1890ff', bg: 'rgba(24,144,255,0.1)',   label: 'Друзья' },
+    FRIEND_ACCEPTED:    { icon: <UserAddOutlined />,           color: '#00e87a', bg: 'rgba(0,232,122,0.1)',    label: 'Принято' },
+    FRIEND_REJECTED:    { icon: <CloseCircleOutlined />,       color: '#ff4d4f', bg: 'rgba(255,77,79,0.1)',    label: 'Отклонено' },
+    TRANSFER_RECEIVED:  { icon: <WalletOutlined />,            color: '#00e87a', bg: 'rgba(0,232,122,0.1)',    label: 'Перевод' },
+    ELAN_MESSAGE:       { icon: <MessageOutlined />,           color: '#a855f7', bg: 'rgba(168,85,247,0.1)',   label: 'Чат' },
+    ELAN_INVITE:        { icon: <BellOutlined />,              color: '#faad14', bg: 'rgba(250,173,20,0.12)',  label: 'Объявление' },
+    GAME_CREATED:       { icon: <TrophyOutlined />,            color: '#00e87a', bg: 'rgba(0,232,122,0.1)',    label: 'Игра' },
+    GAME_REMINDER:      { icon: <BellOutlined />,              color: '#faad14', bg: 'rgba(250,173,20,0.12)',  label: 'Напоминание' },
 };
 
 const getConfig = (type) => TYPE_CONFIG[type] || {
@@ -130,6 +145,32 @@ const buildNotifText = (item, t) => {
             break;
         case 'ROSTER_APPROVED':
             message = t('notifications.messages.ROSTER_APPROVED');
+            break;
+        case 'FRIEND_REQUEST':
+            message = t('notifications.messages.FRIEND_REQUEST', { requesterName: m.requesterName });
+            break;
+        case 'FRIEND_ACCEPTED':
+            message = t('notifications.messages.FRIEND_ACCEPTED', { responderName: m.responderName });
+            break;
+        case 'FRIEND_REJECTED':
+            message = t('notifications.messages.FRIEND_REJECTED', { responderName: m.responderName });
+            break;
+        case 'TRANSFER_RECEIVED':
+            message = m.note
+                ? t('notifications.messages.TRANSFER_RECEIVED_NOTE', { senderName: m.senderName, amount: m.amount, note: m.note })
+                : t('notifications.messages.TRANSFER_RECEIVED', { senderName: m.senderName, amount: m.amount });
+            break;
+        case 'ELAN_MESSAGE':
+            message = item.message || '';
+            break;
+        case 'ELAN_INVITE':
+            message = t('notifications.messages.ELAN_INVITE', { creatorName: m.creatorName, date: m.date, time: m.time });
+            break;
+        case 'GAME_CREATED':
+            message = t('notifications.messages.GAME_CREATED', { gameTitle: m.gameTitle, date: m.date });
+            break;
+        case 'GAME_REMINDER':
+            message = t('notifications.messages.GAME_REMINDER');
             break;
         default:
             message = item.message || '';

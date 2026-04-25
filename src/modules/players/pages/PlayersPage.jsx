@@ -27,21 +27,29 @@ const PlayerRow = ({ player, rank, navigate, t }) => {
 
     return (
         <div
+            className="player-card-new"
             onClick={() => navigate(`/player/${player.id}`)}
             style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: 14,
-                padding: '11px 16px',
+                padding: '11px 16px 11px 20px',
                 background: 'var(--bg-card)',
                 border: '1px solid var(--border-color)',
                 borderRadius: 12,
                 cursor: 'pointer',
-                transition: 'border-color 0.15s, background 0.15s',
+                transition: 'transform 0.15s, border-color 0.15s, box-shadow 0.15s',
+                position: 'relative',
+                overflow: 'hidden',
             }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'; e.currentTarget.style.background = 'var(--bg-raised)'; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.background = 'var(--bg-card)'; }}
         >
+            {/* Left accent stripe */}
+            <div style={{
+                position: 'absolute', left: 0, top: 0, bottom: 0, width: 3,
+                background: pos.color,
+                borderRadius: '12px 0 0 12px',
+            }} />
+
             {/* Rank */}
             <div style={{
                 width: 28, textAlign: 'center', flexShrink: 0,
@@ -51,17 +59,30 @@ const PlayerRow = ({ player, rank, navigate, t }) => {
                 {rank <= 3 ? ['🥇','🥈','🥉'][rank - 1] : rank}
             </div>
 
-            {/* Avatar */}
-            <Avatar
-                size={40}
-                src={player.avatar}
-                icon={<UserOutlined />}
-                style={{ border: `2px solid ${pos.color}50`, flexShrink: 0, background: 'var(--bg-raised)', color: pos.color }}
-            >
-                {!player.avatar && player.name?.charAt(0)?.toUpperCase()}
-            </Avatar>
+            {/* Avatar with position badge */}
+            <div style={{ position: 'relative', flexShrink: 0 }}>
+                <Avatar
+                    size={42}
+                    src={player.avatar}
+                    icon={<UserOutlined />}
+                    style={{ border: `2px solid ${pos.color}60`, background: pos.bg, color: pos.color }}
+                >
+                    {!player.avatar && player.name?.charAt(0)?.toUpperCase()}
+                </Avatar>
+                {player.position && player.position !== 'any' && (
+                    <div style={{
+                        position: 'absolute', bottom: -3, right: -8,
+                        background: pos.color, color: '#060c18',
+                        borderRadius: 4, fontSize: 9, fontWeight: 800,
+                        padding: '1px 4px', letterSpacing: '0.3px',
+                        lineHeight: '14px', fontFamily: 'Outfit, sans-serif',
+                    }}>
+                        {pos.label}
+                    </div>
+                )}
+            </div>
 
-            {/* Name + position */}
+            {/* Name */}
             <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{
                     fontFamily: 'Outfit, sans-serif', fontWeight: 600, fontSize: 14,
@@ -70,35 +91,38 @@ const PlayerRow = ({ player, rank, navigate, t }) => {
                 }}>
                     {player.name || t('players.playerFallback')}
                 </div>
-                {player.position && player.position !== 'any' && (
-                    <span style={{
-                        fontSize: 10, fontWeight: 700, letterSpacing: '0.5px',
-                        color: pos.color, fontFamily: 'Outfit, sans-serif',
-                    }}>
-                        {pos.label}
-                    </span>
-                )}
             </div>
 
-            {/* Stats */}
-            <div style={{ display: 'flex', gap: 20, alignItems: 'center', flexShrink: 0 }}>
-                <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif" }}>
+            {/* Stats as colored chips */}
+            <div style={{ display: 'flex', gap: 7, alignItems: 'center', flexShrink: 0 }}>
+                <div style={{
+                    background: 'rgba(0,232,122,0.1)', border: '1px solid rgba(0,232,122,0.22)',
+                    borderRadius: 8, padding: '3px 10px', textAlign: 'center',
+                }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#00e87a', fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", lineHeight: 1 }}>
                         {player.gamesPlayed || 0}
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>{t('players.stat.games') || 'игр'}</div>
+                    <div style={{ fontSize: 9, color: 'rgba(0,232,122,0.55)', letterSpacing: '0.3px', marginTop: 2 }}>
+                        {t('players.stat.games') || 'ИГР'}
+                    </div>
                 </div>
-                <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: '#f04438', fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif" }}>
+                <div style={{
+                    background: 'rgba(240,68,56,0.1)', border: '1px solid rgba(240,68,56,0.22)',
+                    borderRadius: 8, padding: '3px 10px', textAlign: 'center',
+                }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#f04438', fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", lineHeight: 1 }}>
                         {player.totalGoals || 0}
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>⚽</div>
+                    <div style={{ fontSize: 9, color: 'rgba(240,68,56,0.55)', marginTop: 2 }}>⚽</div>
                 </div>
-                <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: '#faad14', fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif" }}>
+                <div style={{
+                    background: 'rgba(250,173,20,0.1)', border: '1px solid rgba(250,173,20,0.22)',
+                    borderRadius: 8, padding: '3px 10px', textAlign: 'center',
+                }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#faad14', fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", lineHeight: 1 }}>
                         {player.averageRating > 0 ? player.averageRating.toFixed(1) : '—'}
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>★</div>
+                    <div style={{ fontSize: 9, color: 'rgba(250,173,20,0.55)', marginTop: 2 }}>★</div>
                 </div>
             </div>
         </div>

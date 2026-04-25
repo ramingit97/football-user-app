@@ -9,7 +9,7 @@
     "players": "Oyunçular",
     "notifications": "Bildirişlər",
     "leaderboard": "Liderboard",
-    "tournaments": "Turnirlar",
+    "tournaments": "Turnirlər",
     "leaderboardPage": {
       "title": "Liderboard",
       "subtitle": "Platformanın bütün oyunlar üzrə ən yaxşı oyunçuları",
@@ -185,6 +185,8 @@
       }
     },
     "card": {
+      "today": "Bu gün",
+      "tomorrow": "Sabah",
       "noSpots": "Yer yoxdur",
       "spotsLeft": "{{n}} yer qaldı",
       "players": "oyunçu",
@@ -272,6 +274,15 @@
       "smartInviteSent": "{{n}} oyunçuya dəvətlər göndərildi!",
       "smartInviteError": "Dəvətləri göndərmək mümkün olmadı:",
       "whatsappOpened": "WhatsApp açılır...",
+      "shareHeader": "FUTBOL {{format}}",
+      "shareDate": "Tarix: *{{day}}, {{date}}*",
+      "shareTime": "Vaxt: *{{time}}*",
+      "shareLocation": "Yer: *{{location}}*",
+      "sharePrice": "Qiymət: *{{price}} AZN* / nəfər",
+      "sharePlayers": "Oyunçular: {{filled}} / {{total}} (boş {{available}})",
+      "shareUrgency": "*>>> AZ YER QALDI! <<<*",
+      "shareJoin": "Qeydiyyat:",
+      "shareFooter": "_Dostlarına yönləndir — komanda toplayaq!_",
       "playerSelected": "Oyunçu {{name}} mövqe seçdi",
       "statsSubmitted": "Göndərildi ({{sent}}/{{total}})",
       "noPlayersYet": "Hələ heç kim qeydiyyatdan keçməyib",
@@ -455,7 +466,16 @@
         "date": "Tarixi seçin",
         "time": "Vaxtı göstərin",
         "price": "Töhfəni göstərin"
-      }
+      },
+      "minStartLabel": "Başlamaq üçün minimum",
+      "minStartTooltip": "Minimum toplandıqda rezerv avtomatik təsdiqlənəcək",
+      "priceRent": "İcarə",
+      "pricePlayers": "Oyunçu",
+      "pricePerPlayerLabel": "Oyunçu başına töhfə",
+      "recurrenceLabel": "🔄 Təkrarlanan oyun",
+      "recurrenceNone": "Yox (tək oyun)",
+      "recurrenceWeekly": "Hər həftə avtomatik yaradılsın",
+      "recurrenceBiweekly": "Hər 2 həftədən bir yaradılsın"
     },
     "paymentPanel": {
       "title": "Ödəniş uçotu",
@@ -713,8 +733,12 @@
       "basicInfo": "Əsas məlumatlar",
       "personalData": "Şəxsi məlumatlar",
       "ageLabel": "Yaş",
+      "agePlaceholder": "14-70",
       "heightLabel": "Boy (sm)",
+      "heightPlaceholder": "100-250",
       "weightLabel": "Çəki (kq)",
+      "weightPlaceholder": "30-150",
+      "shirtNumberPlaceholder": "1-99",
       "districtLabel": "Bakı rayonu",
       "districtPlaceholder": "Rayon seçin",
       "gameParams": "Oyun parametrləri",
@@ -892,6 +916,14 @@
         "FWD": "HÜC",
         "ANY": "UNV",
         "default": "OYN"
+      },
+      "stats": {
+        "pac": "Sürət",
+        "sho": "Zərbə",
+        "pas": "Ötürmə",
+        "dri": "Driblinq",
+        "def": "Müdafiə",
+        "phy": "Fiziki"
       }
     },
     "referral": {
@@ -969,7 +1001,22 @@
       "cancel": "Ləğv et",
       "emailRequired": "E-poçtu daxil edin",
       "emailInvalid": "Düzgün e-poçt daxil edin",
-      "successLogin": "Uğurla daxil oldunuz!"
+      "successLogin": "Uğurla daxil oldunuz!",
+      "forgotPassword": "Şifrəni unutmusunuz?",
+      "or": "və ya",
+      "googleSignIn": "Google ilə daxil ol"
+    },
+    "forgotPasswordPage": {
+      "title": "Şifrəni unutmusunuz",
+      "subtitle": "Hesabınızın e-poçtunu daxil edin, şifrə sıfırlama linki göndərəcəyik.",
+      "subtitleSent": "Poçtunuzu yoxlayın — sıfırlama təlimatlarını göndərdik.",
+      "sendBtn": "Link göndər",
+      "sendError": "Göndərmə xətası. Sonra cəhd edin.",
+      "emailRequired": "E-poçtu daxil edin",
+      "emailInvalid": "Düzgün e-poçt daxil edin",
+      "successText": "Bu e-poçtla hesab varsa, məktub artıq yoldadır.",
+      "noEmail": "E-poçt yoxdur? Dəstəyə yazın — əl ilə kömək edəcəyik.",
+      "backToLogin": "Girişə qayıt"
     },
     "onboarding": {
       "welcome": {
@@ -1163,6 +1210,14 @@
       "BOOKING_CONFIRMED": "Rezerv",
       "PLAYER_LEFT": "Oyunçu çıxdı",
       "BOOKING_CANCELLED": "Rezerv ləğv edildi",
+      "FRIEND_REQUEST": "Dostluq",
+      "FRIEND_ACCEPTED": "Qəbul edildi",
+      "FRIEND_REJECTED": "Rədd edildi",
+      "TRANSFER_RECEIVED": "Köçürmə",
+      "ELAN_MESSAGE": "Çat",
+      "ELAN_INVITE": "Elan",
+      "GAME_CREATED": "Oyun",
+      "GAME_REMINDER": "Xatırlatma",
       "default": "Bildiriş"
     },
     "titles": {
@@ -1187,7 +1242,15 @@
       "DRAW_STARTING": "Püşkatma başlayır 🎲",
       "TEAM_ADVANCED": "Növbəti mərhələ 🏆",
       "ROSTER_CLAIM": "Heyət tələbi",
-      "ROSTER_APPROVED": "Heyətə daxil edildiniz"
+      "ROSTER_APPROVED": "Heyətə daxil edildiniz",
+      "FRIEND_REQUEST": "Yeni dostluq sorğusu",
+      "FRIEND_ACCEPTED": "Sorğu qəbul edildi",
+      "FRIEND_REJECTED": "Sorğu rədd edildi",
+      "TRANSFER_RECEIVED": "Hesab dolduruldu",
+      "ELAN_MESSAGE": "💬 {{senderName}}",
+      "ELAN_INVITE": "Yaxınlığınızda elan var",
+      "GAME_CREATED": "Oyun yaradıldı! ⚽",
+      "GAME_REMINDER": "Tezliklə oyununuz var! ⏰"
     },
     "messages": {
       "GAME_INVITE": "{{date}} tarixli {{time}} oyununa dəvət.",
@@ -1210,7 +1273,15 @@
       "DRAW_STARTING": "Turnirdə püşkatma başlayır! Qruplarınızı görün.",
       "TEAM_ADVANCED": "Komandanız növbəti mərhələyə keçdi!",
       "ROSTER_CLAIM": "Oyunçu hesabını öz adına tələb edir.",
-      "ROSTER_APPROVED": "Siz turnir heyətinə daxil edildiniz."
+      "ROSTER_APPROVED": "Siz turnir heyətinə daxil edildiniz.",
+      "FRIEND_REQUEST": "{{requesterName}} sizi dost kimi əlavə etmək istəyir.",
+      "FRIEND_ACCEPTED": "{{responderName}} dostluq sorğunuzu qəbul etdi.",
+      "FRIEND_REJECTED": "{{responderName}} dostluq sorğunuzu rədd etdi.",
+      "TRANSFER_RECEIVED": "{{senderName}} sizə {{amount}} AZN köçürdü.",
+      "TRANSFER_RECEIVED_NOTE": "{{senderName}} sizə {{amount}} AZN köçürdü: {{note}}",
+      "ELAN_INVITE": "{{creatorName}} oynamaq istəyir — {{date}} {{time}}. Elana baxın.",
+      "GAME_CREATED": "«{{gameTitle}}» — {{date}}. Qoşulun!",
+      "GAME_REMINDER": "Tezliklə oyun başlayır. Gecikməyin!"
     }
   },
   "teams": {
@@ -1490,7 +1561,8 @@
         "drawing": "⏳ Püşkatma...",
         "startPlayoffDraw": "🎲 Pley-off püşkatmasını başlat",
         "playoffDrawing": "⏳ Püşkatma...",
-        "noCaptain": "Qeydiyyat üçün komandanın kapitanı olmalısınız"
+        "noCaptain": "Qeydiyyat üçün komandanın kapitanı olmalısınız",
+        "captainOnly": "Turnirə yalnız komanda kapitanı qeydiyyatdan keçirə bilər"
       },
       "tabs": {
         "overview": "İcmal",
@@ -1655,6 +1727,231 @@
       "awayRoster": "Qonaq komanda",
       "noRoster": "Heyət yoxdur",
       "deadline": "Son tarix"
+    }
+  },
+  "landing": {
+    "nav": {
+      "leaderboard": "🏆 Liderboard",
+      "login": "Daxil ol",
+      "goToGames": "Oyunlara keç →"
+    },
+    "hero": {
+      "badge": "Bakı, Azərbaycan",
+      "headline1": "Oyun tap.",
+      "headlineGradient": "Meydana",
+      "headline2": "çıx. Qol vur.",
+      "sub": "Bakıda həvəskar futbol üçün ilk platforma. Oyunlar tap, komandaya qoşul, reytinqini artır.",
+      "cta1": "Oynamağa başla →",
+      "cta2": "Oyunlara bax"
+    },
+    "stats": {
+      "s1_value": "10+",
+      "s1_label": "Bakıda stadion",
+      "s2_value": "Hər gün",
+      "s2_label": "Aktiv oyunlar",
+      "s3_value": "Smart",
+      "s3_label": "Komanda seçimi",
+      "s4_value": "MMR",
+      "s4_label": "Oyunçu reytinqi"
+    },
+    "liveGames": {
+      "title": "⚽ Oyunlar indi açıqdır",
+      "subtitle": "Qeydiyyat olmadan baxın — qoşulmaq üçün hesab açın",
+      "viewAll": "Hamısına bax →",
+      "spots": "{{count}} yer",
+      "free": "Pulsuz",
+      "join": "Qoşul →"
+    },
+    "promo": {
+      "prefix": "İlk",
+      "games": "5 oyun",
+      "suffix": "tamamilə pulsuz!",
+      "desc": "Qeydiyyatdan keçin, oyunlara qoşulun. Heç bir ödəniş yoxdur — 5 oyuna qədər.",
+      "cta": "İndi başla →"
+    },
+    "howItWorks": {
+      "eyebrow": "Necə işləyir",
+      "title": "Oyuna 3 addım",
+      "step1_title": "Yaxınlıqda oyun tap",
+      "step1_desc": "Tarix, rayon və formatı seçin. Kimin qeydiyyatdan keçdiyini və neçə yer qaldığını görün.",
+      "step2_title": "Qoşul və ödə",
+      "step2_desc": "AZN ilə pul kisəsi vasitəsilə iştirak haqqını ödəyin. Anında bron, yer sizindir.",
+      "step3_title": "Meydana çıx",
+      "step3_desc": "Gəlin, organizatordan mövqe alın və oyunun keyfini çıxarın. Sonra — reytinq və badcelər."
+    },
+    "elanlar": {
+      "liveBadge": "Canlı elan",
+      "eyebrow": "Yeni · Новое",
+      "title": "Oyun olacaq, amma",
+      "titleHighlight": "vaxt hələ bəlli deyil?",
+      "descPre": "Elan yaz",
+      "descBody": " — qoşulmaq istəyənlər \"Maraqlanıram\" desin, vaxt seçiminə səs versin, söhbət etsin. Ən çox səs toplayan vaxta oyun yaradılır, hamıya bildiriş gedir.",
+      "descExtra": "Напишите объявление — заинтересованные игроки проголосуют за удобное время, обсудят детали в чате. Как только всё решено — одним кликом создаётся игра и все получают уведомление.",
+      "f1": "Elan yaz — rayon, format və tarix göstər",
+      "f1_mobile": "Elan yaz, oyunçuları topla",
+      "f2": "Oyunçular vaxt seçiminə səs versin",
+      "f3": "Söhbətdə detalları razılaşdırın",
+      "f4": "Bir klikdə oyuna çevir, hamıya bildiriş get",
+      "cta": "📋 Elan yaz",
+      "mockTimeVote": "Vaxt seçimi",
+      "mockInterested": "4 nəfər maraqlanır",
+      "mockPeople": "{{count}} nəfər",
+      "createGame": "⚽ Oyun yarat →"
+    },
+    "platform": {
+      "eyebrow": "Platforma imkanları",
+      "title1": "Oyun üçün",
+      "title2": "texnologiya",
+      "desc": "Oyun axtarışından tutmuş oyundan sonrakı statistikaya qədər — hər şey bir tətbiqdə. İnteraktiv sahə sxemi, canlı komanda balansı, anlıq söhbət.",
+      "f1": "Smart Matchmaking — səviyyə və geolokasiyaya görə",
+      "f2": "Team Balancer — MMR ilə bərabər komandalar",
+      "f3": "İnteraktiv sahə sxemi — mövqe seçimi",
+      "f4": "Canlı söhbət — oyun içi real-time chat",
+      "f5": "MVP, badcelər və oyunçu reytinqi"
+    },
+    "friends": {
+      "badge": "Dostlarla oyna",
+      "title1": "Dostlarını dəvət et —",
+      "title2": "qalanını biz edərik",
+      "descPre": "Hər həftə dostlarınla sahəyə çıxın. Oyun başlamazdan əvvəl sadəcə bir düymə ilə bütün oyunçular ",
+      "descBold": "avtomatik olaraq bərabər iki komandaya",
+      "descPost": " bölünür — heç bir mübahisə, heç bir ədalətsizlik yoxdur.",
+      "f1_title": "MMR reytinqinə görə",
+      "f1_desc": "Hər oyunçunun gücü hesablanır və komandalar bərabərləşdirilir",
+      "f2_title": "Snake-draft metodu",
+      "f2_desc": "Növbəli seçim — heç bir komanda üstünlük qazanmır",
+      "f3_title": "Bir klik, bir saniyə",
+      "f3_desc": "Təşkilatçı düyməyə basır, sistem hər şeyi özü bölüşdürür",
+      "cta": "Dostlarını dəvət et →",
+      "autoBalance": "Avtomatik balans",
+      "algorithm": "MMR algoritmilə"
+    },
+    "teams": {
+      "eyebrow": "Komanda rejimi",
+      "title1": "Komanda yarat.",
+      "title2": "Rəqibə meydan oxu.",
+      "desc": "Tək oyun kifayət deyil? Öz komandanızı yaradın, dostları dəvət edin və rəqib komandalarla üz-üzə gəlin.",
+      "f1_title": "Komanda yarat",
+      "f1_desc": "Adını seç, bayraq yüklə, kapitanlığı üstlən. Komandanı istədiyin qədər böyüt.",
+      "f2_title": "Meydan oxu",
+      "f2_desc": "İstənilən komandaya challenge göndər — tarix, vaxt, yer seç. Cavab gəldi — meydana çıx.",
+      "f3_title": "MMR & Statistika",
+      "f3_desc": "Hər oyun komandanın reytinqini dəyişir. Qalib gəl — cədvəldə yuxarı qalx.",
+      "leaderboardTitle": "Komanda reytinqi",
+      "live": "Canlı",
+      "wins": "Qələbə",
+      "losses": "Məğlub"
+    },
+    "tournaments": {
+      "eyebrow": "Turnir rejimi",
+      "title1": "Turnirə qoşul.",
+      "title2": "Çempionu sən ol.",
+      "desc": "Qrup mərhələsi, pley-off sətki, canlı püşk atma — hamısı bir platformada. Komandanı qeydiyyatdan keçir və kuboka gedən yolu başla.",
+      "s1_title": "Qeydiyyat",
+      "s1_desc": "Kapitan olaraq komandanı turnirə qeyd et",
+      "s2_title": "Püşk atma",
+      "s2_desc": "Canlı animasiyalı qrup püşkü",
+      "s3_title": "Qrup mərhələsi",
+      "s3_desc": "4 komanda, ən yaxşı 2-si irəliyə keçir",
+      "s4_title": "Pley-off",
+      "s4_desc": "1/4, 1/2 final və böyük final",
+      "activeTournaments": "Aktiv turnirler",
+      "viewAll": "Hamısına bax →",
+      "statusRegistration": "Qeydiyyat açıqdır",
+      "statusGroup": "Qrup mərhələsi",
+      "statusPlayoff": "Pley-off",
+      "statusCompleted": "Tamamlandı",
+      "teams": "Komandalar",
+      "prizePool": "Mükafat fondu",
+      "entryFee": "Üzvlük haqqı",
+      "free": "Pulsuz",
+      "cta": "🏆 Turnirə qoşul",
+      "ctaNote": "Qeydiyyat tələb olunur · Pulsuz hesab aç",
+      "mockRegistration": "📋 Qeydiyyat"
+    },
+    "ownGame": {
+      "eyebrow": "Öz oyunun",
+      "title1": "Komandan var,",
+      "title2": "1-2 nəfər çatmır?",
+      "desc": "Öz yerini tap, neçə nəfər gətirdiyini yaz — sistem avtomatik açıq yerlər yaradır. Legionerlər birbaşa siyahıdan yazılır.",
+      "s1_label": "Öz oyununu yarat",
+      "s1_sub": "Ünvan, vaxt, format — 30 saniyədə",
+      "s2_label": "Dostlarını əlavə et",
+      "s2_sub": "Sistemdə olsun ya olmasın — sadəcə say yaz",
+      "s3_label": "Smart Invite işə düşür",
+      "s3_sub": "Sistem uyğun oyunçuları tapıb dəvətnamə göndərir",
+      "cta": "⚽ Oyun yarat",
+      "mockOwnPlayers": "Öz oyunçular",
+      "mockOpenSlots": "Açıq yerlər",
+      "smartInviteTitle": "Smart Invite işə düşdü",
+      "smartInviteSubtitle": "Uyğun oyunçular tapıldı",
+      "paymentTitle": "Ödəniş — yerindəcə",
+      "paymentSubtitle": "Legionerlər pulsuz yazılır",
+      "mockGameTitle": "Cümə axşamı 6×6 · Maştağa",
+      "mockGameOpen": "Açıqdır"
+    },
+    "partner": {
+      "eyebrow": "Tezliklə",
+      "title1": "Bakıda",
+      "title2": "stadion",
+      "title3": "sahibisiniz?",
+      "desc": "Stadionlar üçün tərəfdaş platforması hazırlanır. Slotları yerləşdirin, bronları idarə edin, oyunçular avtomatik tapılsın — zəngsiz, messencersiz.",
+      "wip": "Tərəfdaş kabineti — hazırlanır"
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "Tez-tez verilən suallar",
+      "q1": "Ödəniş necə edilir?",
+      "a1": "Tətbiqdaxili pul kisəsi vasitəsilə. Kartla AZN ilə balansı artırın — bron zamanı avtomatik silinir.",
+      "q2": "Bronu ləğv etmək mümkündürmü?",
+      "a2": "Bəli. Oyundan 24 saat əvvəl ləğv etsəniz pul kisəyə tam qaytarılır. 24 saatdan az qalan halda geri qaytarılmır.",
+      "q3": "Komandalar necə formalaşır?",
+      "a3": "Team Balancer alqoritmi oyunçuları MMR reytinqinə görə snake-draft metodu ilə iki bərabər komandaya bölür.",
+      "q4": "Oyunçu sayı çatmırsa nə olur?",
+      "a4": "Smart Invite funksiyası avtomatik olaraq sizə yaxın, lazımi səviyyəli oyunçuları tapır və onlara dəvət göndərir."
+    },
+    "finalCta": {
+      "badge": "İlk 5 oyun PULSUZ",
+      "title": "İlk oyuna hazırsınız?",
+      "desc": "Bir dəqiqəyə qeydiyyatdan keçin və Bakıda ən yaxın oyunu tapın.",
+      "cta": "Oynamağa başla →"
+    },
+    "footer": {
+      "tagline": "Bakıda həvəskar futbol — yeni səviyyədə"
+    },
+    "carousel": {
+      "slide1_title": "Oyunları kəşf et",
+      "slide1_sub": "Bakıda ən yaxın oyunları tap",
+      "slide2_title": "Mövqeyini seç",
+      "slide2_sub": "İnteraktiv sahə sxemi ilə",
+      "slide3_title": "Komanda balansı",
+      "slide3_sub": "MMR algoritmilə avtomatik",
+      "slide4_title": "Oyun statistikası",
+      "slide4_sub": "MVP, reytinq, badcelər",
+      "gamesTitle": "Bakıda oyunlar",
+      "activeGames": "3 aktiv oyun",
+      "open": "Açıqdır",
+      "full": "Dolu",
+      "fieldTitle": "Mövqeyini seç",
+      "freeSlots": "{{count}} boş",
+      "freeLegend": "Boş mövqe",
+      "takenLegend": "Tutulmuş",
+      "emptySpot": "boş",
+      "selectSpot": "Seç!",
+      "balanceTitle": "Komanda Balansı",
+      "swaps": "{{count}} dəyişim",
+      "balanced": "✓ Balanslaşdırıldı",
+      "diff": "Fərq: {{val}}",
+      "teamA": "KOMANDA A",
+      "teamB": "KOMANDA B",
+      "swapping": "Dəyişdirilir...",
+      "postGameTitle": "Oyun Nəticəsi",
+      "badgeFast": "⚡ Sürətli",
+      "badgeAccurate": "🎯 Dəqiq",
+      "badgeMvp": "👑 MVP",
+      "statAttack": "Hücum",
+      "statDefense": "Müdafiə",
+      "statSpeed": "Sürət"
     }
   }
 }

@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useGetGamesQuery } from '../../store/gamesApi';
 import { useGetTournamentsQuery } from '../../store/tournamentsApi';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 /* ─────────────────────────────────────────────────────────
    GLOBAL STYLES  (injected once)
@@ -142,11 +144,13 @@ const MOCK_GAMES = [
   { id:2, stadium:'Olympic Complex', time:'Sabah, 10:00', players:'5/10', price:'8 AZN', district:'Binəqədi', open:true },
   { id:3, stadium:'Lokomotiv Sahəsi', time:'Bu gün, 21:00', players:'10/10', price:'5 AZN', district:'Sabunçu', open:false },
 ];
-const SlideGameList = () => (
+const SlideGameList = () => {
+  const { t } = useTranslation();
+  return (
   <div style={{ padding:'20px 16px', display:'flex', flexDirection:'column', gap:10 }}>
     <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:4 }}>
-      <span style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:700, fontSize:15, color:'var(--text-primary)' }}>Bakıda oyunlar</span>
-      <span style={{ fontSize:11, color:'var(--green)', fontFamily:'Outfit,sans-serif', fontWeight:600 }}>3 aktiv oyun</span>
+      <span style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:700, fontSize:15, color:'var(--text-primary)' }}>{t('landing.carousel.gamesTitle')}</span>
+      <span style={{ fontSize:11, color:'var(--green)', fontFamily:'Outfit,sans-serif', fontWeight:600 }}>{t('landing.carousel.activeGames')}</span>
     </div>
     {MOCK_GAMES.map((g, i) => (
       <div key={g.id} style={{
@@ -163,7 +167,7 @@ const SlideGameList = () => (
             color: g.open ? 'var(--green)' : 'var(--text-tertiary)',
             borderRadius:20, padding:'2px 9px', fontSize:10, fontWeight:700,
             fontFamily:'Outfit,sans-serif', whiteSpace:'nowrap',
-          }}>{g.open ? 'Açıqdır' : 'Dolu'}</span>
+          }}>{g.open ? t('landing.carousel.open') : t('landing.carousel.full')}</span>
         </div>
         <div style={{ display:'flex', gap:14, flexWrap:'wrap' }}>
           {[{icon:'🕐', v:g.time},{icon:'📍', v:g.district},{icon:'👥', v:g.players},{icon:'💳', v:g.price}].map(it => (
@@ -175,7 +179,8 @@ const SlideGameList = () => (
       </div>
     ))}
   </div>
-);
+  );
+};
 
 /* ─────────────────────────────────────────────────────────
    CAROUSEL SLIDE 2 — SVG Football Field + Position Selection
@@ -195,12 +200,13 @@ const POSITIONS = [
 ];
 const SlideField = () => {
   const [hoveredPos, setHoveredPos] = useState(null);
+  const { t } = useTranslation();
   return (
     <div style={{ padding:'12px 16px' }}>
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
-        <span style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:700, fontSize:14, color:'var(--text-primary)' }}>Mövqeyini seç</span>
+        <span style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:700, fontSize:14, color:'var(--text-primary)' }}>{t('landing.carousel.fieldTitle')}</span>
         <span style={{ fontSize:11, color:'var(--text-secondary)', fontFamily:'Outfit,sans-serif' }}>
-          <span style={{ color:'var(--green)', fontWeight:600 }}>5</span>/11 boş
+          <span style={{ color:'var(--green)', fontWeight:600 }}>5</span>/11 {t('landing.carousel.emptySpot')}
         </span>
       </div>
       <svg viewBox="0 0 300 200" style={{ width:'100%', borderRadius:10, display:'block' }}>
@@ -292,23 +298,23 @@ const SlideField = () => {
                 <text x={cx} y={cy + 13} textAnchor="middle"
                   fontSize="4.5" fontFamily="Outfit,sans-serif"
                   fill="rgba(0,232,122,0.7)"
-                >boş</text>
+                >{t('landing.carousel.emptySpot')}</text>
               )}
               {!pos.taken && isHovered && (
                 <text x={cx} y={cy + 13} textAnchor="middle"
                   fontSize="4.5" fontFamily="Outfit,sans-serif" fontWeight="700"
                   fill="var(--green)"
-                >Seç!</text>
+                >{t('landing.carousel.selectSpot')}</text>
               )}
             </g>
           );
         })}
       </svg>
       <div style={{ display:'flex', gap:16, marginTop:10, justifyContent:'center' }}>
-        {[{color:'rgba(0,232,122,0.8)',label:'Boş mövqe'},{color:'rgba(237,242,255,0.3)',label:'Tutulmuş'}].map(l => (
-          <div key={l.label} style={{ display:'flex', alignItems:'center', gap:5 }}>
+        {[{color:'rgba(0,232,122,0.8)',labelKey:'freeLegend'},{color:'rgba(237,242,255,0.3)',labelKey:'takenLegend'}].map(l => (
+          <div key={l.labelKey} style={{ display:'flex', alignItems:'center', gap:5 }}>
             <div style={{ width:9, height:9, borderRadius:'50%', background:l.color, border:'1.5px solid rgba(255,255,255,0.2)' }}/>
-            <span style={{ fontSize:10, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>{l.label}</span>
+            <span style={{ fontSize:10, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>{t(`landing.carousel.${l.labelKey}`)}</span>
           </div>
         ))}
       </div>
@@ -388,6 +394,7 @@ const SlideTeamSwap = () => {
   const [swapCount, setSwapCount] = useState(0);
   const [floatMsg, setFloatMsg] = useState(null);
   const playersRef = useRef(INITIAL_PLAYERS);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const tick = () => {
@@ -398,7 +405,7 @@ const SlideTeamSwap = () => {
       const pA = tA[Math.floor(Math.random() * tA.length)];
       const pB = tB[Math.floor(Math.random() * tB.length)];
       setSwappingIds([pA.id, pB.id]);
-      setFloatMsg({ text:'Dəyişdirilir...', id: Date.now() });
+      setFloatMsg({ textKey:'swapping', id: Date.now() });
       setTimeout(() => {
         const next = current.map(p => {
           if (p.id === pA.id) return { ...p, team:'B', color:'#4f86f7' };
@@ -426,7 +433,7 @@ const SlideTeamSwap = () => {
       {/* Header */}
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
         <span style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:700, fontSize:14, color:'var(--text-primary)' }}>
-          Komanda Balansı
+          {t('landing.carousel.balanceTitle')}
         </span>
         <div style={{ display:'flex', alignItems:'center', gap:6 }}>
           <div style={{
@@ -434,7 +441,7 @@ const SlideTeamSwap = () => {
             animation:'blink-dot 1.5s ease infinite',
           }}/>
           <span style={{ fontFamily:'Outfit,sans-serif', fontSize:10, color:'var(--green)', fontWeight:600 }}>
-            {swapCount} dəyişim
+            {t('landing.carousel.swaps', { count: swapCount })}
           </span>
         </div>
       </div>
@@ -444,7 +451,7 @@ const SlideTeamSwap = () => {
         <div style={{ display:'flex', justifyContent:'space-between', marginBottom:3 }}>
           <span style={{ fontSize:10, color:'#00e87a', fontFamily:'Outfit,sans-serif', fontWeight:700 }}>A: {avgA}</span>
           <span style={{ fontSize:9, color: diff <= 2 ? 'var(--green)' : 'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>
-            {diff <= 2 ? '✓ Balanslaşdırıldı' : `Fərq: ${diff}`}
+            {diff <= 2 ? t('landing.carousel.balanced') : t('landing.carousel.diff', { val: diff })}
           </span>
           <span style={{ fontSize:10, color:'#4f86f7', fontFamily:'Outfit,sans-serif', fontWeight:700 }}>B: {avgB}</span>
         </div>
@@ -466,7 +473,7 @@ const SlideTeamSwap = () => {
       <div style={{ display:'grid', gridTemplateColumns:'1fr auto 1fr', gap:6, alignItems:'start' }}>
         {/* Team A */}
         <div>
-          <div style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:11, color:'#00e87a', marginBottom:5, letterSpacing:.5 }}>KOMANDA A</div>
+          <div style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:11, color:'#00e87a', marginBottom:5, letterSpacing:.5 }}>{t('landing.carousel.teamA')}</div>
           {teamA.map(p => (
             <PlayerRow key={p.id} player={p} isSwapping={swappingIds.includes(p.id)} teamSide="A"/>
           ))}
@@ -486,7 +493,7 @@ const SlideTeamSwap = () => {
 
         {/* Team B */}
         <div>
-          <div style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:11, color:'#4f86f7', marginBottom:5, textAlign:'right', letterSpacing:.5 }}>KOMANDA B</div>
+          <div style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:11, color:'#4f86f7', marginBottom:5, textAlign:'right', letterSpacing:.5 }}>{t('landing.carousel.teamB')}</div>
           {teamB.map(p => (
             <PlayerRow key={p.id} player={p} isSwapping={swappingIds.includes(p.id)} teamSide="B"/>
           ))}
@@ -502,7 +509,7 @@ const SlideTeamSwap = () => {
           fontFamily:'Outfit,sans-serif', fontSize:10, color:'var(--green)', fontWeight:600,
           animation:'float-up 1.5s ease forwards', pointerEvents:'none',
           whiteSpace:'nowrap',
-        }}>⚡ {floatMsg.text}</div>
+        }}>⚡ {t(`landing.carousel.${floatMsg.textKey}`)}</div>
       )}
     </div>
   );
@@ -513,12 +520,13 @@ const SlideTeamSwap = () => {
 ───────────────────────────────────────────────────────── */
 const SlidePostGame = () => {
   const [revealed, setRevealed] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setRevealed(true), 400); return () => clearTimeout(t); }, []);
-  const badges = ['⚡ Sürətli', '🎯 Dəqiq', '👑 MVP'];
+  const { t } = useTranslation();
+  useEffect(() => { const timer = setTimeout(() => setRevealed(true), 400); return () => clearTimeout(timer); }, []);
+  const badges = [t('landing.carousel.badgeFast'), t('landing.carousel.badgeAccurate'), t('landing.carousel.badgeMvp')];
   return (
     <div style={{ padding:'14px 16px' }}>
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12 }}>
-        <span style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:700, fontSize:14, color:'var(--text-primary)' }}>Oyun Nəticəsi</span>
+        <span style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:700, fontSize:14, color:'var(--text-primary)' }}>{t('landing.carousel.postGameTitle')}</span>
         <span style={{ fontFamily:'Outfit,sans-serif', fontSize:10, color:'var(--text-tertiary)' }}>Neftçi Arena · 60 dəq</span>
       </div>
 
@@ -528,12 +536,12 @@ const SlidePostGame = () => {
         background:'var(--bg-raised)', borderRadius:12, padding:'14px 20px', marginBottom:12,
       }}>
         <div style={{ textAlign:'center' }}>
-          <div style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:11, color:'#00e87a', marginBottom:2 }}>KOMANDA A</div>
+          <div style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:11, color:'#00e87a', marginBottom:2 }}>{t('landing.carousel.teamA')}</div>
           <div style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:40, color:'var(--text-primary)', lineHeight:1 }}>3</div>
         </div>
         <div style={{ fontFamily:'Outfit,sans-serif', fontSize:13, color:'var(--text-tertiary)', fontWeight:600 }}>:</div>
         <div style={{ textAlign:'center' }}>
-          <div style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:11, color:'#4f86f7', marginBottom:2 }}>KOMANDA B</div>
+          <div style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:11, color:'#4f86f7', marginBottom:2 }}>{t('landing.carousel.teamB')}</div>
           <div style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:40, color:'var(--text-primary)', lineHeight:1 }}>2</div>
         </div>
       </div>
@@ -572,13 +580,13 @@ const SlidePostGame = () => {
       {/* Rating bars */}
       <div style={{ marginTop:10, display:'flex', flexDirection:'column', gap:6 }}>
         {[
-          { label:'Hücum', val:78, color:'#f59e0b' },
-          { label:'Müdafiə', val:65, color:'#4f86f7' },
-          { label:'Sürət', val:88, color:'var(--green)' },
+          { labelKey:'statAttack', val:78, color:'#f59e0b' },
+          { labelKey:'statDefense', val:65, color:'#4f86f7' },
+          { labelKey:'statSpeed', val:88, color:'var(--green)' },
         ].map((s, i) => (
-          <div key={s.label}>
+          <div key={s.labelKey}>
             <div style={{ display:'flex', justifyContent:'space-between', marginBottom:2 }}>
-              <span style={{ fontFamily:'Outfit,sans-serif', fontSize:10, color:'var(--text-tertiary)' }}>{s.label}</span>
+              <span style={{ fontFamily:'Outfit,sans-serif', fontSize:10, color:'var(--text-tertiary)' }}>{t(`landing.carousel.${s.labelKey}`)}</span>
               <span style={{ fontFamily:'Outfit,sans-serif', fontSize:10, color:'var(--text-secondary)', fontWeight:600 }}>{s.val}</span>
             </div>
             <div style={{ height:3, borderRadius:2, background:'var(--bg-base)', overflow:'hidden' }}>
@@ -599,12 +607,6 @@ const SlidePostGame = () => {
 /* ─────────────────────────────────────────────────────────
    CAROUSEL WRAPPER
 ───────────────────────────────────────────────────────── */
-const SLIDES = [
-  { id:0, title:'Oyunları kəşf et',    subtitle:'Bakıda ən yaxın oyunları tap', component:SlideGameList },
-  { id:1, title:'Mövqeyini seç',        subtitle:'İnteraktiv sahə sxemi ilə', component:SlideField },
-  { id:2, title:'Komanda balansı',      subtitle:'MMR algoritmilə avtomatik', component:SlideTeamSwap },
-  { id:3, title:'Oyun statistikası',    subtitle:'MVP, reytinq, badcelər', component:SlidePostGame },
-];
 const SLIDE_DURATION = 5500;
 
 const Carousel = () => {
@@ -612,6 +614,13 @@ const Carousel = () => {
   const [paused, setPaused] = useState(false);
   const [progressKey, setProgressKey] = useState(0);
   const timerRef = useRef(null);
+  const { t } = useTranslation();
+  const SLIDES = [
+    { id:0, title:t('landing.carousel.slide1_title'), subtitle:t('landing.carousel.slide1_sub'), component:SlideGameList },
+    { id:1, title:t('landing.carousel.slide2_title'), subtitle:t('landing.carousel.slide2_sub'), component:SlideField },
+    { id:2, title:t('landing.carousel.slide3_title'), subtitle:t('landing.carousel.slide3_sub'), component:SlideTeamSwap },
+    { id:3, title:t('landing.carousel.slide4_title'), subtitle:t('landing.carousel.slide4_sub'), component:SlidePostGame },
+  ];
 
   const goTo = useCallback((idx) => {
     setActive(idx);
@@ -695,27 +704,7 @@ const Carousel = () => {
   );
 };
 
-/* ─────────────────────────────────────────────────────────
-   FAQ DATA
-───────────────────────────────────────────────────────── */
-const FAQS = [
-  {
-    q:'Ödəniş necə edilir?',
-    a:'Tətbiqdaxili pul kisəsi vasitəsilə. Kartla AZN ilə balansı artırın — bron zamanı avtomatik silinir.',
-  },
-  {
-    q:'Bronu ləğv etmək mümkündürmü?',
-    a:'Bəli. Oyundan 24 saat əvvəl ləğv etsəniz pul kisəyə tam qaytarılır. 24 saatdan az qalan halda geri qaytarılmır.',
-  },
-  {
-    q:'Komandalar necə formalaşır?',
-    a:'Team Balancer alqoritmi oyunçuları MMR reytinqinə görə snake-draft metodu ilə iki bərabər komandaya bölür.',
-  },
-  {
-    q:'Oyunçu sayı çatmırsa nə olur?',
-    a:'Smart Invite funksiyası avtomatik olaraq sizə yaxın, lazımi səviyyəli oyunçuları tapır və onlara dəvət göndərir.',
-  },
-];
+/* FAQ data is now computed inside the component using t() */
 
 /* ─────────────────────────────────────────────────────────
    MAIN LANDING PAGE
@@ -733,10 +722,18 @@ function useWindowWidth() {
 export default function LandingPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
   const winW = useWindowWidth();
   const isMobile = winW < 768;
+
+  const FAQS = [
+    { q: t('landing.faq.q1'), a: t('landing.faq.a1') },
+    { q: t('landing.faq.q2'), a: t('landing.faq.a2') },
+    { q: t('landing.faq.q3'), a: t('landing.faq.a3') },
+    { q: t('landing.faq.q4'), a: t('landing.faq.a4') },
+  ];
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 60);
@@ -801,14 +798,15 @@ export default function LandingPage() {
               borderRadius:10, padding:'9px 18px',
               fontFamily:'Outfit,sans-serif', fontWeight:600, fontSize:13,
               cursor:'pointer',
-            }}>🏆 Liderboard</button>
+            }}>{t('landing.nav.leaderboard')}</button>
           )}
+          <LanguageSwitcher />
           <button className="lp-btn-primary" onClick={goLoginPage} style={{
             background:'var(--green)', color:'#060c18', border:'none',
             borderRadius:10, padding:'9px 22px',
             fontFamily:'Outfit,sans-serif', fontWeight:700, fontSize:14,
             cursor:'pointer', boxShadow:'0 2px 14px var(--green-glow)',
-          }}>{isLoggedIn ? 'Oyunlara keç →' : 'Daxil ol'}</button>
+          }}>{isLoggedIn ? t('landing.nav.goToGames') : t('landing.nav.login')}</button>
         </div>
       </nav>
 
@@ -840,7 +838,7 @@ export default function LandingPage() {
           animation:'fade-up .7s cubic-bezier(.22,1,.36,1) .08s both',
         }}>
           <span style={{ width:7, height:7, borderRadius:'50%', background:'var(--green)', boxShadow:'0 0 8px var(--green)', display:'inline-block', animation:'blink-dot 2s ease-in-out infinite' }}/>
-          <span style={{ fontFamily:'Outfit,sans-serif', fontSize:12, color:'var(--green)', fontWeight:600, letterSpacing:.5 }}>Bakı, Azərbaycan</span>
+          <span style={{ fontFamily:'Outfit,sans-serif', fontSize:12, color:'var(--green)', fontWeight:600, letterSpacing:.5 }}>{t('landing.hero.badge')}</span>
         </div>
 
         {/* Headline */}
@@ -850,14 +848,14 @@ export default function LandingPage() {
           letterSpacing:'-0.5px', color:'var(--text-primary)',
           maxWidth:880, marginBottom:26,
         }}>
-          Oyun tap.{' '}
+          {t('landing.hero.headline1')}{' '}
           <span style={{
             background:'linear-gradient(135deg,var(--green) 0%,#33f090 50%,#00c868 100%)',
             backgroundSize:'200% auto',
             WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent',
             backgroundClip:'text',
             animation:'shimmer 3s linear infinite',
-          }}>Meydana</span>{' '}çıx. Qol vur.
+          }}>{t('landing.hero.headlineGradient')}</span>{' '}{t('landing.hero.headline2')}
         </h1>
 
         {/* Subtext */}
@@ -865,8 +863,7 @@ export default function LandingPage() {
           fontFamily:'Outfit,sans-serif', fontSize:'clamp(15px,2.5vw,19px)',
           color:'var(--text-secondary)', maxWidth:520, lineHeight:1.7, marginBottom:16,
         }}>
-          Bakıda həvəskar futbol üçün ilk platforma.
-          Oyunlar tap, komandaya qoşul, reytinqini artır.
+          {t('landing.hero.sub')}
         </p>
 
         {/* CTAs */}
@@ -876,14 +873,14 @@ export default function LandingPage() {
             borderRadius:12, padding:'15px 36px',
             fontFamily:'Outfit,sans-serif', fontWeight:700, fontSize:16,
             cursor:'pointer', boxShadow:'0 4px 24px var(--green-glow)',
-          }}>Oynamağa başla →</button>
+          }}>{t('landing.hero.cta1')}</button>
           <button className="lp-btn-secondary" onClick={goLogin} style={{
             background:'transparent', color:'var(--text-secondary)',
             border:'1px solid var(--border-color)',
             borderRadius:12, padding:'15px 36px',
             fontFamily:'Outfit,sans-serif', fontWeight:600, fontSize:16,
             cursor:'pointer',
-          }}>Oyunlara bax</button>
+          }}>{t('landing.hero.cta2')}</button>
         </div>
 
         {/* Scroll hint */}
@@ -898,10 +895,10 @@ export default function LandingPage() {
         <FadeSection>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(190px,1fr))', gap:14, maxWidth:1100, margin:'0 auto' }}>
             {[
-              { icon:'🏟️', value:'10+',   label:'Bakıda stadion' },
-              { icon:'⚽', value:'Hər gün', label:'Aktiv oyunlar' },
-              { icon:'🤖', value:'Smart',  label:'Komanda seçimi' },
-              { icon:'⭐', value:'MMR',    label:'Oyunçu reytinqi' },
+              { icon:'🏟️', value:t('landing.stats.s1_value'), label:t('landing.stats.s1_label') },
+              { icon:'⚽', value:t('landing.stats.s2_value'), label:t('landing.stats.s2_label') },
+              { icon:'🤖', value:t('landing.stats.s3_value'), label:t('landing.stats.s3_label') },
+              { icon:'⭐', value:t('landing.stats.s4_value'), label:t('landing.stats.s4_label') },
             ].map((s,i) => (
               <div key={i} className="lp-stat-card" style={{
                 background:'var(--bg-card)', border:'1px solid var(--border-color)',
@@ -924,10 +921,10 @@ export default function LandingPage() {
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18, flexWrap:'wrap', gap:8 }}>
                 <div>
                   <h2 style={{ fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:800, fontSize:22, color:'var(--text-primary)', margin:0, letterSpacing:'-0.3px' }}>
-                    ⚽ Oyunlar indi açıqdır
+                    {t('landing.liveGames.title')}
                   </h2>
                   <p style={{ color:'var(--text-tertiary)', fontSize:13, margin:'4px 0 0' }}>
-                    Qeydiyyat olmadan baxın — qoşulmaq üçün hesab açın
+                    {t('landing.liveGames.subtitle')}
                   </p>
                 </div>
                 <button
@@ -943,7 +940,7 @@ export default function LandingPage() {
                   onMouseEnter={e=>{ e.currentTarget.style.borderColor='var(--green)'; e.currentTarget.style.color='var(--green)'; }}
                   onMouseLeave={e=>{ e.currentTarget.style.borderColor='var(--border-color)'; e.currentTarget.style.color='var(--text-secondary)'; }}
                 >
-                  Hamısına bax →
+                  {t('landing.liveGames.viewAll')}
                 </button>
               </div>
 
@@ -979,7 +976,7 @@ export default function LandingPage() {
                           fontSize:11, fontWeight:600,
                           color: spots <= 2 ? '#f04438' : spots <= 4 ? '#f59e0b' : '#48bb78',
                         }}>
-                          {spots} yer
+                          {t('landing.liveGames.spots', { count: spots })}
                         </span>
                       </div>
                       <div style={{ fontSize:13, fontWeight:600, color:'var(--text-primary)', marginBottom:6, lineHeight:1.3 }}>
@@ -993,10 +990,10 @@ export default function LandingPage() {
                         display:'flex', alignItems:'center', justifyContent:'space-between',
                       }}>
                         <span style={{ fontSize:13, fontWeight:700, color:'var(--text-primary)' }}>
-                          {game.pricePerSlot > 0 ? `${game.pricePerSlot} ₼` : 'Pulsuz'}
+                          {game.pricePerSlot > 0 ? `${game.pricePerSlot} ₼` : t('landing.liveGames.free')}
                         </span>
                         <span style={{ fontSize:11, color:'var(--green)', fontWeight:600 }}>
-                          Qoşul →
+                          {t('landing.liveGames.join')}
                         </span>
                       </div>
                     </div>
@@ -1026,10 +1023,10 @@ export default function LandingPage() {
               <div style={{ fontSize:52 }}>🎁</div>
               <div>
                 <div style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:'clamp(20px,3vw,28px)', color:'var(--text-primary)', lineHeight:1.2, marginBottom:6 }}>
-                  İlk <span style={{ color:'#f59e0b' }}>5 oyun</span> tamamilə pulsuz!
+                  {t('landing.promo.prefix')} <span style={{ color:'#f59e0b' }}>{t('landing.promo.games')}</span> {t('landing.promo.suffix')}
                 </div>
                 <div style={{ fontFamily:'Outfit,sans-serif', fontSize:15, color:'var(--text-secondary)', lineHeight:1.6 }}>
-                  Qeydiyyatdan keçin, oyunlara qoşulun. Heç bir ödəniş yoxdur — 5 oyuna qədər.
+                  {t('landing.promo.desc')}
                 </div>
               </div>
             </div>
@@ -1050,7 +1047,7 @@ export default function LandingPage() {
                 borderRadius:10, padding:'11px 28px',
                 fontFamily:'Outfit,sans-serif', fontWeight:700, fontSize:14,
                 cursor:'pointer', boxShadow:'0 4px 20px rgba(245,158,11,0.3)',
-              }}>İndi başla →</button>
+              }}>{t('landing.promo.cta')}</button>
             </div>
           </div>
         </FadeSection>
@@ -1061,14 +1058,14 @@ export default function LandingPage() {
         <FadeSection>
           <div style={{ maxWidth:1100, margin:'0 auto' }}>
             <div style={{ textAlign:'center', marginBottom:56 }}>
-              <p style={{ fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, letterSpacing:'2.5px', color:'var(--green)', textTransform:'uppercase', marginBottom:12 }}>Necə işləyir</p>
-              <h2 style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:'clamp(26px,5vw,46px)', color:'var(--text-primary)', letterSpacing:'-1px', lineHeight:1.1 }}>Oyuna 3 addım</h2>
+              <p style={{ fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, letterSpacing:'2.5px', color:'var(--green)', textTransform:'uppercase', marginBottom:12 }}>{t('landing.howItWorks.eyebrow')}</p>
+              <h2 style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:'clamp(26px,5vw,46px)', color:'var(--text-primary)', letterSpacing:'-1px', lineHeight:1.1 }}>{t('landing.howItWorks.title')}</h2>
             </div>
             <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))', gap:28 }}>
               {[
-                { num:'01', icon:'🔍', title:'Yaxınlıqda oyun tap', desc:'Tarix, rayon və formatı seçin. Kimin qeydiyyatdan keçdiyini və neçə yer qaldığını görün.' },
-                { num:'02', icon:'💳', title:'Qoşul və ödə',        desc:'AZN ilə pul kisəsi vasitəsilə iştirak haqqını ödəyin. Anında bron, yer sizindir.' },
-                { num:'03', icon:'🎯', title:'Meydana çıx',         desc:'Gəlin, organizatordan mövqe alın və oyunun keyfini çıxarın. Sonra — reytinq və badcelər.' },
+                { num:'01', icon:'🔍', title:t('landing.howItWorks.step1_title'), desc:t('landing.howItWorks.step1_desc') },
+                { num:'02', icon:'💳', title:t('landing.howItWorks.step2_title'), desc:t('landing.howItWorks.step2_desc') },
+                { num:'03', icon:'🎯', title:t('landing.howItWorks.step3_title'), desc:t('landing.howItWorks.step3_desc') },
               ].map((s,i) => (
                 <FadeSection key={i} delay={i*.1}>
                   <div className="lp-step-card" style={{
@@ -1110,7 +1107,7 @@ export default function LandingPage() {
                     animation:'fade-up .5s ease both',
                   }}>
                     <span style={{ width:7, height:7, borderRadius:'50%', background:'#f5a623', display:'inline-block', animation:'blink-dot 1.4s ease-in-out infinite' }}/>
-                    Canlı elan
+                    {t('landing.elanlar.liveBadge')}
                   </div>
 
                   {/* Card */}
@@ -1140,7 +1137,7 @@ export default function LandingPage() {
 
                     {/* Vote bars */}
                     <div style={{ marginBottom:18 }}>
-                      <div style={{ fontSize:11, fontWeight:700, letterSpacing:'1.5px', color:'var(--text-tertiary)', textTransform:'uppercase', fontFamily:'Outfit,sans-serif', marginBottom:10 }}>Vaxt seçimi</div>
+                      <div style={{ fontSize:11, fontWeight:700, letterSpacing:'1.5px', color:'var(--text-tertiary)', textTransform:'uppercase', fontFamily:'Outfit,sans-serif', marginBottom:10 }}>{t('landing.elanlar.mockTimeVote')}</div>
                       {[
                         { time:'18:00', pct:75, votes:3, winner:true },
                         { time:'20:00', pct:25, votes:1, winner:false },
@@ -1150,7 +1147,7 @@ export default function LandingPage() {
                             <span style={{ color: v.winner ? '#f5a623' : 'var(--text-secondary)', fontWeight: v.winner ? 700 : 400 }}>
                               {v.winner ? '★ ' : ''}{v.time}
                             </span>
-                            <span style={{ color:'var(--text-tertiary)' }}>{v.votes} nəfər</span>
+                            <span style={{ color:'var(--text-tertiary)' }}>{t('landing.elanlar.mockPeople', { count: v.votes })}</span>
                           </div>
                           <div style={{ height:6, borderRadius:99, background:'var(--bg-raised)', overflow:'hidden' }}>
                             <div style={{
@@ -1180,7 +1177,7 @@ export default function LandingPage() {
                           </div>
                         ))}
                       </div>
-                      <span style={{ fontSize:12, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>4 nəfər maraqlanır</span>
+                      <span style={{ fontSize:12, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>{t('landing.elanlar.mockInterested')}</span>
                       <div style={{ marginLeft:'auto', width:28, height:28, borderRadius:'50%', background:'var(--green-dim)', border:'1px solid rgba(0,232,122,0.25)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14 }}>💬</div>
                     </div>
                   </div>
@@ -1195,7 +1192,7 @@ export default function LandingPage() {
                     boxShadow:'0 4px 20px rgba(0,232,122,0.4)',
                     animation:'fade-up .5s .3s ease both',
                   }}>
-                    ⚽ Oyun yarat →
+                    {t('landing.elanlar.createGame')}
                   </div>
                 </div>
               </FadeSection>
@@ -1203,28 +1200,28 @@ export default function LandingPage() {
               {/* Right: text */}
               <div style={{ order: isMobile ? -1 : 0 }}>
                 <p style={{ fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, letterSpacing:'2.5px', color:'#f5a623', textTransform:'uppercase', marginBottom:14 }}>
-                  Yeni · Новое
+                  {t('landing.elanlar.eyebrow')}
                 </p>
                 <h2 style={{
                   fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif",
                   fontWeight:800, fontSize:'clamp(26px,4vw,44px)',
                   color:'var(--text-primary)', letterSpacing:'-1px', lineHeight:1.15, marginBottom:16,
                 }}>
-                  Oyun olacaq, amma<br/>
-                  <span style={{ color:'#f5a623' }}>vaxt hələ bəlli deyil?</span>
+                  {t('landing.elanlar.title')}<br/>
+                  <span style={{ color:'#f5a623' }}>{t('landing.elanlar.titleHighlight')}</span>
                 </h2>
                 <p style={{ fontFamily:'Outfit,sans-serif', fontSize:15, color:'var(--text-secondary)', lineHeight:1.75, marginBottom:12 }}>
-                  <strong style={{ color:'var(--text-primary)' }}>Elan yaz</strong> — qoşulmaq istəyənlər "Maraqlanıram" desin, vaxt seçiminə səs versin, söhbət etsin. Ən çox səs toplayan vaxta oyun yaradılır, hamıya bildiriş gedir.
+                  <strong style={{ color:'var(--text-primary)' }}>{t('landing.elanlar.descPre')}</strong>{t('landing.elanlar.descBody')}
                 </p>
                 <p style={{ fontFamily:'Outfit,sans-serif', fontSize:14, color:'var(--text-tertiary)', lineHeight:1.7, marginBottom:32, borderLeft:'3px solid rgba(245,166,35,0.4)', paddingLeft:14 }}>
-                  Напишите объявление — заинтересованные игроки проголосуют за удобное время, обсудят детали в чате. Как только всё решено — одним кликом создаётся игра и все получают уведомление.
+                  {t('landing.elanlar.descExtra')}
                 </p>
 
                 {[
-                  { icon:'📋', text: isMobile ? 'Elan yaz, oyunçuları topla' : 'Elan yaz — rayon, format və tarix göstər' },
-                  { icon:'🗳️', text:'Oyunçular vaxt seçiminə səs versin' },
-                  { icon:'💬', text:'Söhbətdə detalları razılaşdırın' },
-                  { icon:'⚡', text:'Bir klikdə oyuna çevir, hamıya bildiriş get' },
+                  { icon:'📋', text: isMobile ? t('landing.elanlar.f1_mobile') : t('landing.elanlar.f1') },
+                  { icon:'🗳️', text: t('landing.elanlar.f2') },
+                  { icon:'💬', text: t('landing.elanlar.f3') },
+                  { icon:'⚡', text: t('landing.elanlar.f4') },
                 ].map((f,i) => (
                   <div key={i} style={{ display:'flex', alignItems:'center', gap:12, marginBottom:12 }}>
                     <div style={{ width:32, height:32, borderRadius:8, background:'rgba(245,166,35,0.1)', border:'1px solid rgba(245,166,35,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:15, flexShrink:0 }}>{f.icon}</div>
@@ -1239,7 +1236,7 @@ export default function LandingPage() {
                   fontWeight:800, fontSize:15, cursor:'pointer',
                   boxShadow:'0 4px 24px rgba(245,166,35,0.35)',
                 }}>
-                  📋 Elan yaz
+                  {t('landing.elanlar.cta')}
                 </button>
               </div>
 
@@ -1256,22 +1253,22 @@ export default function LandingPage() {
 
               {/* Left: text */}
               <div>
-                <p style={{ fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, letterSpacing:'2.5px', color:'var(--green)', textTransform:'uppercase', marginBottom:14 }}>Platforma imkanları</p>
+                <p style={{ fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, letterSpacing:'2.5px', color:'var(--green)', textTransform:'uppercase', marginBottom:14 }}>{t('landing.platform.eyebrow')}</p>
                 <h2 style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:'clamp(26px,4vw,44px)', color:'var(--text-primary)', letterSpacing:'-1px', lineHeight:1.15, marginBottom:24 }}>
-                  Oyun üçün<br/>
-                  <span style={{ color:'var(--green)' }}>texnologiya</span>
+                  {t('landing.platform.title1')}<br/>
+                  <span style={{ color:'var(--green)' }}>{t('landing.platform.title2')}</span>
                 </h2>
                 <p style={{ fontFamily:'Outfit,sans-serif', fontSize:15, color:'var(--text-secondary)', lineHeight:1.7, marginBottom:32 }}>
-                  Oyun axtarışından tutmuş oyundan sonrakı statistikaya qədər — hər şey bir tətbiqdə. İnteraktiv sahə sxemi, canlı komanda balansı, anlıq söhbət.
+                  {t('landing.platform.desc')}
                 </p>
 
                 {/* Feature list */}
                 {[
-                  { icon:'🧠', label:'Smart Matchmaking — səviyyə və geolokasiyaya görə' },
-                  { icon:'⚖️', label:'Team Balancer — MMR ilə bərabər komandalar' },
-                  { icon:'🏟️', label:'İnteraktiv sahə sxemi — mövqe seçimi' },
-                  { icon:'💬', label:'Canlı söhbət — oyun içi real-time chat' },
-                  { icon:'🏆', label:'MVP, badcelər və oyunçu reytinqi' },
+                  { icon:'🧠', label:t('landing.platform.f1') },
+                  { icon:'⚖️', label:t('landing.platform.f2') },
+                  { icon:'🏟️', label:t('landing.platform.f3') },
+                  { icon:'💬', label:t('landing.platform.f4') },
+                  { icon:'🏆', label:t('landing.platform.f5') },
                 ].map((f,i) => (
                   <div key={i} style={{ display:'flex', alignItems:'center', gap:12, marginBottom:12 }}>
                     <div style={{ width:32, height:32, borderRadius:8, background:'var(--green-dim)', border:'1px solid rgba(0,232,122,0.15)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:16, flexShrink:0 }}>{f.icon}</div>
@@ -1336,8 +1333,8 @@ export default function LandingPage() {
               }}>
                 <span style={{ fontSize:20 }}>⚖️</span>
                 <div>
-                  <div style={{ fontFamily:'Syne,sans-serif', fontWeight:700, fontSize:12, color:'var(--green)' }}>Avtomatik balans</div>
-                  <div style={{ fontFamily:'Outfit,sans-serif', fontSize:10, color:'var(--text-tertiary)' }}>MMR algoritmilə</div>
+                  <div style={{ fontFamily:'Syne,sans-serif', fontWeight:700, fontSize:12, color:'var(--green)' }}>{t('landing.friends.autoBalance')}</div>
+                  <div style={{ fontFamily:'Outfit,sans-serif', fontSize:10, color:'var(--text-tertiary)' }}>{t('landing.friends.algorithm')}</div>
                 </div>
               </div>
             </div>
@@ -1351,7 +1348,7 @@ export default function LandingPage() {
                 borderRadius:100, padding:'6px 16px', marginBottom:24,
               }}>
                 <span style={{ fontSize:14 }}>👥</span>
-                <span style={{ fontFamily:'Outfit,sans-serif', fontSize:12, fontWeight:700, color:'#4f86f7', letterSpacing:'1px', textTransform:'uppercase' }}>Dostlarla oyna</span>
+                <span style={{ fontFamily:'Outfit,sans-serif', fontSize:12, fontWeight:700, color:'#4f86f7', letterSpacing:'1px', textTransform:'uppercase' }}>{t('landing.friends.badge')}</span>
               </div>
 
               <h2 style={{
@@ -1359,25 +1356,23 @@ export default function LandingPage() {
                 fontSize:'clamp(26px,4vw,44px)', color:'var(--text-primary)',
                 letterSpacing:'-1px', lineHeight:1.15, marginBottom:20,
               }}>
-                Dostlarını dəvət et —{' '}
-                <span style={{ color:'#4f86f7' }}>qalanını biz edərik</span>
+                {t('landing.friends.title1')}{' '}
+                <span style={{ color:'#4f86f7' }}>{t('landing.friends.title2')}</span>
               </h2>
 
               <p style={{
                 fontFamily:'Outfit,sans-serif', fontSize:16, color:'var(--text-secondary)',
                 lineHeight:1.9, marginBottom:36,
               }}>
-                Hər həftə dostlarınla sahəyə çıxın. Oyun başlamazdan əvvəl sadəcə bir düymə ilə
-                bütün oyunçular <b style={{ color:'var(--text-primary)' }}>avtomatik olaraq bərabər iki komandaya</b> bölünür —
-                heç bir mübahisə, heç bir ədalətsizlik yoxdur.
+                {t('landing.friends.descPre')}<b style={{ color:'var(--text-primary)' }}>{t('landing.friends.descBold')}</b>{t('landing.friends.descPost')}
               </p>
 
               {/* Feature points */}
               <div style={{ display:'flex', flexDirection:'column', gap:20, marginBottom:36 }}>
                 {[
-                  { icon:'🧮', title:'MMR reytinqinə görə', desc:'Hər oyunçunun gücü hesablanır və komandalar bərabərləşdirilir' },
-                  { icon:'🔀', title:'Snake-draft metodu', desc:'Növbəli seçim — heç bir komanda üstünlük qazanmır' },
-                  { icon:'⚡', title:'Bir klik, bir saniyə', desc:'Təşkilatçı düyməyə basır, sistem hər şeyi özü bölüşdürür' },
+                  { icon:'🧮', title:t('landing.friends.f1_title'), desc:t('landing.friends.f1_desc') },
+                  { icon:'🔀', title:t('landing.friends.f2_title'), desc:t('landing.friends.f2_desc') },
+                  { icon:'⚡', title:t('landing.friends.f3_title'), desc:t('landing.friends.f3_desc') },
                 ].map((f, i) => (
                   <div key={i} style={{ display:'flex', gap:14, alignItems:'flex-start' }}>
                     <div style={{
@@ -1399,7 +1394,7 @@ export default function LandingPage() {
                 fontFamily:'Outfit,sans-serif', fontWeight:700, fontSize:15,
                 cursor:'pointer', boxShadow:'0 4px 24px rgba(79,134,247,0.35)',
               }}>
-                Dostlarını dəvət et →
+                {t('landing.friends.cta')}
               </button>
             </div>
 
@@ -1417,14 +1412,14 @@ export default function LandingPage() {
             <div style={{ textAlign:'center', marginBottom:64 }}>
               <div style={{ display:'inline-flex', alignItems:'center', gap:8, background:'rgba(168,85,247,0.1)', border:'1px solid rgba(168,85,247,0.25)', borderRadius:100, padding:'6px 18px', marginBottom:20 }}>
                 <span style={{ fontSize:14 }}>🛡️</span>
-                <span style={{ fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, color:'#a855f7', letterSpacing:'2px', textTransform:'uppercase' }}>Komanda rejimi</span>
+                <span style={{ fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, color:'#a855f7', letterSpacing:'2px', textTransform:'uppercase' }}>{t('landing.teams.eyebrow')}</span>
               </div>
               <h2 style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:'clamp(28px,5vw,50px)', color:'var(--text-primary)', letterSpacing:'-1px', lineHeight:1.1, marginBottom:18 }}>
-                Komanda yarat.<br/>
-                <span style={{ color:'#a855f7' }}>Rəqibə meydan oxu.</span>
+                {t('landing.teams.title1')}<br/>
+                <span style={{ color:'#a855f7' }}>{t('landing.teams.title2')}</span>
               </h2>
               <p style={{ fontFamily:'Outfit,sans-serif', fontSize:16, color:'var(--text-secondary)', lineHeight:1.7, maxWidth:520, margin:'0 auto' }}>
-                Tək oyun kifayət deyil? Öz komanданızı yaradın, dostları dəvət edin və rəqib komandalarla üz-üzə gəlin.
+                {t('landing.teams.desc')}
               </p>
             </div>
 
@@ -1436,24 +1431,24 @@ export default function LandingPage() {
                   color:'#a855f7',
                   bg:'rgba(168,85,247,0.08)',
                   border:'rgba(168,85,247,0.2)',
-                  title:'Komanda yarat',
-                  desc:'Adını seç, bayraq yüklə, kapitanlığı üstlən. Komandanı istədiyin qədər böyüt.',
+                  title:t('landing.teams.f1_title'),
+                  desc:t('landing.teams.f1_desc'),
                 },
                 {
                   icon:'⚔️',
                   color:'#f59e0b',
                   bg:'rgba(245,158,11,0.08)',
                   border:'rgba(245,158,11,0.2)',
-                  title:'Meydan oxu',
-                  desc:'İstənilən komandaya challenge göndər — tarix, vaxt, yer seç. Cavab gəldi — meydana çıx.',
+                  title:t('landing.teams.f2_title'),
+                  desc:t('landing.teams.f2_desc'),
                 },
                 {
                   icon:'🏆',
                   color:'#00e87a',
                   bg:'rgba(0,232,122,0.08)',
                   border:'rgba(0,232,122,0.2)',
-                  title:'MMR & Statistika',
-                  desc:'Hər oyun komandanın reytinqini dəyişir. Qalib gəl — cədvəldə yuxarı qalx.',
+                  title:t('landing.teams.f3_title'),
+                  desc:t('landing.teams.f3_desc'),
                 },
               ].map((f, i) => (
                 <FadeSection key={i} delay={i * 0.1}>
@@ -1495,10 +1490,10 @@ export default function LandingPage() {
                 {/* Top bar */}
                 <div style={{ background:'rgba(168,85,247,0.08)', borderBottom:'1px solid rgba(168,85,247,0.15)', padding:'12px 20px', display:'flex', alignItems:'center', gap:10 }}>
                   <span style={{ fontSize:16 }}>🛡️</span>
-                  <span style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:700, fontSize:14, color:'var(--text-primary)' }}>Komanda reytinqi</span>
+                  <span style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:700, fontSize:14, color:'var(--text-primary)' }}>{t('landing.teams.leaderboardTitle')}</span>
                   <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:6, background:'rgba(0,232,122,0.1)', border:'1px solid rgba(0,232,122,0.2)', borderRadius:100, padding:'3px 10px' }}>
                     <div style={{ width:6, height:6, borderRadius:'50%', background:'var(--green)' }}/>
-                    <span style={{ fontFamily:'Outfit,sans-serif', fontSize:11, color:'var(--green)', fontWeight:600 }}>Canlı</span>
+                    <span style={{ fontFamily:'Outfit,sans-serif', fontSize:11, color:'var(--green)', fontWeight:600 }}>{t('landing.teams.live')}</span>
                   </div>
                 </div>
                 {/* Rows */}
@@ -1527,11 +1522,11 @@ export default function LandingPage() {
                       </div>
                       <div style={{ textAlign:'center' }}>
                         <div style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:700, fontSize:13, color:'#52c41a' }}>{row.w}W</div>
-                        <div style={{ fontSize:9, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>Qələbə</div>
+                        <div style={{ fontSize:9, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>{t('landing.teams.wins')}</div>
                       </div>
                       <div style={{ textAlign:'center' }}>
                         <div style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:700, fontSize:13, color:'#f04438' }}>{row.l}L</div>
-                        <div style={{ fontSize:9, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>Məğlub</div>
+                        <div style={{ fontSize:9, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>{t('landing.teams.losses')}</div>
                       </div>
                     </div>
                   </div>
@@ -1556,24 +1551,24 @@ export default function LandingPage() {
             <div style={{ textAlign:'center', marginBottom:64 }}>
               <div style={{ display:'inline-flex', alignItems:'center', gap:8, background:'rgba(240,192,64,0.1)', border:'1px solid rgba(240,192,64,0.25)', borderRadius:100, padding:'6px 18px', marginBottom:20 }}>
                 <span style={{ fontSize:14 }}>🏆</span>
-                <span style={{ fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, color:'#f0c040', letterSpacing:'2px', textTransform:'uppercase' }}>Turnir rejimi</span>
+                <span style={{ fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, color:'#f0c040', letterSpacing:'2px', textTransform:'uppercase' }}>{t('landing.tournaments.eyebrow')}</span>
               </div>
               <h2 style={{ fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:800, fontSize:'clamp(28px,5vw,50px)', color:'var(--text-primary)', letterSpacing:'-1px', lineHeight:1.1, marginBottom:18 }}>
-                Turnirə qoşul.<br/>
-                <span style={{ background:'linear-gradient(135deg,#f0c040,#e07b20)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>Çempionu sən ol.</span>
+                {t('landing.tournaments.title1')}<br/>
+                <span style={{ background:'linear-gradient(135deg,#f0c040,#e07b20)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>{t('landing.tournaments.title2')}</span>
               </h2>
               <p style={{ fontFamily:'Outfit,sans-serif', fontSize:16, color:'var(--text-secondary)', lineHeight:1.7, maxWidth:560, margin:'0 auto' }}>
-                Qrup mərhələsi, pley-off sətki, canlı püşk atma — hamısı bir platformada. Komanданı qeydiyyatdan keçir və kuboka gedən yolu başla.
+                {t('landing.tournaments.desc')}
               </p>
             </div>
 
             {/* How it works — 4 steps */}
             <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4,1fr)', gap:16, marginBottom:64 }}>
               {[
-                { icon:'📋', step:'01', title:'Qeydiyyat', desc:'Kapitan olaraq komandanı turnirə qeyd et' },
-                { icon:'🎲', step:'02', title:'Püşk atma', desc:'Canlı animasiyalı qrup püşkü' },
-                { icon:'⚽', step:'03', title:'Qrup mərhələsi', desc:'4 komanda, ən yaxşı 2-si irəliyə keçir' },
-                { icon:'🔥', step:'04', title:'Pley-off', desc:'1/4, 1/2 final və böyük final' },
+                { icon:'📋', step:'01', title:t('landing.tournaments.s1_title'), desc:t('landing.tournaments.s1_desc') },
+                { icon:'🎲', step:'02', title:t('landing.tournaments.s2_title'), desc:t('landing.tournaments.s2_desc') },
+                { icon:'⚽', step:'03', title:t('landing.tournaments.s3_title'), desc:t('landing.tournaments.s3_desc') },
+                { icon:'🔥', step:'04', title:t('landing.tournaments.s4_title'), desc:t('landing.tournaments.s4_desc') },
               ].map((s, i) => (
                 <div key={i} style={{
                   background:'var(--bg-card)', border:'1px solid var(--border-color)',
@@ -1600,12 +1595,12 @@ export default function LandingPage() {
                 <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20, flexWrap:'wrap', gap:8 }}>
                   <div style={{ display:'flex', alignItems:'center', gap:10 }}>
                     <div style={{ width:8, height:8, borderRadius:'50%', background:'#f0c040', boxShadow:'0 0 8px rgba(240,192,64,0.8)', animation:'dotBlink 1s ease-in-out infinite' }}/>
-                    <span style={{ fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:700, fontSize:18, color:'var(--text-primary)' }}>Aktiv turnirler</span>
+                    <span style={{ fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:700, fontSize:18, color:'var(--text-primary)' }}>{t('landing.tournaments.activeTournaments')}</span>
                   </div>
                   <button onClick={() => navigate('/tournaments')} style={{ background:'transparent', border:'1px solid var(--border-color)', borderRadius:10, padding:'8px 18px', color:'var(--text-secondary)', fontFamily:'Outfit,sans-serif', fontWeight:600, fontSize:13, cursor:'pointer', transition:'border-color 0.15s,color 0.15s' }}
                     onMouseEnter={e => { e.currentTarget.style.borderColor='#f0c040'; e.currentTarget.style.color='#f0c040'; }}
                     onMouseLeave={e => { e.currentTarget.style.borderColor='var(--border-color)'; e.currentTarget.style.color='var(--text-secondary)'; }}
-                  >Hamısına bax →</button>
+                  >{t('landing.tournaments.viewAll')}</button>
                 </div>
                 <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap:16 }}>
                   {liveTournaments.map(tour => {
@@ -1631,7 +1626,7 @@ export default function LandingPage() {
                           {/* Status + format */}
                           <div style={{ display:'flex', gap:8, marginBottom:14, flexWrap:'wrap' }}>
                             <span style={{ fontSize:11, fontWeight:700, padding:'3px 10px', borderRadius:20, background:`${col}18`, color:col, border:`1px solid ${col}40` }}>
-                              {statusIcons[tour.status]} {tour.status === 'registration' ? 'Qeydiyyat açıqdır' : tour.status === 'group_stage' ? 'Qrup mərhələsi' : tour.status === 'playoff' ? 'Pley-off' : 'Tamamlandı'}
+                              {statusIcons[tour.status]} {tour.status === 'registration' ? t('landing.tournaments.statusRegistration') : tour.status === 'group_stage' ? t('landing.tournaments.statusGroup') : tour.status === 'playoff' ? t('landing.tournaments.statusPlayoff') : t('landing.tournaments.statusCompleted')}
                             </span>
                             <span style={{ fontSize:11, fontWeight:600, padding:'3px 10px', borderRadius:20, background:'rgba(255,255,255,0.06)', color:'var(--text-tertiary)' }}>{tour.format}</span>
                           </div>
@@ -1646,7 +1641,7 @@ export default function LandingPage() {
                           {/* Teams progress bar */}
                           <div style={{ marginBottom:14 }}>
                             <div style={{ display:'flex', justifyContent:'space-between', marginBottom:5 }}>
-                              <span style={{ fontSize:11, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>Komandalar</span>
+                              <span style={{ fontSize:11, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>{t('landing.tournaments.teams')}</span>
                               <span style={{ fontSize:11, fontWeight:700, color:'#f0c040', fontFamily:'Outfit,sans-serif' }}>{filled} / {tour.maxTeams}</span>
                             </div>
                             <div style={{ height:4, borderRadius:2, background:'rgba(255,255,255,0.06)', overflow:'hidden' }}>
@@ -1656,15 +1651,15 @@ export default function LandingPage() {
                           {/* Prize + entry */}
                           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', paddingTop:12, borderTop:'1px solid rgba(255,255,255,0.06)' }}>
                             <div>
-                              <div style={{ fontSize:10, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>Mükafat fondu</div>
+                              <div style={{ fontSize:10, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>{t('landing.tournaments.prizePool')}</div>
                               <div style={{ fontSize:16, fontWeight:800, color:'#f0c040', fontFamily:'Outfit,sans-serif' }}>
                                 {tour.prizePool > 0 ? `${tour.prizePool} ₼` : '—'}
                               </div>
                             </div>
                             <div style={{ textAlign:'right' }}>
-                              <div style={{ fontSize:10, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>Üzvlük haqqı</div>
+                              <div style={{ fontSize:10, color:'var(--text-tertiary)', fontFamily:'Outfit,sans-serif' }}>{t('landing.tournaments.entryFee')}</div>
                               <div style={{ fontSize:14, fontWeight:700, color:'var(--text-primary)', fontFamily:'Outfit,sans-serif' }}>
-                                {tour.entryFee > 0 ? `${tour.entryFee} ₼` : 'Pulsuz'}
+                                {tour.entryFee > 0 ? `${tour.entryFee} ₼` : t('landing.tournaments.free')}
                               </div>
                             </div>
                           </div>
@@ -1682,7 +1677,7 @@ export default function LandingPage() {
                     <div style={{ height:3, background:'linear-gradient(90deg,#f0c040,#e07b20)' }}/>
                     <div style={{ padding:'18px 20px' }}>
                       <div style={{ display:'flex', gap:8, marginBottom:14 }}>
-                        <span style={{ fontSize:11, fontWeight:700, padding:'3px 10px', borderRadius:20, background:'rgba(99,179,237,0.15)', color:'#63b3ed' }}>📋 Qeydiyyat</span>
+                        <span style={{ fontSize:11, fontWeight:700, padding:'3px 10px', borderRadius:20, background:'rgba(99,179,237,0.15)', color:'#63b3ed' }}>{t('landing.tournaments.mockRegistration')}</span>
                         <span style={{ fontSize:11, padding:'3px 10px', borderRadius:20, background:'rgba(255,255,255,0.06)', color:'var(--text-tertiary)' }}>5x5</span>
                       </div>
                       <div style={{ fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:800, fontSize:17, color:'#e0e6f0', marginBottom:14 }}>{name}</div>
@@ -1690,8 +1685,8 @@ export default function LandingPage() {
                         <div style={{ height:'100%', width:`${[62,40,15][i]}%`, background:'linear-gradient(90deg,#f0c040,#e07b20)', borderRadius:2 }}/>
                       </div>
                       <div style={{ display:'flex', justifyContent:'space-between', paddingTop:12, borderTop:'1px solid rgba(255,255,255,0.06)' }}>
-                        <div><div style={{ fontSize:10, color:'var(--text-tertiary)' }}>Mükafat fondu</div><div style={{ fontSize:16, fontWeight:800, color:'#f0c040' }}>{[480,320,200][i]} ₼</div></div>
-                        <div style={{ textAlign:'right' }}><div style={{ fontSize:10, color:'var(--text-tertiary)' }}>Üzvlük haqqı</div><div style={{ fontSize:14, fontWeight:700, color:'var(--text-primary)' }}>{[30,20,15][i]} ₼</div></div>
+                        <div><div style={{ fontSize:10, color:'var(--text-tertiary)' }}>{t('landing.tournaments.prizePool')}</div><div style={{ fontSize:16, fontWeight:800, color:'#f0c040' }}>{[480,320,200][i]} ₼</div></div>
+                        <div style={{ textAlign:'right' }}><div style={{ fontSize:10, color:'var(--text-tertiary)' }}>{t('landing.tournaments.entryFee')}</div><div style={{ fontSize:14, fontWeight:700, color:'var(--text-primary)' }}>{[30,20,15][i]} ₼</div></div>
                       </div>
                     </div>
                   </div>
@@ -1706,10 +1701,10 @@ export default function LandingPage() {
                 className="lp-btn-primary"
                 style={{ display:'inline-flex', alignItems:'center', gap:10, background:'linear-gradient(135deg,#f0c040,#e07b20)', border:'none', borderRadius:14, padding:'16px 40px', color:'#07101e', fontFamily:'Outfit,sans-serif', fontWeight:800, fontSize:16, cursor:'pointer', boxShadow:'0 4px 28px rgba(240,192,64,0.35)' }}
               >
-                🏆 Turnirə qoşul
+                {t('landing.tournaments.cta')}
               </button>
               <p style={{ fontFamily:'Outfit,sans-serif', fontSize:13, color:'var(--text-tertiary)', marginTop:12 }}>
-                Qeydiyyat tələb olunur · Pulsuz hesab aç
+                {t('landing.tournaments.ctaNote')}
               </p>
             </div>
 
@@ -1728,24 +1723,24 @@ export default function LandingPage() {
             <div>
               <div style={{ display:'inline-flex', alignItems:'center', gap:8, background:'rgba(0,232,122,0.1)', border:'1px solid rgba(0,232,122,0.25)', borderRadius:100, padding:'6px 18px', marginBottom:20 }}>
                 <span style={{ fontSize:14 }}>⚽</span>
-                <span style={{ fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, color:'var(--green)', letterSpacing:'2px', textTransform:'uppercase' }}>Öz oyunun</span>
+                <span style={{ fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, color:'var(--green)', letterSpacing:'2px', textTransform:'uppercase' }}>{t('landing.ownGame.eyebrow')}</span>
               </div>
 
               <h2 style={{ fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:800, fontSize:'clamp(26px,4vw,46px)', color:'var(--text-primary)', letterSpacing:'-1px', lineHeight:1.1, marginBottom:18 }}>
-                Komandan var,<br/>
-                <span style={{ color:'var(--green)' }}>1-2 nəfər çatmır?</span>
+                {t('landing.ownGame.title1')}<br/>
+                <span style={{ color:'var(--green)' }}>{t('landing.ownGame.title2')}</span>
               </h2>
 
               <p style={{ fontFamily:'Outfit,sans-serif', fontSize:16, color:'var(--text-secondary)', lineHeight:1.7, marginBottom:32, maxWidth:480 }}>
-                Öz yerini tap, neçə nəfər gətirdiyini yaz — sistem avtomatik açıq yerlər yaradır. Legionerlər birbaşa siyahıdan yazılır.
+                {t('landing.ownGame.desc')}
               </p>
 
               {/* Steps */}
               <div style={{ display:'flex', flexDirection:'column', gap:16, marginBottom:36 }}>
                 {[
-                  { n:'1', label:'Öz oyununu yarat', sub:'Ünvan, vaxt, format — 30 saniyədə' },
-                  { n:'2', label:'Dostlarını əlavə et', sub:'Sistemdə olsun ya olmasın — sadəcə say yaz' },
-                  { n:'3', label:'Smart Invite işə düşür', sub:'Sistem uyğun oyunçuları tapıb dəvətnamə göndərir' },
+                  { n:'1', label:t('landing.ownGame.s1_label'), sub:t('landing.ownGame.s1_sub') },
+                  { n:'2', label:t('landing.ownGame.s2_label'), sub:t('landing.ownGame.s2_sub') },
+                  { n:'3', label:t('landing.ownGame.s3_label'), sub:t('landing.ownGame.s3_sub') },
                 ].map(s => (
                   <div key={s.n} style={{ display:'flex', alignItems:'flex-start', gap:14 }}>
                     <div style={{
@@ -1777,7 +1772,7 @@ export default function LandingPage() {
                 onMouseEnter={e => { e.currentTarget.style.opacity='0.88'; e.currentTarget.style.transform='scale(1.03)'; }}
                 onMouseLeave={e => { e.currentTarget.style.opacity='1'; e.currentTarget.style.transform='scale(1)'; }}
               >
-                ⚽ Oyun yarat
+                {t('landing.ownGame.cta')}
               </button>
             </div>
 
@@ -1795,16 +1790,16 @@ export default function LandingPage() {
                   {['#f04438','#f59e0b','#00e87a'].map(c => (
                     <div key={c} style={{ width:9, height:9, borderRadius:'50%', background:c, opacity:0.8 }}/>
                   ))}
-                  <div style={{ marginLeft:10, fontFamily:'Outfit,sans-serif', fontSize:12, color:'var(--text-tertiary)' }}>Cümə axşamı 6×6 · Maştağa</div>
-                  <div style={{ marginLeft:'auto', background:'rgba(0,232,122,0.15)', border:'1px solid rgba(0,232,122,0.3)', borderRadius:6, padding:'2px 10px', fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, color:'var(--green)' }}>Açıqdır</div>
+                  <div style={{ marginLeft:10, fontFamily:'Outfit,sans-serif', fontSize:12, color:'var(--text-tertiary)' }}>{t('landing.ownGame.mockGameTitle')}</div>
+                  <div style={{ marginLeft:'auto', background:'rgba(0,232,122,0.15)', border:'1px solid rgba(0,232,122,0.3)', borderRadius:6, padding:'2px 10px', fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, color:'var(--green)' }}>{t('landing.ownGame.mockGameOpen')}</div>
                 </div>
 
                 <div style={{ padding:'20px 20px 8px' }}>
                   {/* Slot summary */}
                   <div style={{ display:'flex', gap:10, marginBottom:20 }}>
                     {[
-                      { label:'Öz oyunçular', n:'10', color:'#a590f7', bg:'rgba(124,106,247,0.1)' },
-                      { label:'Açıq yerlər', n:'2', color:'var(--green)', bg:'rgba(0,232,122,0.1)' },
+                      { label:t('landing.ownGame.mockOwnPlayers'), n:'10', color:'#a590f7', bg:'rgba(124,106,247,0.1)' },
+                      { label:t('landing.ownGame.mockOpenSlots'), n:'2', color:'var(--green)', bg:'rgba(0,232,122,0.1)' },
                     ].map(b => (
                       <div key={b.label} style={{ flex:1, background:b.bg, border:`1px solid ${b.color}30`, borderRadius:12, padding:'12px 14px', textAlign:'center' }}>
                         <div style={{ fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:800, fontSize:26, color:b.color }}>{b.n}</div>
@@ -1818,8 +1813,8 @@ export default function LandingPage() {
                     <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
                       <span style={{ fontSize:18 }}>⚡</span>
                       <div>
-                        <div style={{ fontFamily:'Outfit,sans-serif', fontWeight:700, fontSize:13, color:'var(--green)' }}>Smart Invite işə düşdü</div>
-                        <div style={{ fontFamily:'Outfit,sans-serif', fontSize:11, color:'var(--text-tertiary)' }}>Uyğun oyunçular tapıldı</div>
+                        <div style={{ fontFamily:'Outfit,sans-serif', fontWeight:700, fontSize:13, color:'var(--green)' }}>{t('landing.ownGame.smartInviteTitle')}</div>
+                        <div style={{ fontFamily:'Outfit,sans-serif', fontSize:11, color:'var(--text-tertiary)' }}>{t('landing.ownGame.smartInviteSubtitle')}</div>
                       </div>
                       <div style={{ marginLeft:'auto', fontFamily:"'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight:800, fontSize:16, color:'var(--green)' }}>14</div>
                     </div>
@@ -1852,8 +1847,8 @@ export default function LandingPage() {
                   <div style={{ display:'flex', alignItems:'center', gap:8, padding:'10px 14px', background:'rgba(245,166,35,0.06)', border:'1px solid rgba(245,166,35,0.2)', borderRadius:10 }}>
                     <span style={{ fontSize:16 }}>🤝</span>
                     <div>
-                      <div style={{ fontFamily:'Outfit,sans-serif', fontWeight:600, fontSize:12, color:'var(--text-primary)' }}>Ödəniş — yerindəcə</div>
-                      <div style={{ fontFamily:'Outfit,sans-serif', fontSize:11, color:'var(--text-tertiary)' }}>Legionerlər pulsuz yazılır</div>
+                      <div style={{ fontFamily:'Outfit,sans-serif', fontWeight:600, fontSize:12, color:'var(--text-primary)' }}>{t('landing.ownGame.paymentTitle')}</div>
+                      <div style={{ fontFamily:'Outfit,sans-serif', fontSize:11, color:'var(--text-tertiary)' }}>{t('landing.ownGame.paymentSubtitle')}</div>
                     </div>
                   </div>
                 </div>
@@ -1873,16 +1868,16 @@ export default function LandingPage() {
           <div style={{ maxWidth:760, margin:'0 auto', textAlign:'center', position:'relative' }}>
             <div style={{ display:'inline-flex', alignItems:'center', gap:8, background:'rgba(79,134,247,0.1)', border:'1px solid rgba(79,134,247,0.25)', borderRadius:100, padding:'6px 16px', marginBottom:24 }}>
               <span style={{ fontSize:13 }}>🚀</span>
-              <span style={{ fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, color:'#4f86f7', letterSpacing:'1.5px', textTransform:'uppercase' }}>Tezliklə</span>
+              <span style={{ fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, color:'#4f86f7', letterSpacing:'1.5px', textTransform:'uppercase' }}>{t('landing.partner.eyebrow')}</span>
             </div>
             <h2 style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:'clamp(24px,4vw,42px)', color:'var(--text-primary)', letterSpacing:'-1px', lineHeight:1.15, marginBottom:18 }}>
-              Bakıda <span style={{ color:'#4f86f7' }}>stadion</span> sahibisiniz?
+              {t('landing.partner.title1')} <span style={{ color:'#4f86f7' }}>{t('landing.partner.title2')}</span> {t('landing.partner.title3')}
             </h2>
             <p style={{ fontFamily:'Outfit,sans-serif', fontSize:16, color:'var(--text-secondary)', lineHeight:1.7, marginBottom:32, maxWidth:540, margin:'0 auto 32px' }}>
-              Stadionlar üçün tərəfdaş platforması hazırlanır. Slotları yerləşdirin, bronları idarə edin, oyunçular avtomatik tapılsın — zəngsiz, messencersiz.
+              {t('landing.partner.desc')}
             </p>
             <div style={{ display:'inline-flex', alignItems:'center', gap:10, background:'var(--bg-raised)', border:'1px solid rgba(79,134,247,0.2)', borderRadius:12, padding:'13px 22px', opacity:.65, cursor:'not-allowed' }}>
-              <span style={{ fontFamily:'Outfit,sans-serif', fontWeight:600, color:'var(--text-secondary)', fontSize:14 }}>Tərəfdaş kabineti — hazırlanır</span>
+              <span style={{ fontFamily:'Outfit,sans-serif', fontWeight:600, color:'var(--text-secondary)', fontSize:14 }}>{t('landing.partner.wip')}</span>
               <span style={{ fontSize:18 }}>🏗️</span>
             </div>
           </div>
@@ -1894,8 +1889,8 @@ export default function LandingPage() {
         <FadeSection>
           <div style={{ maxWidth:700, margin:'0 auto' }}>
             <div style={{ textAlign:'center', marginBottom:52 }}>
-              <p style={{ fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, letterSpacing:'2.5px', color:'var(--green)', textTransform:'uppercase', marginBottom:12 }}>FAQ</p>
-              <h2 style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:'clamp(26px,5vw,42px)', color:'var(--text-primary)', letterSpacing:'-1px', lineHeight:1.1 }}>Tez-tez verilən suallar</h2>
+              <p style={{ fontFamily:'Outfit,sans-serif', fontSize:11, fontWeight:700, letterSpacing:'2.5px', color:'var(--green)', textTransform:'uppercase', marginBottom:12 }}>{t('landing.faq.eyebrow')}</p>
+              <h2 style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:'clamp(26px,5vw,42px)', color:'var(--text-primary)', letterSpacing:'-1px', lineHeight:1.1 }}>{t('landing.faq.title')}</h2>
             </div>
             <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
               {FAQS.map((faq, i) => {
@@ -1927,12 +1922,12 @@ export default function LandingPage() {
             <div style={{ fontSize:46, marginBottom:18 }}>⚽</div>
             <div style={{ display:'inline-flex', alignItems:'center', gap:7, background:'rgba(245,158,11,0.12)', border:'1px solid rgba(245,158,11,0.3)', borderRadius:100, padding:'5px 14px', marginBottom:18 }}>
               <span style={{ fontSize:13 }}>🎁</span>
-              <span style={{ fontFamily:'Outfit,sans-serif', fontSize:12, fontWeight:700, color:'#f59e0b' }}>İlk 5 oyun PULSUZ</span>
+              <span style={{ fontFamily:'Outfit,sans-serif', fontSize:12, fontWeight:700, color:'#f59e0b' }}>{t('landing.finalCta.badge')}</span>
             </div>
-            <h2 style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:'clamp(24px,4vw,38px)', color:'var(--text-primary)', letterSpacing:'-1px', lineHeight:1.15, marginBottom:14 }}>İlk oyuna hazırsınız?</h2>
-            <p style={{ fontFamily:'Outfit,sans-serif', fontSize:15, color:'var(--text-secondary)', lineHeight:1.65, marginBottom:32 }}>Bir dəqiqəyə qeydiyyatdan keçin və Bakıda ən yaxın oyunu tapın.</p>
+            <h2 style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:'clamp(24px,4vw,38px)', color:'var(--text-primary)', letterSpacing:'-1px', lineHeight:1.15, marginBottom:14 }}>{t('landing.finalCta.title')}</h2>
+            <p style={{ fontFamily:'Outfit,sans-serif', fontSize:15, color:'var(--text-secondary)', lineHeight:1.65, marginBottom:32 }}>{t('landing.finalCta.desc')}</p>
             <button className="lp-btn-primary" onClick={goLogin} style={{ background:'var(--green)', color:'#060c18', border:'none', borderRadius:12, padding:'17px 48px', fontFamily:'Outfit,sans-serif', fontWeight:700, fontSize:17, cursor:'pointer', boxShadow:'0 4px 28px var(--green-glow)' }}>
-              Oynamağa başla →
+              {t('landing.finalCta.cta')}
             </button>
           </div>
         </FadeSection>
@@ -1944,7 +1939,7 @@ export default function LandingPage() {
           <div style={{ width:26, height:26, borderRadius:'50%', background:'var(--green)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:13 }}>⚽</div>
           <span style={{ fontFamily:"'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight:800, fontSize:17, color:'var(--text-primary)' }}>Topin<span style={{ color:'var(--green)' }}>.az</span></span>
         </div>
-        <p style={{ fontFamily:'Outfit,sans-serif', fontSize:12, color:'var(--text-tertiary)', textAlign:'center', margin:0 }}>Bakıda həvəskar futbol — yeni səviyyədə</p>
+        <p style={{ fontFamily:'Outfit,sans-serif', fontSize:12, color:'var(--text-tertiary)', textAlign:'center', margin:0 }}>{t('landing.footer.tagline')}</p>
         <div style={{ display:'flex', alignItems:'center', gap:20 }}>
           <a
             href="https://www.instagram.com/topin.az"

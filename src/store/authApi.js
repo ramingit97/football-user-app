@@ -1,5 +1,6 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
 import { API_BASE } from '../config.js';
+import { buildBaseQueryWithReauth } from './baseQueryWithReauth';
 
 // When VITE_API_BASE='' in production (same-origin), API_BASE is empty string.
 // fetchBaseQuery does string concat: baseUrl('/api/auth') + path('/api/users/...')
@@ -9,16 +10,7 @@ const U = () => API_BASE || (typeof window !== 'undefined' ? window.location.ori
 export const authApi = createApi({
     reducerPath: 'authApi',
     tagTypes: ['User', 'Friends', 'Referral'],
-    baseQuery: fetchBaseQuery({
-        baseUrl: `${API_BASE}/api/auth`,
-        prepareHeaders: (headers) => {
-            const token = localStorage.getItem('token');
-            if (token) {
-                headers.set('authorization', `Bearer ${token}`);
-            }
-            return headers;
-        },
-    }),
+    baseQuery: buildBaseQueryWithReauth(`${API_BASE}/api/auth`),
     endpoints: (builder) => ({
         login: builder.mutation({
             query: (credentials) => ({
@@ -76,8 +68,16 @@ export const authApi = createApi({
             query: () => ({
                 url: 'logout',
                 method: 'POST',
+                body: { refresh_token: localStorage.getItem('refresh_token') },
             }),
             invalidatesTags: ['User'],
+        }),
+        refreshToken: builder.mutation({
+            query: (refreshToken) => ({
+                url: 'refresh',
+                method: 'POST',
+                body: { refresh_token: refreshToken },
+            }),
         }),
         submitRating: builder.mutation({
             query: (data) => ({
@@ -149,6 +149,7 @@ export const authApi = createApi({
 
 export const {
     useLoginMutation,
+    useRefreshTokenMutation,
     useRegisterMutation,
     useGetProfileQuery,
     useUpdateProfileMutation,

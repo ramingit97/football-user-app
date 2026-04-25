@@ -4,19 +4,24 @@ import { Divider } from 'antd';
 import { useTranslation } from 'react-i18next';
 import UnifiedLoginForm from '../components/UnifiedLoginForm';
 import LanguageSwitcher from '../../../components/LanguageSwitcher';
+import { useGetProfileQuery } from '../../../store/authApi';
 
 const LoginPage = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
 
+    // Only redirect away from /login if we can actually fetch the profile
+    // (i.e. the access/refresh tokens are valid). A stale token alone is not enough.
+    const hasToken = !!localStorage.getItem('token');
+    const { data: profile } = useGetProfileQuery(undefined, { skip: !hasToken });
+
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
+        if (profile?.id) {
             const returnTo = new URLSearchParams(location.search).get('returnTo');
             navigate(returnTo || '/games', { replace: true });
         }
-    }, [navigate]);
+    }, [profile, navigate]);
 
     const handleSuccess = () => {
         const returnTo = new URLSearchParams(location.search).get('returnTo');

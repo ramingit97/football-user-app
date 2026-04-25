@@ -31,9 +31,11 @@ const UnifiedLoginForm = ({ onSuccess }) => {
     const dispatch = useDispatch();
 
     const handleSuccess = (response) => {
-        dispatch(setCredentials({ user: response.user, token: response.access_token }));
-        localStorage.setItem('token', response.access_token);
-        localStorage.setItem('user', JSON.stringify(response.user));
+        dispatch(setCredentials({
+            user: response.user,
+            token: response.access_token,
+            refreshToken: response.refresh_token,
+        }));
         message.success(t('auth.unifiedLogin.successLogin'));
         onSuccess();
     };
@@ -74,12 +76,13 @@ const UnifiedLoginForm = ({ onSuccess }) => {
         <Select
             value={countryCode}
             onChange={setCountryCode}
-            style={{ width: 110 }}
+            style={{ width: 130 }}
             dropdownMatchSelectWidth={false}
             bordered={false}
+            optionLabelProp="label"
         >
             {countryCodes.map(c => (
-                <Option key={c.code} value={c.code}>
+                <Option key={c.code} value={c.code} label={`${c.flag} ${c.code}`}>
                     <Space>{c.flag} {c.code}</Space>
                 </Option>
             ))}
@@ -136,7 +139,7 @@ const UnifiedLoginForm = ({ onSuccess }) => {
                                 onClick={(e) => { e.preventDefault(); navigate('/forgot-password'); }}
                                 style={{ color: 'var(--text-tertiary)', fontSize: 13 }}
                             >
-                                Забыл пароль?
+                                {t('auth.unifiedLogin.forgotPassword')}
                             </a>
                         </div>
                     </Form>
@@ -196,7 +199,7 @@ const UnifiedLoginForm = ({ onSuccess }) => {
                                 onClick={(e) => { e.preventDefault(); navigate('/forgot-password'); }}
                                 style={{ color: 'var(--text-tertiary)', fontSize: 13 }}
                             >
-                                Забыл пароль?
+                                {t('auth.unifiedLogin.forgotPassword')}
                             </a>
                         </div>
                     </Form>
@@ -216,7 +219,7 @@ const UnifiedLoginForm = ({ onSuccess }) => {
             />
 
             <div style={{ margin: '16px 0 8px', textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: 14 }}>
-                — или —
+                — {t('auth.unifiedLogin.or')} —
             </div>
 
             <button
@@ -227,7 +230,7 @@ const UnifiedLoginForm = ({ onSuccess }) => {
                 {googleLoading ? '⏳ ...' : (
                     <>
                         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width={22} height={22} />
-                        Войти через Google
+                        {t('auth.unifiedLogin.googleSignIn')}
                     </>
                 )}
             </button>

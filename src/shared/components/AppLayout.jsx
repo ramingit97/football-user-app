@@ -7,7 +7,10 @@ import {
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { useGetProfileQuery, useLogoutMutation } from '../../store/authApi';
+import { useGetMyNotificationsQuery } from '../../store/notificationsApi';
+import { logout as logoutAction } from '../../store/authSlice';
 import { requestForToken, messaging } from '../../firebase';
 import { onMessage } from 'firebase/messaging';
 import axios from 'axios';
@@ -43,13 +46,19 @@ const MOBILE_NAV = [
 const AppLayout = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const dispatch = useDispatch();
     const { data: user, isLoading } = useGetProfileQuery();
     const [logout] = useLogoutMutation();
     const [api, contextHolder] = notification.useNotification();
     const { t, i18n } = useTranslation();
-    const [hasUnread, setHasUnread] = useState(false);
     const [feedbackVisible, setFeedbackVisible] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
+
+    const { data: notifications } = useGetMyNotificationsQuery(user?.id, {
+        skip: !user?.id,
+        pollingInterval: 30000,
+    });
+    const unreadCount = (notifications || []).filter(n => !n.isRead).length;
 
     useEffect(() => {
         const localLang = localStorage.getItem('lang');
@@ -69,7 +78,6 @@ const AppLayout = ({ children }) => {
             });
             const unsubscribe = onMessage(messaging, (payload) => {
                 if (payload) {
-                    setHasUnread(true);
                     api.info({
                         message: payload.notification?.title || t('nav.newNotification'),
                         description: payload.notification?.body || '',
@@ -83,8 +91,7 @@ const AppLayout = ({ children }) => {
 
     const handleLogout = async () => {
         try { await logout().unwrap(); } catch {}
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        dispatch(logoutAction());
         navigate('/');
     };
 
@@ -99,7 +106,7 @@ const AppLayout = ({ children }) => {
             key: 'notifications',
             icon: <BellOutlined />,
             label: t('nav.notifications'),
-            onClick: () => { navigate('/notifications'); setHasUnread(false); },
+            onClick: () => navigate('/notifications'),
         },
         { type: 'divider' },
         {
@@ -132,7 +139,7 @@ const AppLayout = ({ children }) => {
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 padding: '0 28px',
                 height: 60,
-                background: 'rgba(6,12,24,0.94)',
+                background: 'var(--header-bg)',
                 backdropFilter: 'blur(24px)',
                 borderBottom: '1px solid var(--border-color)',
             }}>
@@ -164,7 +171,7 @@ const AppLayout = ({ children }) => {
                 >
                     <img
                         src="/logo.png" alt="logo"
-                        style={{ height: 72, width: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
+                        style={{ height: 72, width: 'auto', objectFit: 'contain', filter: 'var(--logo-filter)' }}
                     />
                 </div>
 
@@ -254,7 +261,7 @@ const AppLayout = ({ children }) => {
                     {/* Notification bell — only if logged in */}
                     {user && (
                         <button
-                            onClick={() => { navigate('/notifications'); setHasUnread(false); }}
+                            onClick={() => navigate('/notifications')}
                             style={{
                                 position: 'relative',
                                 width: 36, height: 36,
@@ -270,14 +277,21 @@ const AppLayout = ({ children }) => {
                             onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.color = location.pathname === '/notifications' ? 'var(--green)' : 'var(--text-tertiary)'; }}
                         >
                             <BellOutlined style={{ fontSize: 16 }} />
-                            {hasUnread && (
+                            {unreadCount > 0 && (
                                 <span style={{
-                                    position: 'absolute', top: 6, right: 6,
-                                    width: 7, height: 7, borderRadius: '50%',
+                                    position: 'absolute', top: -4, right: -4,
+                                    minWidth: 16, height: 16,
+                                    borderRadius: 8,
                                     background: '#f04438',
                                     border: '1.5px solid var(--bg-base)',
                                     boxShadow: '0 0 6px rgba(240,68,56,0.8)',
-                                }} />
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    fontSize: 10, fontWeight: 700, color: '#fff',
+                                    fontFamily: 'Outfit, sans-serif',
+                                    padding: '0 3px',
+                                }}>
+                                    {unreadCount > 99 ? '99+' : unreadCount}
+                                </span>
                             )}
                         </button>
                     )}
@@ -311,7 +325,7 @@ const AppLayout = ({ children }) => {
                         </Dropdown>
                     ) : (
                         <button
-                            onClick={() => navigate('/')}
+                            onClick={() => navigate('/login')}
                             style={{
                                 background: 'transparent',
                                 border: '1px solid var(--border-color)',
@@ -341,7 +355,7 @@ const AppLayout = ({ children }) => {
             <nav className="mobile-bottom-nav" style={{
                 position: 'fixed', bottom: 0, left: 0, right: 0,
                 height: 64,
-                background: 'rgba(6,12,24,0.97)',
+                background: 'var(--nav-bg)',
                 backdropFilter: 'blur(24px)',
                 borderTop: '1px solid var(--border-color)',
                 display: 'flex', alignItems: 'center',
@@ -497,7 +511,7 @@ const AppLayout = ({ children }) => {
                 ) : (
                     <div style={{ margin: '12px 16px' }}>
                         <button
-                            onClick={() => { navigate('/'); setDrawerOpen(false); }}
+                            onClick={() => { navigate('/login'); setDrawerOpen(false); }}
                             style={{
                                 width: '100%', background: 'var(--green)', border: 'none',
                                 borderRadius: 10, padding: '12px', color: '#060c18',
@@ -520,7 +534,7 @@ const AppLayout = ({ children }) => {
                     { key: '/tournaments', icon: <ApartmentOutlined />,  labelKey: 'nav.tournaments' },
                     { key: '/leaderboard', icon: <TrophyOutlined />,     labelKey: 'nav.leaderboard' },
                     ...(user ? [
-                        { key: '/notifications', icon: <BellOutlined />, labelKey: 'nav.notifications', badge: hasUnread },
+                        { key: '/notifications', icon: <BellOutlined />, labelKey: 'nav.notifications', badge: unreadCount },
                     ] : []),
                 ].map(item => (
                     <button
@@ -528,7 +542,6 @@ const AppLayout = ({ children }) => {
                         onClick={() => {
                             navigate(item.key);
                             setDrawerOpen(false);
-                            if (item.key === '/notifications') setHasUnread(false);
                         }}
                         style={{
                             display: 'flex', alignItems: 'center', gap: 12,
@@ -544,12 +557,17 @@ const AppLayout = ({ children }) => {
                     >
                         <span style={{ fontSize: 16, opacity: 0.8 }}>{item.icon}</span>
                         {t(item.labelKey)}
-                        {item.badge && (
+                        {item.badge > 0 && (
                             <span style={{
-                                width: 7, height: 7, borderRadius: '50%',
+                                minWidth: 16, height: 16, borderRadius: 8,
                                 background: '#f04438', marginLeft: 'auto',
                                 boxShadow: '0 0 6px rgba(240,68,56,0.8)',
-                            }} />
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: 10, fontWeight: 700, color: '#fff',
+                                fontFamily: 'Outfit, sans-serif', padding: '0 3px',
+                            }}>
+                                {item.badge > 99 ? '99+' : item.badge}
+                            </span>
                         )}
                     </button>
                 ))}

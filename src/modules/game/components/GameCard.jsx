@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { EnvironmentOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import { formatDateLocale } from '../../../utils/dateFormat';
 
 const FORMAT_COLORS = {
     '5x5':   { color: '#00e87a', bg: 'rgba(0,232,122,0.1)',  glow: 'rgba(0,232,122,0.18)' },
@@ -14,7 +15,7 @@ const getFmt = (f) => FORMAT_COLORS[f] || FORMAT_COLORS['5x5'];
 
 const GameCard = ({ game, onJoin }) => {
     const navigate = useNavigate();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [hovered, setHovered] = useState(false);
 
     const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
@@ -34,9 +35,9 @@ const GameCard = ({ game, onJoin }) => {
     const isTomorrow = gameDate.getTime() === tomorrow.getTime();
 
     const formatDate = (dateStr) => {
-        if (isToday) return 'Сегодня';
-        if (isTomorrow) return 'Завтра';
-        return new Date(dateStr).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', weekday: 'short' });
+        if (isToday) return t('game.card.today');
+        if (isTomorrow) return t('game.card.tomorrow');
+        return formatDateLocale(new Date(dateStr), i18n.language, { day: 'numeric', month: 'short', weekday: 'short' });
     };
 
     const visiblePlayers = players.slice(0, 5);

@@ -9,10 +9,11 @@ import {
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useJoinGameMutation } from '../../../store/gamesApi';
+import { formatDateLocale } from '../../../utils/dateFormat';
 
 const JoinGameModal = ({ game, visible, onClose, onSuccess }) => {
     const [joinGame, { isLoading }] = useJoinGameMutation();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     if (!game) return null;
 
@@ -32,8 +33,7 @@ const JoinGameModal = ({ game, visible, onClose, onSuccess }) => {
 
     const formatDate = (dateStr) => {
         const date = new Date(dateStr);
-        const options = { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' };
-        return date.toLocaleDateString('ru-RU', options);
+        return formatDateLocale(date, i18n.language, { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' });
     };
 
     const handleJoin = async () => {

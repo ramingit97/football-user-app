@@ -20,7 +20,7 @@ const ForgotPasswordPage = () => {
             await axios.post(`${API_BASE}/api/auth/forgot-password`, { email });
             setSent(true);
         } catch {
-            message.error('Ошибка отправки. Попробуйте позже.');
+            message.error(t('auth.forgotPasswordPage.sendError'));
         } finally {
             setLoading(false);
         }
@@ -35,11 +35,11 @@ const ForgotPasswordPage = () => {
                         alt="logo"
                         style={{ width: 120, height: 'auto', objectFit: 'contain', marginBottom: 8, filter: 'brightness(0) invert(1)' }}
                     />
-                    <h1 className="auth-title">Забыл пароль</h1>
+                    <h1 className="auth-title">{t('auth.forgotPasswordPage.title')}</h1>
                     <p className="auth-subtitle">
                         {sent
-                            ? 'Проверьте почту — мы отправили инструкции по сбросу пароля.'
-                            : 'Введите email вашего аккаунта и мы отправим ссылку для сброса пароля.'}
+                            ? t('auth.forgotPasswordPage.subtitleSent')
+                            : t('auth.forgotPasswordPage.subtitle')}
                     </p>
                 </div>
 
@@ -48,8 +48,8 @@ const ForgotPasswordPage = () => {
                         <Form.Item
                             name="email"
                             rules={[
-                                { required: true, message: 'Введите email' },
-                                { type: 'email', message: 'Некорректный email' },
+                                { required: true, message: t('auth.forgotPasswordPage.emailRequired') },
+                                { type: 'email', message: t('auth.forgotPasswordPage.emailInvalid') },
                             ]}
                         >
                             <Input
@@ -68,17 +68,17 @@ const ForgotPasswordPage = () => {
                             size="large"
                             style={{ borderRadius: 10, marginTop: 8 }}
                         >
-                            Отправить ссылку
+                            {t('auth.forgotPasswordPage.sendBtn')}
                         </Button>
                     </Form>
                 ) : (
                     <div style={{ textAlign: 'center', padding: '24px 0' }}>
                         <div style={{ fontSize: 48, marginBottom: 16 }}>📧</div>
                         <p style={{ color: 'var(--text-secondary)' }}>
-                            Если аккаунт с этим email существует, письмо уже в пути.
+                            {t('auth.forgotPasswordPage.successText')}
                         </p>
                         <p style={{ color: 'var(--text-tertiary)', fontSize: 13 }}>
-                            Нет email? Напишите нам в поддержку — мы поможем вручную.
+                            {t('auth.forgotPasswordPage.noEmail')}
                         </p>
                     </div>
                 )}
@@ -89,7 +89,7 @@ const ForgotPasswordPage = () => {
                         onClick={(e) => { e.preventDefault(); navigate('/login'); }}
                         style={{ color: 'var(--text-tertiary)', fontSize: 14, display: 'inline-flex', alignItems: 'center', gap: 6 }}
                     >
-                        <ArrowLeftOutlined /> Вернуться ко входу
+                        <ArrowLeftOutlined /> {t('auth.forgotPasswordPage.backToLogin')}
                     </a>
                 </div>
             </div>

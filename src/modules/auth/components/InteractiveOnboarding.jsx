@@ -142,8 +142,11 @@ const InteractiveOnboarding = () => {
 
             const result = await register(registerData).unwrap();
 
-            localStorage.setItem('token', result.access_token);
-            localStorage.setItem('user', JSON.stringify(result.user));
+            dispatch(setCredentials({
+                user: result.user,
+                token: result.access_token,
+                refreshToken: result.refresh_token,
+            }));
 
             // 2. Update profile with position + play style + initial ratings
             await updateProfile({
@@ -194,9 +197,11 @@ const InteractiveOnboarding = () => {
         try {
             const result = await loginWithGoogle(idToken).unwrap();
 
-            dispatch(setCredentials({ user: result.user, token: result.access_token }));
-            localStorage.setItem('token', result.access_token);
-            localStorage.setItem('user', JSON.stringify(result.user));
+            dispatch(setCredentials({
+                user: result.user,
+                token: result.access_token,
+                refreshToken: result.refresh_token,
+            }));
 
             // Update profile with onboarding data
             await updateProfile({

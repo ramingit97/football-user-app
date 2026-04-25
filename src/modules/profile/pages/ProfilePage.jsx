@@ -60,17 +60,34 @@ const TabBtn = ({ active, onClick, icon, label }) => (
     </button>
 );
 
-// ── Stat item ────────────────────────────────────────
-const StatItem = ({ value, label, color = 'var(--text-primary)' }) => (
-    <div style={{ textAlign: 'center', padding: '0 8px' }}>
-        <div style={{ fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 800, fontSize: 22, color, lineHeight: 1 }}>
-            {value}
+// ── Stat mini-card ───────────────────────────────────
+const STAT_META = {
+    rating:  { icon: '⭐', color: '#faad14', bg: 'rgba(250,173,20,0.08)',  border: 'rgba(250,173,20,0.22)'  },
+    games:   { icon: '🎮', color: '#00e87a', bg: 'rgba(0,232,122,0.08)',   border: 'rgba(0,232,122,0.22)'   },
+    mvp:     { icon: '🏆', color: '#faad14', bg: 'rgba(250,173,20,0.08)',  border: 'rgba(250,173,20,0.22)'  },
+    goals:   { icon: '⚽', color: '#ef4444', bg: 'rgba(239,68,68,0.08)',   border: 'rgba(239,68,68,0.22)'   },
+    assists: { icon: '🅰️', color: '#4f86f7', bg: 'rgba(79,134,247,0.08)', border: 'rgba(79,134,247,0.22)' },
+    xp:      { icon: '⚡', color: '#a855f7', bg: 'rgba(168,85,247,0.08)', border: 'rgba(168,85,247,0.22)' },
+};
+
+const StatItem = ({ value, label, metaKey }) => {
+    const m = STAT_META[metaKey] || { icon: '•', color: 'var(--text-primary)', bg: 'rgba(255,255,255,0.04)', border: 'rgba(255,255,255,0.1)' };
+    return (
+        <div style={{
+            flex: '1 0 74px', minWidth: 70,
+            background: m.bg, border: `1px solid ${m.border}`,
+            borderRadius: 12, padding: '12px 10px', textAlign: 'center',
+        }}>
+            <div style={{ fontSize: 16, lineHeight: 1, marginBottom: 5 }}>{m.icon}</div>
+            <div style={{ fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 800, fontSize: 20, color: m.color, lineHeight: 1 }}>
+                {value}
+            </div>
+            <div style={{ color: 'var(--text-tertiary)', fontSize: 10, marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+                {label}
+            </div>
         </div>
-        <div style={{ color: 'var(--text-tertiary)', fontSize: 11, marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            {label}
-        </div>
-    </div>
-);
+    );
+};
 
 // ── Change Password Section ──────────────────────────
 const ChangePasswordSection = ({ hasPassword }) => {
@@ -487,28 +504,20 @@ const ProfilePage = () => {
             <div style={{
                 background: 'var(--bg-card)',
                 borderBottom: '1px solid var(--border-color)',
+                padding: '16px 24px',
             }}>
-                <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
+                <div style={{ maxWidth: 1100, margin: '0 auto' }}>
                     <div className="profile-stats-strip" style={{
-                        display: 'flex', alignItems: 'center',
-                        gap: 0, overflowX: 'auto',
+                        display: 'flex', gap: 10, overflowX: 'auto',
                     }}>
                         {[
-                            { value: (userProfile?.averageRating || 0).toFixed(1), label: t('profile.stats.rating'), color: '#faad14' },
-                            { value: userProfile?.gamesPlayed || 0, label: t('profile.stats.games'), color: 'var(--green)' },
-                            { value: userProfile?.manOfTheMatchCount || 0, label: t('profile.stats.mvp'), color: '#faad14' },
-                            { value: userProfile?.totalGoals || 0, label: t('profile.stats.goals'), color: '#ef4444' },
-                            { value: userProfile?.totalAssists || 0, label: t('profile.stats.assists'), color: '#4f86f7' },
-                            { value: userProfile?.xp || 0, label: t('profile.stats.xp'), color: '#a855f7' },
-                        ].map((s, i, arr) => (
-                            <div key={s.label} style={{
-                                flex: 1, padding: '16px 8px',
-                                borderRight: i < arr.length - 1 ? '1px solid var(--border-color)' : 'none',
-                                minWidth: 80,
-                            }}>
-                                <StatItem {...s} />
-                            </div>
-                        ))}
+                            { metaKey: 'rating',  value: (userProfile?.averageRating || 0).toFixed(1), label: t('profile.stats.rating')  },
+                            { metaKey: 'games',   value: userProfile?.gamesPlayed || 0,                label: t('profile.stats.games')   },
+                            { metaKey: 'mvp',     value: userProfile?.manOfTheMatchCount || 0,         label: t('profile.stats.mvp')     },
+                            { metaKey: 'goals',   value: userProfile?.totalGoals || 0,                 label: t('profile.stats.goals')   },
+                            { metaKey: 'assists', value: userProfile?.totalAssists || 0,               label: t('profile.stats.assists') },
+                            { metaKey: 'xp',      value: userProfile?.xp || 0,                        label: t('profile.stats.xp')      },
+                        ].map(s => <StatItem key={s.metaKey} {...s} />)}
                     </div>
                 </div>
             </div>

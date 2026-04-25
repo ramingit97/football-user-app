@@ -1,17 +1,11 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
 import { API_BASE } from '../config.js';
+import { buildBaseQueryWithReauth } from './baseQueryWithReauth';
 
 export const supportApi = createApi({
     reducerPath: 'supportApi',
     tagTypes: ['Tickets'],
-    baseQuery: fetchBaseQuery({
-        baseUrl: `${API_BASE}/api/support`,
-        prepareHeaders: (headers) => {
-            const token = localStorage.getItem('token');
-            if (token) headers.set('authorization', `Bearer ${token}`);
-            return headers;
-        },
-    }),
+    baseQuery: buildBaseQueryWithReauth(`${API_BASE}/api/support`),
     endpoints: (builder) => ({
         getMyTickets: builder.query({
             query: (userId) => `/my?userId=${userId}`,

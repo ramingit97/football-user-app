@@ -141,11 +141,10 @@ const TeamInvitations = ({ user }) => {
                 <Card
                     className="glass-card"
                     title={
-                        <span>
-                            <Badge count={teamInvitations.length} offset={[10, 0]}>
-                                <UsergroupAddOutlined style={{ marginRight: 8 }} />
-                                {t('profile.invitations.teamTitle')}
-                            </Badge>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+                            <UsergroupAddOutlined />
+                            {t('profile.invitations.teamTitle')}
+                            <Badge count={teamInvitations.length} style={{ marginLeft: 4 }} />
                         </span>
                     }
                     style={{ marginBottom: 16 }}
@@ -218,11 +217,10 @@ const TeamInvitations = ({ user }) => {
                 <Card
                     className="glass-card"
                     title={
-                        <span>
-                            <Badge count={pendingGameInvites.length} offset={[10, 0]}>
-                                <TeamOutlined style={{ marginRight: 8 }} />
-                                {t('profile.invitations.gameTitle')}
-                            </Badge>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+                            <TeamOutlined />
+                            {t('profile.invitations.gameTitle')}
+                            <Badge count={pendingGameInvites.length} style={{ marginLeft: 4 }} />
                         </span>
                     }
                     style={{ marginBottom: 16 }}

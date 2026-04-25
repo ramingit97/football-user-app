@@ -1,11 +1,10 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
 import { API_BASE } from '../config.js';
+import { buildBaseQueryWithReauth } from './baseQueryWithReauth';
 
 export const locationsApi = createApi({
     reducerPath: 'locationsApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: `${API_BASE}/api`,
-    }),
+    baseQuery: buildBaseQueryWithReauth(`${API_BASE}/api`),
     tagTypes: ['District', 'Metro'],
     endpoints: (builder) => ({
         getDistricts: builder.query({

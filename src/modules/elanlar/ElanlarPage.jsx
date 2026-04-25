@@ -118,14 +118,17 @@ const ElanCard = ({ elan, currentUser, onInterest, onCancel, onOpenChat }) => {
                 {!isCreator && currentUser && (
                     <button onClick={() => onInterest(elan)} style={{
                         flex: 1, minWidth: 140,
-                        background: isInterested ? 'rgba(34,197,94,0.15)' : 'rgba(34,197,94,0.08)',
-                        border: `1px solid ${isInterested ? 'var(--green)' : 'rgba(34,197,94,0.3)'}`,
+                        background: isInterested ? 'rgba(239,68,68,0.08)' : 'rgba(34,197,94,0.08)',
+                        border: `1px solid ${isInterested ? 'rgba(239,68,68,0.4)' : 'rgba(34,197,94,0.3)'}`,
                         borderRadius: 10, padding: '9px 16px',
-                        color: 'var(--green)', fontFamily: 'Outfit, sans-serif',
+                        color: isInterested ? '#ef4444' : 'var(--green)',
+                        fontFamily: 'Outfit, sans-serif',
                         fontWeight: 600, fontSize: 13, cursor: 'pointer',
                         transition: 'all 0.15s',
                     }}>
-                        {isInterested ? '✓ ' : ''}{isAz ? 'Mən də istəyirəm' : 'Я тоже хочу'}
+                        {isInterested
+                            ? (isAz ? '✕ İstəmirəm' : '✕ Отказаться')
+                            : (isAz ? '✓ Mən də istəyirəm' : '✓ Я тоже хочу')}
                     </button>
                 )}
                 <button onClick={() => onOpenChat(elan)} style={{
@@ -407,7 +410,7 @@ const ElanlarPage = () => {
                         name="date"
                         rules={[{ required: true, message: isAz ? 'Tarix seçin' : 'Выберите дату' }]}
                     >
-                        <DatePicker style={{ width: '100%', borderRadius: 10 }} format="DD.MM.YYYY" disabledDate={d => d && d < dayjs().startOf('day')} />
+                        <DatePicker style={{ width: '100%', borderRadius: 10 }} format="DD.MM.YYYY" disabledDate={d => d && d < dayjs().startOf('day')} getPopupContainer={trigger => trigger.parentElement} />
                     </Form.Item>
 
                     <Form.Item
@@ -423,10 +426,11 @@ const ElanlarPage = () => {
                             maxCount={3}
                             placeholder={isAz ? 'Saat seçin' : 'Выберите время'}
                             style={{ width: '100%' }}
-                            options={['18:00','18:30','19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30'].map(t => ({
+                            options={['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30','23:00'].map(t => ({
                                 value: t, label: t
                             }))}
                             filterOption={false}
+                            getPopupContainer={trigger => trigger.parentElement}
                         />
                     </Form.Item>
 
@@ -434,7 +438,7 @@ const ElanlarPage = () => {
                         label={<span style={{ color: 'var(--text-secondary)' }}>⚽ {isAz ? 'Format' : 'Формат'}</span>}
                         name="format"
                     >
-                        <Select placeholder={isAz ? 'Seçin (istəyə görə)' : 'Выберите (необязательно)'} allowClear style={{ borderRadius: 10 }}>
+                        <Select placeholder={isAz ? 'Seçin (istəyə görə)' : 'Выберите (необязательно)'} allowClear style={{ borderRadius: 10 }} getPopupContainer={trigger => trigger.parentElement}>
                             {FORMATS.map(f => <Option key={f} value={f}>{f}</Option>)}
                         </Select>
                     </Form.Item>
@@ -444,7 +448,7 @@ const ElanlarPage = () => {
                             label={<span style={{ color: 'var(--text-secondary)' }}>📍 {isAz ? 'Rayon' : 'Район'}</span>}
                             name="district"
                         >
-                            <Select placeholder={isAz ? 'İstəyə görə' : 'Необязательно'} allowClear showSearch>
+                            <Select placeholder={isAz ? 'İstəyə görə' : 'Необязательно'} allowClear showSearch getPopupContainer={trigger => trigger.parentElement}>
                                 {districts.map(d => <Option key={d.id} value={d.name}>{d.name}</Option>)}
                             </Select>
                         </Form.Item>
@@ -452,7 +456,7 @@ const ElanlarPage = () => {
                             label={<span style={{ color: 'var(--text-secondary)' }}>🚇 Metro</span>}
                             name="metro"
                         >
-                            <Select placeholder={isAz ? 'İstəyə görə' : 'Необязательно'} allowClear showSearch>
+                            <Select placeholder={isAz ? 'İstəyə görə' : 'Необязательно'} allowClear showSearch getPopupContainer={trigger => trigger.parentElement}>
                                 {metros.map(m => <Option key={m.id} value={m.name}>{m.name}</Option>)}
                             </Select>
                         </Form.Item>

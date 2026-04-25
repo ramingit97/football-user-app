@@ -184,7 +184,7 @@ const ProfileForm = ({ initialData = {} }) => {
                 marginBottom: 28,
             }}>
                 <span style={{
-                    fontFamily: "'ClashDisplay-Variable', 'Clash Display', sans-serif", fontWeight: 700,
+                    fontFamily: "'ClashDisplay-Variable', 'Clash Display', 'Outfit', 'Inter', sans-serif", fontWeight: 700,
                     fontSize: 17, color: 'var(--text-primary)',
                 }}>
                     {t('profile.edit.title')}
@@ -231,11 +231,12 @@ const ProfileForm = ({ initialData = {} }) => {
                                     value={countryCode}
                                     onChange={(v) => { setCountryCode(v); setIsDirty(true); }}
                                     size="large"
-                                    style={{ width: 110, flexShrink: 0 }}
+                                    style={{ width: 130, flexShrink: 0 }}
                                     popupMatchSelectWidth={false}
+                                    optionLabelProp="label"
                                 >
                                     {COUNTRY_CODES.map(c => (
-                                        <Option key={c.code} value={c.code}>
+                                        <Option key={c.code} value={c.code} label={`${c.flag} ${c.code}`}>
                                             {c.flag} {c.code}
                                         </Option>
                                     ))}
@@ -293,19 +294,19 @@ const ProfileForm = ({ initialData = {} }) => {
                         <div>
                             <FieldLabel>{t('profile.edit.ageLabel')}</FieldLabel>
                             <Form.Item name="age" style={{ marginBottom: 0 }}>
-                                <InputNumber min={14} max={70} style={{ width: '100%' }} size="large" />
+                                <InputNumber min={14} max={70} placeholder={t('profile.edit.agePlaceholder')} style={{ width: '100%' }} size="large" />
                             </Form.Item>
                         </div>
                         <div>
                             <FieldLabel>{t('profile.edit.heightLabel')}</FieldLabel>
                             <Form.Item name="height" style={{ marginBottom: 0 }}>
-                                <InputNumber min={100} max={250} style={{ width: '100%' }} size="large" />
+                                <InputNumber min={100} max={250} placeholder={t('profile.edit.heightPlaceholder')} style={{ width: '100%' }} size="large" />
                             </Form.Item>
                         </div>
                         <div>
                             <FieldLabel>{t('profile.edit.weightLabel')}</FieldLabel>
                             <Form.Item name="weight" style={{ marginBottom: 0 }}>
-                                <InputNumber min={30} max={150} style={{ width: '100%' }} size="large" />
+                                <InputNumber min={30} max={150} placeholder={t('profile.edit.weightPlaceholder')} style={{ width: '100%' }} size="large" />
                             </Form.Item>
                         </div>
                     </div>
@@ -369,7 +370,7 @@ const ProfileForm = ({ initialData = {} }) => {
                         <div>
                             <FieldLabel>{t('profile.edit.shirtNumberLabel')}</FieldLabel>
                             <Form.Item name="shirtNumber" style={{ marginBottom: 0 }}>
-                                <InputNumber min={1} max={99} style={{ width: '100%' }} size="large" />
+                                <InputNumber min={1} max={99} placeholder={t('profile.edit.shirtNumberPlaceholder')} style={{ width: '100%' }} size="large" />
                             </Form.Item>
                         </div>
                     </div>
@@ -377,11 +378,14 @@ const ProfileForm = ({ initialData = {} }) => {
                     <div>
                         <FieldLabel>{t('profile.edit.physicalLabel')}</FieldLabel>
                         <Form.Item name="physicalLevel" style={{ marginBottom: 0 }}>
-                            <Slider marks={{
-                                0:   t('profile.edit.physicalBeginning'),
-                                50:  t('profile.edit.physicalMiddle'),
-                                100: t('profile.edit.physicalAthlete'),
-                            }} />
+                            <Slider
+                                tooltip={{ open: true, placement: 'top' }}
+                                marks={{
+                                    0:   { style: { transform: 'translateX(0)', whiteSpace: 'nowrap' },        label: t('profile.edit.physicalBeginning') },
+                                    50:  { style: { whiteSpace: 'nowrap' },                                    label: t('profile.edit.physicalMiddle') },
+                                    100: { style: { transform: 'translateX(-100%)', whiteSpace: 'nowrap' },    label: t('profile.edit.physicalAthlete') },
+                                }}
+                            />
                         </Form.Item>
                     </div>
                 </Section>

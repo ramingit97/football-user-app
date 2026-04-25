@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatDateLocale } from '../../../utils/dateFormat';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import {
@@ -152,7 +153,7 @@ const ActionBtn = ({ icon, label, onClick, loading, variant = 'ghost', disabled 
 };
 
 const GameDetailPage = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { id } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -635,8 +636,8 @@ const GameDetailPage = () => {
 
     const handleShareWhatsApp = () => {
         const gameDate = new Date(game.date);
-        const dayName = gameDate.toLocaleDateString('ru-RU', { weekday: 'long' });
-        const dateStr = gameDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+        const dayName = formatDateLocale(gameDate, i18n.language, { weekday: 'long' });
+        const dateStr = formatDateLocale(gameDate, i18n.language, { day: 'numeric', month: 'long' });
         const spotsAvailable = (game.maxPlayers || 0) - (game.players?.length || 0);
         const totalSpots = game.maxPlayers || 12;
         const filled = game.players?.length || 0;
@@ -645,34 +646,35 @@ const GameDetailPage = () => {
         const refParam = currentUser?.id ? `?ref=${currentUser.id}` : '';
         const gameUrl = `${baseUrl}${refParam}`;
 
-        const urgencyLine = spotsAvailable <= 3 && spotsAvailable > 0
-            ? '\n*>>> ОСТАЛОСЬ МАЛО МЕСТ! <<<*\n' : '';
+        const day = dayName.charAt(0).toUpperCase() + dayName.slice(1);
 
-        const shareText = [
+        const lines = [
             '- - - - - - - - - - - - - -',
-            `*ФУТБОЛ ${game.format || '6x6'}*`,
+            `*${t('game.detail.shareHeader', { format: game.format || '6x6' })}*`,
             '- - - - - - - - - - - - - -',
             '',
-            `Дата: *${dayName.charAt(0).toUpperCase() + dayName.slice(1)}, ${dateStr}*`,
-            `Время: *${game.time || '20:00'}*`,
-            `Место: *${game.location || 'Стадион'}*`,
-            `Цена: *${pricePerSlot} AZN* / чел`,
+            t('game.detail.shareDate', { day, date: dateStr }),
+            t('game.detail.shareTime', { time: game.time || '20:00' }),
+            t('game.detail.shareLocation', { location: game.location || '' }),
+            t('game.detail.sharePrice', { price: pricePerSlot }),
             '',
-            `Игроков: ${filled} из ${totalSpots} (свободно ${spotsAvailable})`,
-            urgencyLine,
-            `Записаться:`,
-            gameUrl,
-            '',
-            '_Перешли друзьям - соберём команду!_',
-        ].join('\n');
+            t('game.detail.sharePlayers', { filled, total: totalSpots, available: spotsAvailable }),
+        ];
 
-        window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
+        if (spotsAvailable <= 3 && spotsAvailable > 0) {
+            lines.push('', t('game.detail.shareUrgency'), '');
+        }
+
+        lines.push('', t('game.detail.shareJoin'), gameUrl, '', t('game.detail.shareFooter'));
+
+        window.open(`https://wa.me/?text=${encodeURIComponent(lines.join('\n'))}`, '_blank');
         message.success(t('game.detail.whatsappOpened'));
     };
 
     const formatDate = (dateStr) => {
         const date = new Date(dateStr);
-        return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' });
+        const str = formatDateLocale(date, i18n.language, { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' });
+        return str.charAt(0).toUpperCase() + str.slice(1);
     };
 
     if (isLoading) {

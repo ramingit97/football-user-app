@@ -66,6 +66,9 @@ function applyCssVars(themeObj, accentObj, fontSizeObj) {
     r.setProperty('--bg-secondary', themeObj.bg.card);
     r.setProperty('--bg-glass',  themeObj.bg.card);
     r.setProperty('--bg-input',  themeObj.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)');
+    r.setProperty('--header-bg', themeObj.isDark ? 'rgba(6,12,24,0.94)'    : 'rgba(255,255,255,0.95)');
+    r.setProperty('--nav-bg',    themeObj.isDark ? 'rgba(6,12,24,0.97)'    : 'rgba(255,255,255,0.97)');
+    r.setProperty('--logo-filter', themeObj.isDark ? 'brightness(0) invert(1)' : 'brightness(0)');
     // Text
     r.setProperty('--text-primary',   themeObj.text.primary);
     r.setProperty('--text-secondary', themeObj.text.secondary);

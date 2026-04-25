@@ -10,7 +10,8 @@ import {
     ShopOutlined, UserAddOutlined, PlusOutlined, MinusOutlined,
     DeleteOutlined,
 } from '@ant-design/icons';
-import locale from 'antd/es/date-picker/locale/ru_RU';
+import ruLocale from 'antd/es/date-picker/locale/ru_RU';
+import azLocale from 'antd/es/date-picker/locale/az_AZ';
 import { useTranslation } from 'react-i18next';
 import { useCreateGameMutation } from '../../../store/gamesApi';
 import { useConvertElanMutation } from '../../../store/elanlarApi';
@@ -111,7 +112,8 @@ const CounterControl = ({ value, onChange, min = 0, max = 30, label, sublabel, c
 
 const CreateGameForm = ({ onSuccess, elanPrefill = null }) => {
     const [form] = Form.useForm();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const datePickerLocale = i18n.language === 'az' ? azLocale : ruLocale;
     const currentUser = JSON.parse(localStorage.getItem('user'));
     const [createGame, { isLoading }] = useCreateGameMutation();
     const [convertElan] = useConvertElanMutation();
@@ -430,7 +432,7 @@ const CreateGameForm = ({ onSuccess, elanPrefill = null }) => {
                         rules={[{ required: true, message: t('game.create.ownValidation.date') }]}
                         style={{ marginBottom: 0 }}
                     >
-                        <DatePicker locale={locale} size="large" style={{ width: '100%' }} format="DD.MM.YYYY"
+                        <DatePicker locale={datePickerLocale} size="large" style={{ width: '100%' }} format="YYYY.MM.DD"
                             disabledDate={current => current && current < dayjs().startOf('day')} />
                     </Form.Item>
                     <Form.Item
@@ -839,7 +841,7 @@ const CreateGameForm = ({ onSuccess, elanPrefill = null }) => {
 
             <Form.Item name="date" label={<span style={{ color: 'var(--text-secondary)', fontSize: 13, fontWeight: 500 }}>{t('game.create.dateLabel')}</span>}
                 rules={[{ required: true, message: t('game.create.validation.selectDate') }]} style={{ marginBottom: 16 }}>
-                <DatePicker locale={locale} placeholder={t('game.create.datePlaceholder')} size="large" style={{ width: '100%' }} format="DD.MM.YYYY"
+                <DatePicker locale={datePickerLocale} placeholder={t('game.create.datePlaceholder')} size="large" style={{ width: '100%' }} format="YYYY.MM.DD"
                     disabledDate={current => current && current < dayjs().startOf('day')}
                     onChange={date => { setSelectedDate(date); form.setFieldValue('time', undefined); }} />
             </Form.Item>
@@ -939,7 +941,7 @@ const CreateGameForm = ({ onSuccess, elanPrefill = null }) => {
             </Form.Item>
 
             <Form.Item name="minPlayers" label={<span style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text-secondary)', fontSize: 13, fontWeight: 500 }}>
-                Минимум для старта <InfoCircleOutlined style={{ color: 'var(--text-tertiary)' }} title="Бронирование автоматически подтвердится" />
+                {t('game.create.minStartLabel')} <InfoCircleOutlined style={{ color: 'var(--text-tertiary)' }} title={t('game.create.minStartTooltip')} />
             </span>} style={{ marginBottom: 16 }}>
                 <InputNumber min={2} max={30} placeholder={t('game.create.minPlayersAuto')} size="large" style={{ width: '100%' }} />
             </Form.Item>
@@ -947,11 +949,11 @@ const CreateGameForm = ({ onSuccess, elanPrefill = null }) => {
             {pricePerPlayer !== null && (
                 <div style={{ marginBottom: 20, padding: '14px 16px', background: 'rgba(0,232,122,0.06)', border: '1px solid rgba(0,232,122,0.2)', borderRadius: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
                     <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-                        <div style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>Аренда<br /><span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>{selectedStadiumData?.pricePerHour} ₼/ч</span></div>
-                        <div style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>Игроков<br /><span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>{maxPlayers}</span></div>
+                        <div style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{t('game.create.priceRent')}<br /><span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>{selectedStadiumData?.pricePerHour} ₼/ч</span></div>
+                        <div style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{t('game.create.pricePlayers')}<br /><span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>{maxPlayers}</span></div>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 2 }}>Взнос с игрока</div>
+                        <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 2 }}>{t('game.create.pricePerPlayerLabel')}</div>
                         <div style={{ fontFamily: "'ClashDisplay-Variable','Clash Display',sans-serif", fontWeight: 800, fontSize: 22, color: 'var(--green)' }}>~{pricePerPlayer} ₼</div>
                     </div>
                 </div>
@@ -961,12 +963,12 @@ const CreateGameForm = ({ onSuccess, elanPrefill = null }) => {
                 <TextArea placeholder={t('game.create.descriptionPlaceholder')} rows={3} maxLength={500} showCount />
             </Form.Item>
 
-            <Form.Item name="recurrence" label={<span style={{ color: 'var(--text-secondary)', fontSize: 13, fontWeight: 500 }}>🔄 Təkrarlanan oyun</span>}
+            <Form.Item name="recurrence" label={<span style={{ color: 'var(--text-secondary)', fontSize: 13, fontWeight: 500 }}>{t('game.create.recurrenceLabel')}</span>}
                 initialValue="none" style={{ marginBottom: 28 }}>
                 <Select size="large">
-                    <Option value="none">Yox (tək oyun)</Option>
-                    <Option value="weekly">Hər həftə avtomatik yaradılsın</Option>
-                    <Option value="biweekly">Hər 2 həftədən bir yaradılsın</Option>
+                    <Option value="none">{t('game.create.recurrenceNone')}</Option>
+                    <Option value="weekly">{t('game.create.recurrenceWeekly')}</Option>
+                    <Option value="biweekly">{t('game.create.recurrenceBiweekly')}</Option>
                 </Select>
             </Form.Item>
 
@@ -1004,43 +1006,70 @@ const CreateGameForm = ({ onSuccess, elanPrefill = null }) => {
 // ── Mode selection card ──────────────────────────────────────
 const ModeCard = ({ onClick, icon, title, description, tags, color, badge }) => {
     const [hovered, setHovered] = useState(false);
+    const isGreen = color === 'var(--green)';
+    const glowColor = isGreen ? 'rgba(0,232,122,0.12)' : 'rgba(124,106,247,0.15)';
+    const tintColor = isGreen ? 'rgba(0,232,122,0.06)' : 'rgba(124,106,247,0.06)';
+    const badgeBg  = isGreen ? 'rgba(0,232,122,0.12)' : 'rgba(124,106,247,0.12)';
+
     return (
         <div
             onClick={onClick}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             style={{
-                padding: '20px 20px',
+                padding: '20px 20px 20px 24px',
                 borderRadius: 14,
                 border: `1.5px solid ${hovered ? color : 'var(--border-color)'}`,
-                background: hovered
-                    ? (color === 'var(--green)' ? 'rgba(0,232,122,0.05)' : 'rgba(124,106,247,0.05)')
-                    : 'var(--bg-raised)',
+                background: hovered ? tintColor : 'var(--bg-raised)',
                 cursor: 'pointer',
                 transition: 'all 0.18s ease',
                 transform: hovered ? 'translateY(-2px)' : 'none',
-                boxShadow: hovered ? `0 8px 24px ${color === 'var(--green)' ? 'rgba(0,232,122,0.12)' : 'rgba(124,106,247,0.15)'}` : 'none',
+                boxShadow: hovered ? `0 8px 28px ${glowColor}` : 'none',
                 position: 'relative',
+                overflow: 'hidden',
             }}
         >
-            {badge && (
+            {/* Left accent bar */}
+            <div style={{
+                position: 'absolute', left: 0, top: 0, bottom: 0, width: 3,
+                background: hovered ? color : 'transparent',
+                transition: 'background 0.18s',
+                borderRadius: '14px 0 0 14px',
+            }} />
+
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+                {/* Icon */}
                 <div style={{
-                    position: 'absolute', top: 14, right: 14,
-                    padding: '3px 10px', borderRadius: 20,
-                    background: color === 'var(--green)' ? 'rgba(0,232,122,0.15)' : 'rgba(124,106,247,0.15)',
-                    color, fontSize: 11, fontWeight: 700,
+                    width: 52, height: 52, borderRadius: 14, flexShrink: 0,
+                    background: badgeBg,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 26, transition: 'transform 0.18s',
+                    transform: hovered ? 'scale(1.08)' : 'scale(1)',
                 }}>
-                    {badge}
+                    {icon}
                 </div>
-            )}
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-                <span style={{ fontSize: 32, flexShrink: 0, lineHeight: 1 }}>{icon}</span>
+
+                {/* Content */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{
-                        fontFamily: "'ClashDisplay-Variable','Clash Display',sans-serif",
-                        fontWeight: 800, fontSize: 17, color: 'var(--text-primary)', marginBottom: 6,
-                    }}>
-                        {title}
+                    {/* Title row with badge */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, flexWrap: 'wrap' }}>
+                        <span style={{
+                            fontFamily: "'ClashDisplay-Variable','Clash Display',sans-serif",
+                            fontWeight: 800, fontSize: 17, color: 'var(--text-primary)',
+                        }}>
+                            {title}
+                        </span>
+                        {badge && (
+                            <span style={{
+                                padding: '2px 9px', borderRadius: 6,
+                                background: badgeBg,
+                                color, fontSize: 10, fontWeight: 700,
+                                letterSpacing: '0.4px', flexShrink: 0,
+                                border: `1px solid ${isGreen ? 'rgba(0,232,122,0.2)' : 'rgba(124,106,247,0.2)'}`,
+                            }}>
+                                {badge}
+                            </span>
+                        )}
                     </div>
                     <div style={{ fontSize: 13, color: 'var(--text-tertiary)', lineHeight: 1.5, marginBottom: 12 }}>
                         {description}
@@ -1058,13 +1087,17 @@ const ModeCard = ({ onClick, icon, title, description, tags, color, badge }) => 
                         ))}
                     </div>
                 </div>
+
+                {/* Arrow */}
                 <div style={{
-                    width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
-                    border: `2px solid ${hovered ? color : 'var(--border-color)'}`,
+                    width: 32, height: 32, borderRadius: 9, flexShrink: 0,
+                    background: hovered ? badgeBg : 'transparent',
+                    border: `1.5px solid ${hovered ? color : 'var(--border-color)'}`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     transition: 'all 0.18s',
                     color: hovered ? color : 'var(--text-tertiary)',
-                    fontSize: 13, marginTop: 2,
+                    fontSize: 14, marginTop: 10,
+                    transform: hovered ? 'translateX(3px)' : 'none',
                 }}>
                     →
                 </div>
