@@ -4,31 +4,49 @@ import { getCardTier, calculateStats, calculateOverall } from '../utils/fifaUtil
 
 const KNOWN_POSITIONS = ['GK', 'DEF', 'MID', 'FWD', 'ANY'];
 
-// FUT-style card silhouette — viewBox 0 0 200 300
-const CARD_PATH = "M 28 4 L 172 4 Q 196 4 198 30 L 198 248 Q 196 282 172 290 Q 100 304 28 290 Q 4 282 2 248 L 2 30 Q 4 4 28 4 Z";
+// FUT-style silhouette with center top peak and center bottom notch
+// viewBox = 0 0 200 300
+const CARD_PATH =
+    "M 30 8 L 90 8 L 100 0 L 110 8 L 170 8 " +
+    "Q 196 8 198 32 L 198 248 Q 196 278 175 285 " +
+    "L 173 290 L 105 297 L 100 302 L 95 297 L 27 290 L 25 285 " +
+    "Q 4 278 2 248 L 2 32 Q 4 8 30 8 Z";
 
-const TIER_ACCENTS = {
-    locked: { color: '#6b6b6b', glow: 'rgba(140,140,140,0.35)' },
-    bronze: { color: '#e29a5b', glow: 'rgba(226,154,91,0.55)'  },
-    silver: { color: '#dcdcdc', glow: 'rgba(220,220,220,0.5)'  },
-    // Topin brand neon green for top tier, matching reference
-    gold:   { color: '#00e87a', glow: 'rgba(0,232,122,0.6)'    },
+const TIER_DEFAULT_COLOR = {
+    locked: '#9b9b9b',
+    bronze: '#cd7f32',
+    silver: '#c4c4c4',
+    gold:   '#c79b3e',
 };
 
 const SIZE_STYLES = {
     small:  { width: 160, height: 240, fontSize: 10 },
     medium: { width: 220, height: 330, fontSize: 13 },
-    large:  { width: 290, height: 435, fontSize: 17 },
+    large:  { width: 330, height: 495, fontSize: 18 },
 };
 
-const FifaPlayerCard = ({ user, size = 'medium', showStats = true, onClick }) => {
+// Helper: hex → rgba
+const hexToRgba = (hex, alpha) => {
+    const h = hex.replace('#', '');
+    const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
+    const r = parseInt(full.slice(0, 2), 16) || 0;
+    const g = parseInt(full.slice(2, 4), 16) || 0;
+    const b = parseInt(full.slice(4, 6), 16) || 0;
+    return `rgba(${r},${g},${b},${alpha})`;
+};
+
+const FifaPlayerCard = ({ user, size = 'medium', showStats = true, onClick, accentColor }) => {
     const { t } = useTranslation();
     const uid = useId().replace(/:/g, '');
     const tier = getCardTier(user);
     const stats = calculateStats(user);
     const overall = calculateOverall(stats, user?.position);
 
-    const accent = TIER_ACCENTS[tier] || TIER_ACCENTS.locked;
+    const accent = accentColor || TIER_DEFAULT_COLOR[tier] || TIER_DEFAULT_COLOR.gold;
+    const accentSoft   = hexToRgba(accent, 0.18);
+    const accentMedium = hexToRgba(accent, 0.55);
+    const accentGlow   = hexToRgba(accent, 0.45);
+
     const { width, height, fontSize } = SIZE_STYLES[size];
 
     const positionLabels = {
@@ -51,41 +69,64 @@ const FifaPlayerCard = ({ user, size = 'medium', showStats = true, onClick }) =>
             style={{
                 '--card-width':   `${width}px`,
                 '--card-height':  `${height}px`,
-                '--accent-color': accent.color,
-                '--accent-glow':  accent.glow,
+                '--accent-color': accent,
+                '--accent-soft':  accentSoft,
+                '--accent-glow':  accentGlow,
                 '--font-size':    `${fontSize}px`,
             }}
         >
-            {/* Card silhouette + grunge fill + neon stroke */}
-            <svg className="card-shape" viewBox="0 0 200 300" preserveAspectRatio="none" aria-hidden="true">
+            <svg className="card-shape" viewBox="0 0 200 305" preserveAspectRatio="none" aria-hidden="true">
                 <defs>
-                    <linearGradient id={`bg-${uid}`} x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%"   stopColor="#0b1d12" />
-                        <stop offset="55%"  stopColor="#040c08" />
-                        <stop offset="100%" stopColor="#020403" />
+                    {/* Marble base */}
+                    <linearGradient id={`marble-${uid}`} x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%"   stopColor="#fcfaf6" />
+                        <stop offset="55%"  stopColor="#f3ecdc" />
+                        <stop offset="100%" stopColor="#e6dcc4" />
                     </linearGradient>
-                    <radialGradient id={`splash1-${uid}`} cx="22%" cy="18%" r="55%">
-                        <stop offset="0%"   stopColor={accent.color} stopOpacity="0.22" />
-                        <stop offset="100%" stopColor={accent.color} stopOpacity="0" />
-                    </radialGradient>
-                    <radialGradient id={`splash2-${uid}`} cx="82%" cy="78%" r="48%">
-                        <stop offset="0%"   stopColor={accent.color} stopOpacity="0.14" />
-                        <stop offset="100%" stopColor={accent.color} stopOpacity="0" />
-                    </radialGradient>
-                    <pattern id={`splatter-${uid}`} x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
-                        <circle cx="3"  cy="4"  r="0.7" fill={accent.color} fillOpacity="0.22" />
-                        <circle cx="22" cy="14" r="0.4" fill={accent.color} fillOpacity="0.14" />
-                        <circle cx="38" cy="6"  r="0.5" fill="#fff"          fillOpacity="0.06" />
-                        <circle cx="12" cy="32" r="0.5" fill={accent.color} fillOpacity="0.16" />
-                        <circle cx="30" cy="38" r="0.6" fill="#fff"          fillOpacity="0.05" />
-                        <circle cx="44" cy="28" r="0.4" fill={accent.color} fillOpacity="0.12" />
+                    {/* Marble veining via subtle noise pattern */}
+                    <pattern id={`veins-${uid}`} x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+                        <path d="M 0 20 Q 30 28 60 18 T 80 24" stroke="rgba(0,0,0,0.04)" strokeWidth="0.4" fill="none" />
+                        <path d="M 0 50 Q 25 58 55 48 T 80 56" stroke="rgba(0,0,0,0.035)" strokeWidth="0.3" fill="none" />
+                        <path d="M 10 70 Q 35 75 65 68 T 80 72" stroke="rgba(0,0,0,0.025)" strokeWidth="0.3" fill="none" />
                     </pattern>
+                    {/* Gold brushstroke band — diagonal */}
+                    <linearGradient id={`brush1-${uid}`} x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%"   stopColor={accent} stopOpacity="0" />
+                        <stop offset="40%"  stopColor={accent} stopOpacity="0.35" />
+                        <stop offset="60%"  stopColor={accent} stopOpacity="0.4" />
+                        <stop offset="100%" stopColor={accent} stopOpacity="0" />
+                    </linearGradient>
+                    {/* Splatter */}
+                    <pattern id={`splatter-${uid}`} x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+                        <circle cx="8"  cy="10" r="1.0" fill={accent} fillOpacity="0.32" />
+                        <circle cx="22" cy="22" r="0.4" fill={accent} fillOpacity="0.24" />
+                        <circle cx="40" cy="14" r="0.6" fill={accent} fillOpacity="0.18" />
+                        <circle cx="50" cy="40" r="0.8" fill={accent} fillOpacity="0.22" />
+                        <circle cx="14" cy="44" r="0.5" fill={accent} fillOpacity="0.2" />
+                        <circle cx="34" cy="50" r="0.4" fill={accent} fillOpacity="0.16" />
+                    </pattern>
+                    {/* Clip path so brush strokes don't overflow */}
+                    <clipPath id={`clip-${uid}`}>
+                        <path d={CARD_PATH} />
+                    </clipPath>
                 </defs>
-                <path d={CARD_PATH} fill={`url(#bg-${uid})`} />
-                <path d={CARD_PATH} fill={`url(#splash1-${uid})`} />
-                <path d={CARD_PATH} fill={`url(#splash2-${uid})`} />
-                <path d={CARD_PATH} fill={`url(#splatter-${uid})`} />
-                <path d={CARD_PATH} fill="none" stroke={accent.color} strokeWidth="2.2" strokeLinejoin="round" />
+
+                {/* Marble fill */}
+                <path d={CARD_PATH} fill={`url(#marble-${uid})`} />
+                {/* Marble veining */}
+                <path d={CARD_PATH} fill={`url(#veins-${uid})`} />
+
+                {/* Decorative gold brush strokes inside card */}
+                <g clipPath={`url(#clip-${uid})`}>
+                    <path d="M -30 90 Q 80 110 230 60" stroke={`url(#brush1-${uid})`} strokeWidth="22" fill="none" opacity="0.6" />
+                    <path d="M 130 -10 Q 150 80 90 220" stroke={accent} strokeWidth="2" fill="none" opacity="0.35" />
+                    <path d="M 30 200 Q 110 230 230 180" stroke={accent} strokeWidth="1.2" fill="none" opacity="0.3" />
+                </g>
+                {/* Splatter overlay */}
+                <path d={CARD_PATH} fill={`url(#splatter-${uid})`} opacity="0.85" />
+
+                {/* Border stroke */}
+                <path d={CARD_PATH} fill="none" stroke={accent} strokeWidth="2.5" strokeLinejoin="round" />
             </svg>
 
             {isLocked ? (
@@ -96,26 +137,37 @@ const FifaPlayerCard = ({ user, size = 'medium', showStats = true, onClick }) =>
                 </div>
             ) : (
                 <div className="card-content">
-                    {/* Top-left: OVR + position + ball badge */}
+                    {/* Top-left: OVR + position + small badge */}
                     <div className="card-corner-tl">
                         <div className="overall">{overall}</div>
-                        {positionLabel && <div className="position-text">{positionLabel}</div>}
-                        <div className="position-badge"><span>⚽</span></div>
+                        {positionLabel && (
+                            <>
+                                <div className="position-text">{positionLabel}</div>
+                                <div className="position-underline" />
+                            </>
+                        )}
+                        <div className="position-badge">
+                            <svg viewBox="0 0 32 36" width="100%" height="100%">
+                                <path d="M 16 2 L 30 8 L 28 22 Q 24 32 16 34 Q 8 32 4 22 L 2 8 Z"
+                                    fill="rgba(0,0,0,0.05)" stroke={accent} strokeWidth="1.2" />
+                                <circle cx="16" cy="18" r="4" fill={accent} fillOpacity="0.85" />
+                            </svg>
+                        </div>
                     </div>
 
-                    {/* Player photo — top-right area */}
+                    {/* Player photo */}
                     <div className="player-photo">
                         {user?.avatar ? (
                             <img src={user.avatar} alt={user?.name || ''} draggable={false} />
                         ) : (
                             <svg className="photo-silhouette" viewBox="0 0 80 100" aria-hidden="true">
-                                <circle cx="40" cy="28" r="18" fill="currentColor" opacity="0.35" />
-                                <path d="M 6 100 Q 6 60 40 60 Q 74 60 74 100 Z" fill="currentColor" opacity="0.35" />
+                                <circle cx="40" cy="30" r="18" fill="currentColor" opacity="0.3" />
+                                <path d="M 6 100 Q 6 60 40 60 Q 74 60 74 100 Z" fill="currentColor" opacity="0.3" />
                             </svg>
                         )}
                     </div>
 
-                    {/* Player name */}
+                    {/* Name */}
                     <div className="player-name">
                         {user?.name || t('profile.fifa.playerFallback')}
                     </div>
@@ -123,15 +175,15 @@ const FifaPlayerCard = ({ user, size = 'medium', showStats = true, onClick }) =>
                     {/* Divider */}
                     <div className="divider" />
 
-                    {/* Stats grid */}
+                    {/* Stats — 2 columns × 3 rows */}
                     {showStats && (
                         <div className="stats-grid">
                             {[
                                 { v: stats.pac, l: 'PAC' },
-                                { v: stats.sho, l: 'SHO' },
-                                { v: stats.pas, l: 'PAS' },
                                 { v: stats.dri, l: 'DRI' },
+                                { v: stats.sho, l: 'SHO' },
                                 { v: stats.def, l: 'DEF' },
+                                { v: stats.pas, l: 'PAS' },
                                 { v: stats.phy, l: 'PHY' },
                             ].map(({ v, l }) => (
                                 <div className="stat" key={l}>
@@ -139,8 +191,12 @@ const FifaPlayerCard = ({ user, size = 'medium', showStats = true, onClick }) =>
                                     <span className="stat-label">{l}</span>
                                 </div>
                             ))}
+                            <div className="stats-mid-divider" aria-hidden="true" />
                         </div>
                     )}
+
+                    {/* Bottom branding */}
+                    <div className="card-brand">★ TOPIN ★</div>
                 </div>
             )}
 
@@ -158,31 +214,28 @@ const FifaPlayerCard = ({ user, size = 'medium', showStats = true, onClick }) =>
                     transform: ${onClick ? 'translateY(-6px) scale(1.02)' : 'none'};
                 }
                 .fifa-card:hover .card-shape {
-                    filter: drop-shadow(0 0 8px var(--accent-glow))
-                            drop-shadow(0 0 28px var(--accent-glow));
+                    filter: drop-shadow(0 0 10px var(--accent-glow))
+                            drop-shadow(0 8px 24px rgba(0,0,0,0.45));
                 }
-
                 .card-shape {
                     position: absolute;
                     inset: 0;
                     width: 100%;
                     height: 100%;
-                    filter: drop-shadow(0 0 6px var(--accent-glow))
-                            drop-shadow(0 0 20px var(--accent-glow));
+                    filter: drop-shadow(0 6px 18px rgba(0,0,0,0.35));
                     transition: filter 0.3s ease;
                 }
-
                 .card-content {
                     position: absolute;
                     inset: 0;
                     z-index: 2;
                 }
 
-                /* Top-left cluster: OVR + position abbr + ball badge */
+                /* Top-left cluster */
                 .card-corner-tl {
                     position: absolute;
                     top: 6%;
-                    left: 8%;
+                    left: 9%;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
@@ -190,48 +243,43 @@ const FifaPlayerCard = ({ user, size = 'medium', showStats = true, onClick }) =>
                     z-index: 3;
                 }
                 .overall {
-                    font-size: calc(var(--font-size) * 3.0);
+                    font-size: calc(var(--font-size) * 2.7);
                     font-weight: 900;
                     color: var(--accent-color);
                     line-height: 0.85;
                     letter-spacing: -2px;
-                    text-shadow: 0 0 14px var(--accent-glow);
                 }
                 .position-text {
                     margin-top: calc(var(--font-size) * 0.15);
-                    font-size: calc(var(--font-size) * 1.1);
+                    font-size: calc(var(--font-size) * 1.3);
                     font-weight: 800;
                     color: var(--accent-color);
-                    letter-spacing: 1.4px;
-                    text-shadow: 0 0 8px var(--accent-glow);
+                    letter-spacing: 1.5px;
+                }
+                .position-underline {
+                    width: calc(var(--font-size) * 1.4);
+                    height: 2px;
+                    background: var(--accent-color);
+                    margin-top: calc(var(--font-size) * 0.25);
                 }
                 .position-badge {
-                    width: calc(var(--font-size) * 1.7);
-                    height: calc(var(--font-size) * 1.7);
-                    border-radius: 50%;
-                    border: 1.5px solid var(--accent-color);
-                    background: rgba(0, 0, 0, 0.5);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: calc(var(--font-size) * 0.85);
-                    margin-top: calc(var(--font-size) * 0.45);
-                    box-shadow: 0 0 8px var(--accent-glow);
+                    width: calc(var(--font-size) * 2.2);
+                    height: calc(var(--font-size) * 2.4);
+                    margin-top: calc(var(--font-size) * 0.6);
+                    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15));
                 }
 
-                /* Player photo */
+                /* Photo */
                 .player-photo {
                     position: absolute;
                     top: 4%;
-                    left: 30%;
-                    right: 6%;
+                    left: 35%;
+                    right: 5%;
                     height: 60%;
                     display: flex;
                     align-items: flex-end;
                     justify-content: center;
                     overflow: hidden;
-                    -webkit-mask-image: linear-gradient(180deg, black 76%, transparent 100%);
-                    mask-image: linear-gradient(180deg, black 76%, transparent 100%);
                     z-index: 1;
                 }
                 .player-photo img {
@@ -242,7 +290,7 @@ const FifaPlayerCard = ({ user, size = 'medium', showStats = true, onClick }) =>
                     user-select: none;
                 }
                 .photo-silhouette {
-                    width: 78%;
+                    width: 80%;
                     height: 100%;
                     color: var(--accent-color);
                 }
@@ -250,16 +298,15 @@ const FifaPlayerCard = ({ user, size = 'medium', showStats = true, onClick }) =>
                 /* Name */
                 .player-name {
                     position: absolute;
-                    top: 62%;
+                    top: 64%;
                     left: 0;
                     right: 0;
                     text-align: center;
-                    font-size: calc(var(--font-size) * 1.45);
+                    font-size: calc(var(--font-size) * 1.6);
                     font-weight: 900;
-                    color: #ffffff;
-                    letter-spacing: 1.5px;
+                    color: var(--accent-color);
+                    letter-spacing: 2px;
                     text-transform: uppercase;
-                    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.85);
                     padding: 0 8%;
                     white-space: nowrap;
                     overflow: hidden;
@@ -270,50 +317,76 @@ const FifaPlayerCard = ({ user, size = 'medium', showStats = true, onClick }) =>
                 /* Divider line */
                 .divider {
                     position: absolute;
-                    top: 71%;
-                    left: 18%;
-                    right: 18%;
+                    top: 73%;
+                    left: 14%;
+                    right: 14%;
                     height: 1px;
                     background: linear-gradient(90deg, transparent 0%, var(--accent-color) 50%, transparent 100%);
-                    opacity: 0.5;
+                    opacity: 0.55;
                     z-index: 2;
                 }
 
-                /* Stats */
+                /* Stats — 2 cols × 3 rows */
                 .stats-grid {
                     position: absolute;
-                    bottom: calc(var(--font-size) * 1.4);
-                    left: 9%;
-                    right: 9%;
+                    bottom: calc(var(--font-size) * 2.6);
+                    left: 12%;
+                    right: 12%;
                     display: grid;
-                    grid-template-columns: repeat(3, 1fr);
-                    grid-template-rows: 1fr 1fr;
-                    gap: calc(var(--font-size) * 0.55) 0;
-                    text-align: center;
+                    grid-template-columns: 1fr 1fr;
+                    grid-template-rows: 1fr 1fr 1fr;
+                    grid-auto-flow: row;
+                    column-gap: calc(var(--font-size) * 0.8);
+                    row-gap: calc(var(--font-size) * 0.4);
                     z-index: 2;
+                }
+                .stats-mid-divider {
+                    position: absolute;
+                    top: 8%;
+                    bottom: 8%;
+                    left: 50%;
+                    width: 1px;
+                    background: linear-gradient(180deg, transparent 0%, var(--accent-color) 50%, transparent 100%);
+                    opacity: 0.45;
+                    transform: translateX(-50%);
                 }
                 .stat {
                     display: flex;
-                    flex-direction: column;
-                    align-items: center;
+                    align-items: baseline;
+                    gap: calc(var(--font-size) * 0.4);
                     line-height: 1;
                 }
                 .stat-value {
-                    font-size: calc(var(--font-size) * 1.75);
+                    font-size: calc(var(--font-size) * 1.38);
                     font-weight: 900;
                     color: var(--accent-color);
-                    text-shadow: 0 0 8px var(--accent-glow);
                     letter-spacing: -0.5px;
+                    min-width: calc(var(--font-size) * 1.6);
+                    text-align: right;
                 }
                 .stat-label {
-                    font-size: calc(var(--font-size) * 0.78);
+                    font-size: calc(var(--font-size) * 0.95);
                     font-weight: 700;
-                    color: rgba(255, 255, 255, 0.55);
-                    letter-spacing: 1.5px;
-                    margin-top: 4px;
+                    color: var(--accent-color);
+                    letter-spacing: 1.2px;
                 }
 
-                /* Locked state */
+                /* Branding bottom — kept inside the wide silhouette zone */
+                .card-brand {
+                    position: absolute;
+                    bottom: calc(var(--font-size) * 1.5);
+                    left: 0;
+                    right: 0;
+                    text-align: center;
+                    font-size: calc(var(--font-size) * 0.55);
+                    font-weight: 700;
+                    color: var(--accent-color);
+                    opacity: 0.55;
+                    letter-spacing: 2px;
+                    z-index: 2;
+                }
+
+                /* Locked */
                 .locked-content {
                     display: flex;
                     flex-direction: column;
@@ -332,7 +405,7 @@ const FifaPlayerCard = ({ user, size = 'medium', showStats = true, onClick }) =>
                 .lock-title {
                     font-size: calc(var(--font-size) * 1.1);
                     font-weight: 700;
-                    color: #aaa;
+                    color: #888;
                     margin-bottom: calc(var(--font-size) * 0.3);
                 }
                 .lock-subtitle {

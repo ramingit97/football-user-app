@@ -710,11 +710,25 @@ const ProfilePage = () => {
                 onCancel={() => setShowFifaCard(false)}
                 footer={null}
                 centered
-                width={320}
-                styles={{ content: { background: 'transparent', boxShadow: 'none', padding: 0 }, mask: { backdropFilter: 'blur(8px)' } }}
+                width={460}
+                closeIcon={
+                    <span style={{
+                        position: 'fixed', top: 20, right: 20,
+                        width: 36, height: 36, borderRadius: '50%',
+                        background: 'rgba(255,255,255,0.15)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: '#fff', fontSize: 16, cursor: 'pointer',
+                    }}>✕</span>
+                }
+                styles={{
+                    body:    { background: 'transparent', padding: 0 },
+                    content: { background: 'transparent', boxShadow: 'none', padding: 0 },
+                    mask:    { backdropFilter: 'blur(10px)', background: 'rgba(0,0,0,0.88)' },
+                }}
             >
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18 }}>
                     <FifaPlayerCard user={userProfile} size="large" />
+
                     <button
                         onClick={() => {
                             const url = `${window.location.origin}/player/${userProfile?.id}`;
