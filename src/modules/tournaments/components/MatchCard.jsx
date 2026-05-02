@@ -82,14 +82,11 @@ export default function MatchCard({
     const isAwayCaptain = myTournamentTeam && match.awayTeamId === myTournamentTeam.teamId;
     const isParticipant = isHomeCaptain || isAwayCaptain;
 
-    // Can propose: match is scheduled, user is a captain in this match, no slot proposed yet
-    const canPropose = !isPlayed && match.status === 'scheduled' && isParticipant && onProposeSlot;
+    // Only organizer can assign slots (captains have no time-picking UI)
+    const canPropose = !isPlayed && match.status === 'scheduled' && isOrganizer && onProposeSlot;
 
-    // Can respond: match has pending slot, proposed by the OTHER captain (backend stores captainId/userId)
-    const canRespond = match.status === 'slot_pending'
-        && isParticipant
-        && userId !== match.pendingSlotProposedBy
-        && onRespondSlot;
+    // Captains never respond — organizer assigns directly. Kept false for safety.
+    const canRespond = false;
 
     // Is my proposal pending (I proposed, waiting for other side)
     const myProposalPending = match.status === 'slot_pending'

@@ -158,7 +158,7 @@ function ScoreEntryPanel({ match, tournamentId, onDone }) {
 }
 
 /* ── Slot scheduling panel ── */
-function SlotPanel({ match, tournamentId, slots, userId, myTournamentTeam }) {
+function SlotPanel({ match, tournamentId, slots, userId, myTournamentTeam, isOrganizer }) {
     const { t, i18n } = useTranslation();
     const tm = (k) => t(`tournaments.match.${k}`);
     const locale = i18n.language === 'az' ? 'az' : 'ru';
@@ -168,13 +168,10 @@ function SlotPanel({ match, tournamentId, slots, userId, myTournamentTeam }) {
     const [proposeSlot] = useProposeSlotMutation();
     const [respondToSlot] = useRespondToSlotMutation();
 
-    const isHomeCaptain = myTournamentTeam && match.homeTeamId === myTournamentTeam.teamId;
-    const isAwayCaptain = myTournamentTeam && match.awayTeamId === myTournamentTeam.teamId;
-    const isParticipant = isHomeCaptain || isAwayCaptain;
-
-    const canPropose = match.status === 'scheduled' && isParticipant;
-    const canRespond = match.status === 'slot_pending' && isParticipant && userId !== match.pendingSlotProposedBy;
-    const myProposalPending = match.status === 'slot_pending' && userId === match.pendingSlotProposedBy;
+    // Only organizer can assign/change slots — captains have no time-picking UI
+    const canPropose = !!isOrganizer && (match.status === 'scheduled' || match.status === 'confirmed');
+    const canRespond = false;
+    const myProposalPending = false;
 
     const confirmedSlot = match.slotId ? slots.find(s => s.id === match.slotId) : null;
     const pendingSlot = match.pendingSlotId ? slots.find(s => s.id === match.pendingSlotId) : null;
@@ -476,6 +473,7 @@ export default function TournamentMatchPage() {
                         slots={slots}
                         userId={user?.id}
                         myTournamentTeam={myTournamentTeam}
+                        isOrganizer={isOrganizer}
                     />
                 )}
 

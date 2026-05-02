@@ -1606,7 +1606,8 @@
         "bracket": "Sxem 🏆"
       },
       "overview": {
-        "schedule": "Mərhələ cədvəli",
+        "schedule": "Başlanğıc tarixi",
+        "startDate": "Turnirin başlanğıcı",
         "regDeadline": "Komandaların qeydiyyatı",
         "groupDeadline": "Qrup mərhələsi (son tarix)",
         "playoffDeadline": "Pley-off (son tarix)",
@@ -1656,6 +1657,8 @@
       "regDeadlineHint": "Komandalar üçün son tarix",
       "groupDeadlineLabel": "Qrup mərhələsi son tarixi",
       "playoffDeadlineLabel": "Pley-off son tarixi",
+      "startDateLabel": "Turnirin başlanğıc tarixi",
+      "startDateHint": "Turnir nə vaxt başlayır",
       "entryFeeLabel": "Komandadan giriş haqqı (₼)",
       "entryFeeHint": "Komandalar nağd ödəyir",
       "totalPool": "Ümumi mükafat fondu",

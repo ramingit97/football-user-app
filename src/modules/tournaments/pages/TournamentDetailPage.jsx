@@ -393,9 +393,7 @@ socket.on('teamAdvanced',       () => { refetch(); });
                                     {td('overview.schedule')}
                                 </h3>
                                 {[
-                                    { label: td('overview.regDeadline'),    date: tour.registrationDeadline, icon: '📋' },
-                                    { label: td('overview.groupDeadline'),  date: tour.groupStageDeadline,   icon: '⚽' },
-                                    { label: td('overview.playoffDeadline'),date: tour.playoffDeadline,      icon: '🔥' },
+                                    { label: td('overview.startDate'), date: tour.registrationDeadline, icon: '🚀' },
                                 ].filter(e => e.date).map((e, i) => (
                                     <div key={i} style={{
                                         display: 'flex', alignItems: 'center', gap: 16,
@@ -406,7 +404,10 @@ socket.on('teamAdvanced',       () => { refetch(); });
                                             <div style={{ fontWeight: 600, color: '#e0e6f0', fontSize: 14 }}>{e.label}</div>
                                         </div>
                                         <div style={{ fontSize: 13, color: '#63b3ed', fontWeight: 600 }}>
-                                            {new Date(e.date).toLocaleDateString('ru', { day: '2-digit', month: 'long', year: 'numeric' })}
+                                            {(() => {
+                                                const d = new Date(e.date);
+                                                return `${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+                                            })()}
                                         </div>
                                     </div>
                                 ))}

@@ -9,7 +9,7 @@ import { useCreateTournamentMutation } from '../../../store/tournamentsApi';
 
 const FORMATS = ['5x5', '6x6', '7x7', '8x8', '11x11'];
 const MAX_TEAMS_OPTIONS = [8, 16];
-const PLATFORM_FEE_PCT = 5;
+const PLATFORM_FEE_PCT = 0;
 
 function Section({ title, icon, children }) {
     return (
@@ -87,11 +87,11 @@ export default function CreateTournamentPage() {
     const [form, setForm] = useState({
         name: '', description: '', format: '7x7', maxTeams: 16,
         entryFee: 100, location: '',
-        registrationDeadline: null, groupStageDeadline: null, playoffDeadline: null,
+        registrationDeadline: null,
     });
     const [prize1, setPrize1] = useState(60);
-    const [prize2, setPrize2] = useState(20);
-    const [prize3, setPrize3] = useState(5);
+    const [prize2, setPrize2] = useState(35);
+    const [prize3, setPrize3] = useState(0);
 
     const set = (key, val) => setForm(prev => ({ ...prev, [key]: val }));
 
@@ -119,8 +119,6 @@ export default function CreateTournamentPage() {
                 maxTeams: Number(form.maxTeams),
                 prize1Percent: prize1, prize2Percent: prize2, prize3Percent: prize3,
                 registrationDeadline: form.registrationDeadline?.toISOString(),
-                groupStageDeadline: form.groupStageDeadline?.toISOString(),
-                playoffDeadline: form.playoffDeadline?.toISOString(),
             }).unwrap();
             message.success(t('tournaments.create.successMsg'));
             navigate(`/tournaments/${result.id}`);
@@ -253,41 +251,15 @@ export default function CreateTournamentPage() {
                         </Field>
                     </Section>
 
-                    {/* ─── Dates ─── */}
+                    {/* ─── Start Date ─── */}
                     <Section title={tc('sectionDates')} icon="📅">
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                            <Field label={tc('regDeadlineLabel')} hint={tc('regDeadlineHint')}>
-                                <div className="dark-picker">
-                                    <DatePicker
-                                        showTime={{ format: 'HH:mm' }} format="DD.MM.YYYY HH:mm"
-                                        placeholder={tc('regDeadlineLabel')}
-                                        value={form.registrationDeadline}
-                                        onChange={v => set('registrationDeadline', v)}
-                                        disabledDate={d => d && d < dayjs().startOf('day')}
-                                        style={{ width: '100%', padding: '11px 16px' }}
-                                    />
-                                </div>
-                            </Field>
-                            <Field label={tc('groupDeadlineLabel')}>
-                                <div className="dark-picker">
-                                    <DatePicker
-                                        showTime={{ format: 'HH:mm' }} format="DD.MM.YYYY HH:mm"
-                                        placeholder={tc('groupDeadlineLabel')}
-                                        value={form.groupStageDeadline}
-                                        onChange={v => set('groupStageDeadline', v)}
-                                        disabledDate={d => d && d < dayjs().startOf('day')}
-                                        style={{ width: '100%', padding: '11px 16px' }}
-                                    />
-                                </div>
-                            </Field>
-                        </div>
-                        <Field label={tc('playoffDeadlineLabel')}>
-                            <div className="dark-picker" style={{ maxWidth: 280 }}>
+                        <Field label={tc('startDateLabel')} hint={tc('startDateHint')}>
+                            <div className="dark-picker" style={{ maxWidth: 320 }}>
                                 <DatePicker
                                     showTime={{ format: 'HH:mm' }} format="DD.MM.YYYY HH:mm"
-                                    placeholder={tc('playoffDeadlineLabel')}
-                                    value={form.playoffDeadline}
-                                    onChange={v => set('playoffDeadline', v)}
+                                    placeholder={tc('startDateLabel')}
+                                    value={form.registrationDeadline}
+                                    onChange={v => set('registrationDeadline', v)}
                                     disabledDate={d => d && d < dayjs().startOf('day')}
                                     style={{ width: '100%', padding: '11px 16px' }}
                                 />
@@ -378,27 +350,9 @@ export default function CreateTournamentPage() {
                                 <PrizeBar label={tc('prize2Label')} icon="" pct={prize2} amount={pct(prize2)} color="#a0aec0" />
                                 <PrizeBar label={tc('prize3Label')} icon="" pct={prize3} amount={pct(prize3)} color="#cd7f32" />
                                 <PrizeBar label={tc('organizerLabel')} icon="" pct={organizerPct} amount={pct(organizerPct)} color="#68d391" />
-                                <PrizeBar label={tc('platformLabel')} icon="" pct={PLATFORM_FEE_PCT} amount={pct(PLATFORM_FEE_PCT)} color="#63b3ed" />
                             </div>
                         </div>
                     </Section>
-
-                    {/* Platform fee notice */}
-                    <div style={{
-                        padding: '14px 18px', borderRadius: 12, marginBottom: 20,
-                        background: 'rgba(99,179,237,0.08)', border: '1px solid rgba(99,179,237,0.2)',
-                        display: 'flex', alignItems: 'flex-start', gap: 12,
-                    }}>
-                        <span style={{ fontSize: 22, marginTop: 2 }}>💳</span>
-                        <div>
-                            <div style={{ fontWeight: 700, color: '#63b3ed', fontSize: 14 }}>
-                                {tc('platformFeeNotice')}
-                            </div>
-                            <div style={{ fontSize: 12, color: '#7a8ba0', marginTop: 2 }}>
-                                {tc('platformFeeDesc')}
-                            </div>
-                        </div>
-                    </div>
 
                     {/* Min players notice */}
                     <div style={{

@@ -1606,7 +1606,8 @@
         "bracket": "Сетка 🏆"
       },
       "overview": {
-        "schedule": "Расписание этапов",
+        "schedule": "Дата начала",
+        "startDate": "Старт турнира",
         "regDeadline": "Регистрация команд",
         "groupDeadline": "Групповой этап (дедлайн)",
         "playoffDeadline": "Плей-офф (дедлайн)",
@@ -1656,6 +1657,8 @@
       "regDeadlineHint": "Дедлайн для команд",
       "groupDeadlineLabel": "Дедлайн группового этапа",
       "playoffDeadlineLabel": "Дедлайн плей-офф",
+      "startDateLabel": "Дата начала турнира",
+      "startDateHint": "Когда стартует турнир",
       "entryFeeLabel": "Взнос с команды (₼)",
       "entryFeeHint": "Команды платят наличными",
       "totalPool": "Общий призовой фонд",
