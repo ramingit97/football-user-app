@@ -327,11 +327,11 @@ const CreateGameForm = ({ onSuccess, elanPrefill = null }) => {
 
             {/* ── 2: When ────────────────────────────────────── */}
             <QuestionBlock number="2" emoji="📅" label={t('game.create.simple.whenLabel')}>
-                <div style={{ display: 'flex', gap: 10 }}>
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                     <Form.Item
                         name="date"
                         rules={[{ required: true, message: t('game.create.validation.selectDate') }]}
-                        style={{ flex: 1, marginBottom: 0 }}
+                        style={{ flex: '1 1 140px', minWidth: 0, marginBottom: 0 }}
                     >
                         <DatePicker
                             locale={datePickerLocale}
@@ -350,7 +350,7 @@ const CreateGameForm = ({ onSuccess, elanPrefill = null }) => {
                     <Form.Item
                         name="time"
                         rules={[{ required: true, message: t('game.create.ownValidation.time') }]}
-                        style={{ flex: 1, marginBottom: 0 }}
+                        style={{ flex: '1 1 140px', minWidth: 0, marginBottom: 0 }}
                     >
                         {useCustomLocation ? (
                             <Select
@@ -543,7 +543,7 @@ const CreateGameForm = ({ onSuccess, elanPrefill = null }) => {
                     }}>
 
                         {/* Skill + Age */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12 }}>
                             <Form.Item
                                 name="skillLevel"
                                 initialValue="any"
