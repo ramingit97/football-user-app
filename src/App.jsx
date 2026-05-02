@@ -41,6 +41,8 @@ import AppLayout from './shared/components/AppLayout';
 import LoginPage from './modules/auth/pages/LoginPage';
 import ElanlarPage from './modules/elanlar/ElanlarPage';
 import ElanDetailPage from './modules/elanlar/ElanDetailPage';
+import LookupPage from './modules/lookup/LookupPage';
+import LookupDetailPage from './modules/lookup/LookupDetailPage';
 import ForgotPasswordPage from './modules/auth/pages/ForgotPasswordPage';
 import ResetPasswordPage from './modules/auth/pages/ResetPasswordPage';
 import TournamentsListPage from './modules/tournaments/pages/TournamentsListPage';
@@ -126,6 +128,17 @@ const AppContent = () => {
           <Route path="/elanlar/:id" element={
             <AppLayout>
               <ElanDetailPage />
+            </AppLayout>
+          } />
+
+          <Route path="/lookup" element={
+            <AppLayout>
+              <LookupPage />
+            </AppLayout>
+          } />
+          <Route path="/lookup/:id" element={
+            <AppLayout>
+              <LookupDetailPage />
             </AppLayout>
           } />
 

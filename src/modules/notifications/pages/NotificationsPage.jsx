@@ -5,6 +5,7 @@ import {
     TrophyOutlined, TeamOutlined, WalletOutlined,
     BarChartOutlined, UserAddOutlined, CheckOutlined,
     StarOutlined, ExclamationCircleOutlined, MessageOutlined,
+    ThunderboltOutlined,
 } from '@ant-design/icons';
 import { useGetMyNotificationsQuery, useMarkAsReadMutation, useMarkAllAsReadMutation } from '../../../store/notificationsApi';
 import { useGetProfileQuery } from '../../../store/authApi';
@@ -40,6 +41,8 @@ const getTarget = (notification) => {
         case 'ELAN_INVITE':        return meta.elanId ? `/elanlar/${meta.elanId}` : '/elanlar';
         case 'GAME_CREATED':       return meta.gameId ? `/games/${meta.gameId}` : '/games';
         case 'GAME_REMINDER':      return meta.gameId ? `/games/${meta.gameId}` : null;
+        case 'LOOKUP_CREATED':     return meta.lookupId ? `/lookup/${meta.lookupId}` : '/lookup';
+        case 'LOOKUP_RESPONSE':    return meta.lookupId ? `/lookup/${meta.lookupId}` : '/lookup';
         default:                   return null;
     }
 };
@@ -67,6 +70,8 @@ const TYPE_CONFIG = {
     ELAN_INVITE:        { icon: <BellOutlined />,              color: '#faad14', bg: 'rgba(250,173,20,0.12)',  label: 'Объявление' },
     GAME_CREATED:       { icon: <TrophyOutlined />,            color: '#00e87a', bg: 'rgba(0,232,122,0.1)',    label: 'Игра' },
     GAME_REMINDER:      { icon: <BellOutlined />,              color: '#faad14', bg: 'rgba(250,173,20,0.12)',  label: 'Напоминание' },
+    LOOKUP_CREATED:     { icon: <ThunderboltOutlined />,       color: '#faad14', bg: 'rgba(250,173,20,0.12)',  label: 'Вызов' },
+    LOOKUP_RESPONSE:    { icon: <UserAddOutlined />,           color: '#00e87a', bg: 'rgba(0,232,122,0.1)',    label: 'Отклик' },
 };
 
 const getConfig = (type) => TYPE_CONFIG[type] || {
@@ -74,13 +79,14 @@ const getConfig = (type) => TYPE_CONFIG[type] || {
 };
 
 /* ─── Build title/message from type + metadata ─────────────────── */
-const buildNotifText = (item, t) => {
+const buildNotifText = (item, t, i18n) => {
     const m = item.metadata || {};
     const type = item.type;
     const title = t(`notifications.titles.${type}`, { defaultValue: item.title || type });
+    const locale = i18n?.language === 'az' ? 'az-AZ' : 'ru-RU';
 
     let message;
-    const fmt = (iso) => iso ? new Date(iso).toLocaleDateString() : '';
+    const fmt = (iso) => iso ? new Date(iso).toLocaleDateString(locale, { day: 'numeric', month: 'long' }) : '';
 
     switch (type) {
         case 'INVITE_ACCEPTED':
@@ -167,10 +173,18 @@ const buildNotifText = (item, t) => {
             message = t('notifications.messages.ELAN_INVITE', { creatorName: m.creatorName, date: m.date, time: m.time });
             break;
         case 'GAME_CREATED':
-            message = t('notifications.messages.GAME_CREATED', { gameTitle: m.gameTitle, date: m.date });
+            message = t('notifications.messages.GAME_CREATED', { gameTitle: m.gameTitle, date: fmt(m.date) });
             break;
         case 'GAME_REMINDER':
             message = t('notifications.messages.GAME_REMINDER');
+            break;
+        case 'LOOKUP_CREATED': {
+            const details = m.district ? `${m.format} · ${m.district}` : m.format;
+            message = t('notifications.messages.LOOKUP_CREATED', { creatorName: m.creatorName, details });
+            break;
+        }
+        case 'LOOKUP_RESPONSE':
+            message = t('notifications.messages.LOOKUP_RESPONSE', { userName: m.userName });
             break;
         default:
             message = item.message || '';
@@ -202,7 +216,7 @@ const groupByDate = (notifications, t) => {
 const NotifRow = ({ item, onNavigate, onMarkRead }) => {
     const { t, i18n } = useTranslation();
     const cfg = getConfig(item.type);
-    const { title, message } = buildNotifText(item, t);
+    const { title, message } = buildNotifText(item, t, i18n);
     dayjs.locale(i18n.language === 'az' ? 'az' : 'ru');
     const target = getTarget(item);
     const clickable = !!target;

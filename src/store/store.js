@@ -10,6 +10,7 @@ import { stadiumsApi } from './stadiumsApi';
 import { supportApi } from './supportApi';
 import { elanlarApi } from './elanlarApi';
 import { tournamentsApi } from './tournamentsApi';
+import { lookupApi } from './lookupApi';
 import authReducer from './authSlice';
 
 export const store = configureStore({
@@ -25,6 +26,7 @@ export const store = configureStore({
         [supportApi.reducerPath]: supportApi.reducer,
         [elanlarApi.reducerPath]: elanlarApi.reducer,
         [tournamentsApi.reducerPath]: tournamentsApi.reducer,
+        [lookupApi.reducerPath]: lookupApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(
@@ -38,6 +40,7 @@ export const store = configureStore({
             supportApi.middleware,
             elanlarApi.middleware,
             tournamentsApi.middleware,
+            lookupApi.middleware,
         ),
 });
 

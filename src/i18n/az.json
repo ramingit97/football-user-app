@@ -1,6 +1,8 @@
 {
   "nav": {
     "games": "Oyunlar",
+    "lookup": "Rəqib axtarırıq",
+    "newFeature": "Yeni funksiya",
     "elanlar": "Elanlar",
     "stadiums": "Stadionlar",
     "createGame": "Oyun yarat",
@@ -195,7 +197,8 @@
       "full": "Dolu",
       "join": "Qeydiyyat",
       "joined": "Qeydiyyatdasınız",
-      "organizer": "Təşkilatçı:"
+      "organizer": "Təşkilatçı:",
+      "guarantee": "Toplanmasa geri qaytarılır"
     },
     "detail": {
       "backToList": "Oyunlar siyahısına",
@@ -353,7 +356,7 @@
       "privatePrice": "Yaratmaq üçün 1₼",
       "nameLabel": "Oyunun adı",
       "namePlaceholder": "Ad daxil edin",
-      "nameMinLength": "Minimum 5 simvol",
+      "nameMinLength": "Minimum 3 simvol",
       "nameExample": "Məsələn: Parkda axşam futbolu",
       "stadiumLabel": "Stadion",
       "stadiumHint": "Sürətli axtarış üçün rayon və ya metro üzrə filtrləyin",
@@ -475,7 +478,31 @@
       "recurrenceLabel": "🔄 Təkrarlanan oyun",
       "recurrenceNone": "Yox (tək oyun)",
       "recurrenceWeekly": "Hər həftə avtomatik yaradılsın",
-      "recurrenceBiweekly": "Hər 2 həftədən bir yaradılsın"
+      "recurrenceBiweekly": "Hər 2 həftədən bir yaradılsın",
+      "simple": {
+        "whereLabel": "Harada oynayırıq?",
+        "whenLabel": "Nə vaxt?",
+        "formatLabel": "Format",
+        "alreadyLabel": "Artıq var olan oyunçular",
+        "fromScratch": "Sıfırdan toplanır — bütün yerlər boşdur",
+        "needMore": "Daha {{n}} oyunçu lazımdır",
+        "outOf": "{{total}} yerdən",
+        "totalPlayers": "Ümumi oyunçu: {{n}}",
+        "topBadge": "TOP",
+        "stadiumPlaceholder": "Ad və ya rayon üzrə axtar...",
+        "customLocationLink": "Siyahıda yoxdur? Ünvan yazın →",
+        "customLocationPlaceholder": "Sahənin adı və ya ünvanı",
+        "backToList": "← Siyahıdan seçin",
+        "datePlaceholder": "Tarix",
+        "timePlaceholder": "Vaxt",
+        "selectDateFirst": "Əvvəlcə tarix seçin",
+        "extrasLabel": "Əlavə seçimlər",
+        "extrasHint": "səviyyə, yaş, qiymət...",
+        "priceLabel": "Oyunçu başına ödəniş (ixtiyari)",
+        "createBtn": "⚽ Oyun yarat",
+        "successMsg": "Oyun yaradıldı! Oyunçuları dəvət edin.",
+        "elanBanner": "Elan əsasında oyun yaradılır. Maraqlananlar bildiriş alacaq."
+      }
     },
     "paymentPanel": {
       "title": "Ödəniş uçotu",
@@ -1218,6 +1245,8 @@
       "ELAN_INVITE": "Elan",
       "GAME_CREATED": "Oyun",
       "GAME_REMINDER": "Xatırlatma",
+      "LOOKUP_CREATED": "Çağırış",
+      "LOOKUP_RESPONSE": "Cavab",
       "default": "Bildiriş"
     },
     "titles": {
@@ -1250,7 +1279,9 @@
       "ELAN_MESSAGE": "💬 {{senderName}}",
       "ELAN_INVITE": "Yaxınlığınızda elan var",
       "GAME_CREATED": "Oyun yaradıldı! ⚽",
-      "GAME_REMINDER": "Tezliklə oyununuz var! ⏰"
+      "GAME_REMINDER": "Tezliklə oyununuz var! ⏰",
+      "LOOKUP_CREATED": "Komanda rəqib axtarır! ⚽",
+      "LOOKUP_RESPONSE": "Çağırışınıza yeni cavab! ⚽"
     },
     "messages": {
       "GAME_INVITE": "{{date}} tarixli {{time}} oyununa dəvət.",
@@ -1281,7 +1312,9 @@
       "TRANSFER_RECEIVED_NOTE": "{{senderName}} sizə {{amount}} AZN köçürdü: {{note}}",
       "ELAN_INVITE": "{{creatorName}} oynamaq istəyir — {{date}} {{time}}. Elana baxın.",
       "GAME_CREATED": "«{{gameTitle}}» — {{date}}. Qoşulun!",
-      "GAME_REMINDER": "Tezliklə oyun başlayır. Gecikməyin!"
+      "GAME_REMINDER": "Tezliklə oyun başlayır. Gecikməyin!",
+      "LOOKUP_CREATED": "{{creatorName}} rəqib axtarır — {{details}}",
+      "LOOKUP_RESPONSE": "{{userName}} sizinlə oynamaq istəyir"
     }
   },
   "teams": {
@@ -1952,6 +1985,75 @@
       "statAttack": "Hücum",
       "statDefense": "Müdafiə",
       "statSpeed": "Sürət"
+    }
+  },
+  "lookup": {
+    "pageTitle": "Komanda rəqib axtarır",
+    "heroDesc": "Komandanız var? Elan yerləşdirin — digər kapitanlar görüb cavab verəcək. Çatda razılaşın və oynayın.",
+    "cta": "Biz rəqib axtarırıq",
+    "filterFormat": "Format",
+    "filterDistrict": "Rayon",
+    "filterReset": "Sıfırla",
+    "count": "{{count}} elan",
+    "emptyTitle": "Hələ heç kim axtarmır",
+    "emptyDesc": "İlk ol — elan yerləşdir",
+    "statusOpen": "Axtarırıq",
+    "statusMatched": "Tapdıq",
+    "statusCancelled": "Ləğv edildi",
+    "playerCount": "Bizdə {{count}} nəfər",
+    "noResponses": "Cavab yoxdur",
+    "responses": "{{count}} cavab",
+    "responsesCta": "Cavab ver →",
+    "closed": "Bağlıdır",
+    "timeAgoNow": "indi",
+    "timeAgoMin": "{{n}} dəq əvvəl",
+    "timeAgoHour": "{{n}} saat əvvəl",
+    "timeAgoDay": "{{n}} gün əvvəl",
+    "modal": {
+      "title": "⚽ Biz rəqib axtarırıq",
+      "labelFormat": "Format",
+      "labelCount": "Bizdə neçə nəfər",
+      "placeholderCount": "məs. 6",
+      "labelDate": "Tarix",
+      "labelTime": "Saat",
+      "labelDistrict": "Rayon",
+      "placeholderDistrict": "Rayon seçin",
+      "labelTeam": "Komanda adı (istəyə bağlı)",
+      "placeholderTeam": "məs. FC Nəsimi",
+      "labelPhone": "Əlaqə telefonu (istəyə bağlı)",
+      "placeholderPhone": "məs. +994 50 123 45 67",
+      "labelMessage": "Mesaj (istəyə bağlı)",
+      "placeholderMessage": "Özünüz haqqında: səviyyə, rəqibə tələblər...",
+      "submit": "Elan yerləşdir →",
+      "submitting": "Yerləşdirilir...",
+      "validationFormat": "Format seçin",
+      "successPublished": "Elan yerləşdirildi!",
+      "errorPublish": "Xəta baş verdi"
+    },
+    "detail": {
+      "back": "Bütün elanlar",
+      "contact": "Birbaşa yazmaq:",
+      "foundOpponent": "Rəqib tapıldı",
+      "cancel": "Ləğv et",
+      "responded": "Artıq cavab vermisiniz",
+      "responsesTitle": "Cavablar",
+      "chatTitle": "Ümumi çat",
+      "chatSubtitle": "Detalları burada müzakirə edin",
+      "chatEmpty": "İlk yazan siz olun",
+      "chatPlaceholder": "Çata yaz...",
+      "chatLogin": "Çatda yazmaq üçün daxil olun",
+      "respondTitle": "Elanı cavablandır",
+      "respondLabelTeam": "Komanda adınız (istəyə bağlı)",
+      "respondLabelPhone": "Əlaqə telefonu (istəyə bağlı)",
+      "respondLabelMessage": "Mesaj (istəyə bağlı)",
+      "respondPlaceholderTeam": "məs. FC Binəqədi",
+      "respondPlaceholderPhone": "məs. +994 50 123 45 67",
+      "respondPlaceholderMessage": "Komandanız haqqında danışın...",
+      "respondSubmit": "Cavab göndər →",
+      "respondSubmitting": "Göndərilir...",
+      "respondSuccess": "Cavabınız göndərildi! Təşkilatçı görəcək.",
+      "respondCta": "Cavab ver →",
+      "loginToRespond": "Cavab vermək üçün daxil olun"
     }
   }
 }

@@ -34,11 +34,16 @@ const ensureRefreshed = () => {
     return refreshPromise;
 };
 
+const PROTECTED_PATHS = ['/profile', '/notifications'];
+
 const handleAuthFailure = (api) => {
     api.dispatch(logout());
-    if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
-        const returnTo = window.location.pathname + window.location.search;
-        window.location.href = `/login?returnTo=${encodeURIComponent(returnTo)}`;
+    if (typeof window !== 'undefined') {
+        const path = window.location.pathname;
+        const isProtected = PROTECTED_PATHS.some(p => path.startsWith(p));
+        if (isProtected) {
+            window.location.href = `/login?returnTo=${encodeURIComponent(path + window.location.search)}`;
+        }
     }
 };
 

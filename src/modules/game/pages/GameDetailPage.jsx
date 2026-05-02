@@ -1028,6 +1028,16 @@ const GameDetailPage = () => {
                                 variant="whatsapp"
                             />
                             <ActionBtn
+                                icon={<ShareAltOutlined />}
+                                label="Telegram"
+                                onClick={() => {
+                                    const url = window.location.origin + `/games/${game.id}`;
+                                    const text = `⚽ ${game.title} · ${game.format} · ${game.time} · ${game.location}`;
+                                    window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+                                }}
+                                variant="ghost"
+                            />
+                            <ActionBtn
                                 icon={<QrcodeOutlined />}
                                 label="QR"
                                 onClick={() => setIsQrModalVisible(true)}

@@ -10,6 +10,7 @@ import { useDispatch } from 'react-redux';
 import { useRegisterMutation } from '../../../store/authApi';
 import { setCredentials } from '../../../store/store';
 import { useTranslation } from 'react-i18next';
+import { API_BASE } from '../../../config.js';
 
 const { Option } = Select;
 
@@ -49,6 +50,15 @@ const RegistrationForm = ({ onSuccess }) => {
                 token: result.access_token,
                 refreshToken: result.refresh_token,
             }));
+
+            const storedLang = localStorage.getItem('lang');
+            if (storedLang && storedLang !== 'ru' && result.user?.id) {
+                fetch(`${API_BASE}/api/users/${result.user.id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${result.access_token}` },
+                    body: JSON.stringify({ language: storedLang }),
+                }).catch(() => {});
+            }
 
             message.success(t('auth.registration.success'));
 

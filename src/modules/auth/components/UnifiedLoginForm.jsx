@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { setCredentials } from '../../../store/store';
 import { useLoginMutation, useLoginWithGoogleMutation } from '../../../store/authApi';
 import { useTranslation } from 'react-i18next';
+import { API_BASE } from '../../../config.js';
 
 const { Option } = Select;
 
@@ -36,6 +37,14 @@ const UnifiedLoginForm = ({ onSuccess }) => {
             token: response.access_token,
             refreshToken: response.refresh_token,
         }));
+        const storedLang = localStorage.getItem('lang');
+        if (storedLang && storedLang !== (response.user?.language || 'ru') && response.user?.id) {
+            fetch(`${API_BASE}/api/users/${response.user.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${response.access_token}` },
+                body: JSON.stringify({ language: storedLang }),
+            }).catch(() => {});
+        }
         message.success(t('auth.unifiedLogin.successLogin'));
         onSuccess();
     };

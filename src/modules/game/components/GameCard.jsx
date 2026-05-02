@@ -144,6 +144,22 @@ const GameCard = ({ game, onJoin }) => {
                         </span>
                     )}
 
+                    {game.minPlayers > 0 && !isFull && (
+                        <span style={{
+                            background: 'rgba(0,232,122,0.06)',
+                            color: '#00e87a',
+                            padding: '3px 9px',
+                            borderRadius: 20,
+                            fontSize: 10,
+                            fontWeight: 600,
+                            border: '1px solid rgba(0,232,122,0.15)',
+                            fontFamily: 'Outfit,sans-serif',
+                            whiteSpace: 'nowrap',
+                        }}>
+                            ✓ {t('game.card.guarantee')}
+                        </span>
+                    )}
+
                     {isParticipant && (
                         <span style={{
                             marginLeft: 'auto',

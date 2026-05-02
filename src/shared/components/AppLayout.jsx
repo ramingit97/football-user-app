@@ -4,6 +4,7 @@ import {
     TrophyOutlined, BellOutlined, PlusOutlined,
     HomeOutlined, UsergroupAddOutlined, BankOutlined, FileTextOutlined,
     MenuOutlined, CloseOutlined, ApartmentOutlined, MessageOutlined,
+    ThunderboltOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -23,9 +24,10 @@ import { useTranslation } from 'react-i18next';
 
 const { Content } = Layout;
 
-// Desktop nav — 7 core items
+// Desktop nav — 8 core items
 const DESKTOP_NAV = [
     { key: '/games',       icon: HomeOutlined,          labelKey: 'nav.games' },
+    { key: '/lookup',      icon: ThunderboltOutlined,   labelKey: 'nav.lookup' },
     { key: '/elanlar',     icon: FileTextOutlined,      labelKey: 'nav.elanlar' },
     { key: '/stadiums',    icon: BankOutlined,          labelKey: 'nav.stadiums' },
     { key: '/teams',       icon: TeamOutlined,          labelKey: 'nav.teams' },
@@ -36,11 +38,11 @@ const DESKTOP_NAV = [
 
 // Mobile bottom nav — 4 items + central FAB
 const MOBILE_NAV = [
-    { key: '/games',     icon: HomeOutlined,         labelKey: 'nav.games' },
-    { key: '/stadiums',  icon: BankOutlined,         labelKey: 'nav.stadiums' },
+    { key: '/games',     icon: HomeOutlined,           labelKey: 'nav.games' },
+    { key: '/lookup',    icon: ThunderboltOutlined,    labelKey: 'nav.lookup' },
     null, // FAB placeholder
-    { key: '/players',   icon: UsergroupAddOutlined, labelKey: 'nav.players' },
-    { key: '/teams',     icon: TeamOutlined,         labelKey: 'nav.teams' },
+    { key: '/players',   icon: UsergroupAddOutlined,   labelKey: 'nav.players' },
+    { key: '/teams',     icon: TeamOutlined,           labelKey: 'nav.teams' },
 ];
 
 const AppLayout = ({ children }) => {
@@ -529,6 +531,7 @@ const AppLayout = ({ children }) => {
 
                 {/* Nav items */}
                 {[
+                    { key: '/lookup',      icon: <ThunderboltOutlined />, labelKey: 'nav.lookup' },
                     { key: '/elanlar',     icon: <FileTextOutlined />,   labelKey: 'nav.elanlar' },
                     { key: '/stadiums',    icon: <BankOutlined />,       labelKey: 'nav.stadiums' },
                     { key: '/tournaments', icon: <ApartmentOutlined />,  labelKey: 'nav.tournaments' },

@@ -5,8 +5,8 @@ import az from './az.json';
 
 i18n.use(initReactI18next).init({
   resources: { ru: { translation: ru }, az: { translation: az } },
-  lng: localStorage.getItem('lang') || 'ru',
-  fallbackLng: 'ru',
+  lng: localStorage.getItem('lang') || 'az',
+  fallbackLng: 'az',
   interpolation: { escapeValue: false },
 });
 

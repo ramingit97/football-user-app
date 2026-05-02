@@ -1,6 +1,8 @@
 {
   "nav": {
     "games": "Игры",
+    "lookup": "Ищем соперника",
+    "newFeature": "Новая функция",
     "elanlar": "Объявления",
     "stadiums": "Стадионы",
     "createGame": "Создать игру",
@@ -195,7 +197,8 @@
       "full": "Заполнено",
       "join": "Записаться",
       "joined": "Вы записаны",
-      "organizer": "Организатор:"
+      "organizer": "Организатор:",
+      "guarantee": "Возврат если не наберётся"
     },
     "detail": {
       "backToList": "К списку игр",
@@ -353,7 +356,7 @@
       "privatePrice": "1₼ за создание",
       "nameLabel": "Название игры",
       "namePlaceholder": "Введите название",
-      "nameMinLength": "Минимум 5 символов",
+      "nameMinLength": "Минимум 3 символа",
       "nameExample": "Например: Вечерний футбол в парке",
       "stadiumLabel": "Стадион",
       "stadiumHint": "Фильтруйте по району или метро для быстрого поиска",
@@ -475,7 +478,31 @@
       "recurrenceLabel": "🔄 Повторяющаяся игра",
       "recurrenceNone": "Нет (разовая игра)",
       "recurrenceWeekly": "Каждую неделю автоматически",
-      "recurrenceBiweekly": "Каждые 2 недели автоматически"
+      "recurrenceBiweekly": "Каждые 2 недели автоматически",
+      "simple": {
+        "whereLabel": "Где играем?",
+        "whenLabel": "Когда?",
+        "formatLabel": "Формат",
+        "alreadyLabel": "Уже есть игроков",
+        "fromScratch": "Собираем с нуля — все места свободны",
+        "needMore": "Нужно ещё {{n}}",
+        "outOf": "из {{total}} мест",
+        "totalPlayers": "Всего игроков: {{n}}",
+        "topBadge": "ТОП",
+        "stadiumPlaceholder": "Поиск по названию или району...",
+        "customLocationLink": "Нет в списке? Указать адрес →",
+        "customLocationPlaceholder": "Название или адрес поля",
+        "backToList": "← Выбрать из списка",
+        "datePlaceholder": "Дата",
+        "timePlaceholder": "Время",
+        "selectDateFirst": "Сначала выберите дату",
+        "extrasLabel": "Дополнительно",
+        "extrasHint": "уровень, возраст, цена...",
+        "priceLabel": "Взнос с игрока (необязательно)",
+        "createBtn": "⚽ Создать игру",
+        "successMsg": "Игра создана! Приглашайте игроков.",
+        "elanBanner": "Создаётся игра из объявления. Заинтересованным придёт уведомление."
+      }
     },
     "paymentPanel": {
       "title": "Учёт оплаты",
@@ -1218,6 +1245,8 @@
       "ELAN_INVITE": "Объявление",
       "GAME_CREATED": "Игра",
       "GAME_REMINDER": "Напоминание",
+      "LOOKUP_CREATED": "Вызов",
+      "LOOKUP_RESPONSE": "Отклик",
       "default": "Уведомление"
     },
     "titles": {
@@ -1250,7 +1279,9 @@
       "ELAN_MESSAGE": "💬 {{senderName}}",
       "ELAN_INVITE": "Объявление рядом с вами",
       "GAME_CREATED": "Игра создана! ⚽",
-      "GAME_REMINDER": "Скоро ваша игра! ⏰"
+      "GAME_REMINDER": "Скоро ваша игра! ⏰",
+      "LOOKUP_CREATED": "Команда ищет соперника! ⚽",
+      "LOOKUP_RESPONSE": "Новый отклик на ваш вызов! ⚽"
     },
     "messages": {
       "GAME_INVITE": "Приглашение на матч {{date}} в {{time}}.",
@@ -1281,7 +1312,9 @@
       "TRANSFER_RECEIVED_NOTE": "{{senderName}} перевёл вам {{amount}} AZN: {{note}}",
       "ELAN_INVITE": "{{creatorName}} хочет сыграть — {{date}} {{time}}. Посмотрите объявление.",
       "GAME_CREATED": "«{{gameTitle}}» — {{date}}. Присоединяйтесь!",
-      "GAME_REMINDER": "Скоро начало игры. Не опаздывайте!"
+      "GAME_REMINDER": "Скоро начало игры. Не опаздывайте!",
+      "LOOKUP_CREATED": "{{creatorName}} ищет соперника — {{details}}",
+      "LOOKUP_RESPONSE": "{{userName}} хочет сыграть с вами"
     }
   },
   "teams": {
@@ -1952,6 +1985,75 @@
       "statAttack": "Атака",
       "statDefense": "Защита",
       "statSpeed": "Скорость"
+    }
+  },
+  "lookup": {
+    "pageTitle": "Команда ищет соперника",
+    "heroDesc": "Есть команда или просто компания? Публикуй вызов — другие капитаны увидят и откликнутся. Договоритесь в чате и сыграйте.",
+    "cta": "Мы ищем соперника",
+    "filterFormat": "Формат",
+    "filterDistrict": "Район",
+    "filterReset": "Сбросить",
+    "count": "{{count}} объявлений",
+    "emptyTitle": "Пока никто не ищет",
+    "emptyDesc": "Будь первым — опубликуй вызов",
+    "statusOpen": "Ищем",
+    "statusMatched": "Нашли",
+    "statusCancelled": "Отменено",
+    "playerCount": "Нас {{count}} чел.",
+    "noResponses": "Нет откликов",
+    "responses": "{{count}} отклик",
+    "responsesCta": "Откликнуться →",
+    "closed": "Закрыто",
+    "timeAgoNow": "только что",
+    "timeAgoMin": "{{n}} мин назад",
+    "timeAgoHour": "{{n}} ч назад",
+    "timeAgoDay": "{{n}} дн назад",
+    "modal": {
+      "title": "⚽ Мы ищем соперника",
+      "labelFormat": "Формат",
+      "labelCount": "Нас человек",
+      "placeholderCount": "напр. 6",
+      "labelDate": "Дата",
+      "labelTime": "Время",
+      "labelDistrict": "Район",
+      "placeholderDistrict": "Выбрать район",
+      "labelTeam": "Название команды (необязательно)",
+      "placeholderTeam": "напр. FC Nasimi или просто пропусти",
+      "labelPhone": "Телефон для связи (необязательно)",
+      "placeholderPhone": "напр. +994 50 123 45 67",
+      "labelMessage": "Сообщение (необязательно)",
+      "placeholderMessage": "Расскажи о себе: уровень, пожелания к сопернику...",
+      "submit": "Опубликовать вызов →",
+      "submitting": "Публикуем...",
+      "validationFormat": "Выберите формат",
+      "successPublished": "Объявление опубликовано!",
+      "errorPublish": "Ошибка публикации"
+    },
+    "detail": {
+      "back": "Все объявления",
+      "contact": "Написать напрямую:",
+      "foundOpponent": "Нашли соперника",
+      "cancel": "Отменить",
+      "responded": "Ты уже откликнулся",
+      "responsesTitle": "Отклики",
+      "chatTitle": "Общий чат",
+      "chatSubtitle": "Обсудите детали здесь",
+      "chatEmpty": "Начните общение — напишите первым",
+      "chatPlaceholder": "Написать в чат...",
+      "chatLogin": "Войдите чтобы писать в чат",
+      "respondTitle": "Откликнуться на вызов",
+      "respondLabelTeam": "Название вашей команды (необязательно)",
+      "respondLabelPhone": "Телефон для связи (необязательно)",
+      "respondLabelMessage": "Сообщение (необязательно)",
+      "respondPlaceholderTeam": "напр. FC Binagadi",
+      "respondPlaceholderPhone": "напр. +994 50 123 45 67",
+      "respondPlaceholderMessage": "Расскажи о своей команде...",
+      "respondSubmit": "Отправить отклик →",
+      "respondSubmitting": "Отправляем...",
+      "respondSuccess": "Отклик отправлен! Организатор увидит тебя.",
+      "respondCta": "Откликнуться →",
+      "loginToRespond": "Войдите, чтобы откликнуться"
     }
   }
 }

@@ -5,6 +5,7 @@ import { useRegisterMutation, useUpdateProfileMutation, useProcessReferralMutati
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../../../store/store';
 import { useTranslation } from 'react-i18next';
+import { API_BASE } from '../../../config.js';
 import LanguageSwitcher from '../../../components/LanguageSwitcher';
 
 // Step Components - Simplified: only 3 core questions + auth
@@ -148,6 +149,15 @@ const InteractiveOnboarding = () => {
                 refreshToken: result.refresh_token,
             }));
 
+            const storedLang = localStorage.getItem('lang');
+            if (storedLang && storedLang !== 'ru' && result.user?.id) {
+                fetch(`${API_BASE}/api/users/${result.user.id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${result.access_token}` },
+                    body: JSON.stringify({ language: storedLang }),
+                }).catch(() => {});
+            }
+
             // 2. Update profile with position + play style + initial ratings
             await updateProfile({
                 position: formData.position,
@@ -202,6 +212,15 @@ const InteractiveOnboarding = () => {
                 token: result.access_token,
                 refreshToken: result.refresh_token,
             }));
+
+            const storedLangG = localStorage.getItem('lang');
+            if (storedLangG && storedLangG !== 'ru' && result.user?.id) {
+                fetch(`${API_BASE}/api/users/${result.user.id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${result.access_token}` },
+                    body: JSON.stringify({ language: storedLangG }),
+                }).catch(() => {});
+            }
 
             // Update profile with onboarding data
             await updateProfile({
